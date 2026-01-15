@@ -15,17 +15,26 @@ export function TemporalAnalysis() {
   const [localData, setLocalData] = useState<DynamicTimelinePoint[]>([]);
   const [saved, setSaved] = useState(false);
   const [hoveredCell, setHoveredCell] = useState<{ idx: number; catId: string } | null>(null);
-  
+
   const process = selectedProcessId ? getProcessById(selectedProcessId) : null;
-  const categories = settings.impactCategories || DEFAULT_IMPACT_CATEGORIES;
-  const timelinePoints = settings.customTimelinePoints || [];
-  const timelineStructure = getTimelinePointsFromCustom(timelinePoints);
+  const categories = useMemo(() => settings.impactCategories || DEFAULT_IMPACT_CATEGORIES, [settings.impactCategories]);
+  const timelinePoints = useMemo(() => settings.customTimelinePoints || [], [settings.customTimelinePoints]);
+  const timelineStructure = useMemo(() => getTimelinePointsFromCustom(timelinePoints), [timelinePoints]);
 
   useEffect(() => {
     if (selectedProcessId) {
       const existing = temporalData[selectedProcessId];
+      // Only set local data if it's drastically different (e.g. initial load or different process)
+      // We check length and presence. If length matches, we assume it's the data we want unless we have nothing.
       if (existing && existing.length === timelineStructure.length) {
-        setLocalData(existing as DynamicTimelinePoint[]);
+        // Only initialize if localData is empty or belongs to a different process (checked by structure/length context here)
+        // To be safe, we only overwrite if we haven't initialized localData for THIS process yet.
+        setLocalData(prev => {
+          if (prev.length === existing.length && prev[0]?.timeOffset === existing[0]?.timeOffset) {
+            return prev; // Keep current local changes
+          }
+          return existing as unknown as DynamicTimelinePoint[];
+        });
       } else {
         const newData: DynamicTimelinePoint[] = timelineStructure.map(tp => {
           const point: DynamicTimelinePoint = { timeOffset: tp.timeOffset, timeLabel: tp.timeLabel };
@@ -34,6 +43,8 @@ export function TemporalAnalysis() {
         });
         setLocalData(newData);
       }
+    } else {
+      setLocalData([]);
     }
   }, [selectedProcessId, temporalData, categories, timelineStructure]);
 
@@ -71,7 +82,7 @@ export function TemporalAnalysis() {
   // Custom tooltip for the chart with time-based definitions
   const CustomChartTooltip = ({ active, payload, label }: any) => {
     if (!active || !payload || !payload.length) return null;
-    
+
     // Find the timeline point ID for this label
     const pointIdx = localData.findIndex(d => d.timeLabel === label);
     const timelinePointId = timelinePoints[pointIdx]?.id;
@@ -105,7 +116,7 @@ export function TemporalAnalysis() {
 
   // Calculate max impact per category across all timeline points (worst-case)
   const getMaxImpactPerCategory = (processId: string) => {
-    const data = temporalData[processId] as DynamicTimelinePoint[] | undefined;
+    const data = temporalData[processId] as unknown as DynamicTimelinePoint[] | undefined;
     if (!data) return {};
     const maxImpacts: Record<string, number> = {};
     categories.forEach(cat => {
@@ -129,7 +140,7 @@ export function TemporalAnalysis() {
   const getProcessImpactSummary = (processId: string) => {
     const score = calculateOverallCriticality(processId);
     const maxImpacts = getMaxImpactPerCategory(processId);
-    const highestCat = categories.reduce((max, cat) => 
+    const highestCat = categories.reduce((max, cat) =>
       (maxImpacts[cat.id] || 0) > (maxImpacts[max.id] || 0) ? cat : max, categories[0]);
     return { score, highestCat, highestValue: maxImpacts[highestCat?.id] || 0 };
   };
@@ -140,8 +151,8 @@ export function TemporalAnalysis() {
   const [criticalityFilter, setCriticalityFilter] = useState('');
 
   // Get unique departments
-  const departments = useMemo(() => 
-    [...new Set(processes.map(p => p.department))].sort(), 
+  const departments = useMemo(() =>
+    [...new Set(processes.map(p => p.department))].sort(),
     [processes]
   );
 
@@ -149,7 +160,7 @@ export function TemporalAnalysis() {
   const filteredProcesses = useMemo(() => {
     return processes.filter(p => {
       const matchesSearch = p.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                           p.department.toLowerCase().includes(searchTerm.toLowerCase());
+        p.department.toLowerCase().includes(searchTerm.toLowerCase());
       const matchesDept = !deptFilter || p.department === deptFilter;
       const matchesCrit = !criticalityFilter || p.criticality === criticalityFilter;
       return matchesSearch && matchesDept && matchesCrit;
