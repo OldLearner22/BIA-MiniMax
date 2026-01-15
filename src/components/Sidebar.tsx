@@ -19,16 +19,14 @@ export function Sidebar() {
     <aside className={`fixed left-0 top-0 h-screen glass-sidebar z-50 transition-all duration-300 ${sidebarCollapsed ? 'w-16' : 'w-64'}`}>
       <div className="flex flex-col h-full">
         {/* Logo */}
-        <div className={`flex items-center gap-3 p-4 border-b border-[rgba(255,255,255,0.05)] ${sidebarCollapsed ? 'justify-center' : ''}`}>
-          <div className="w-10 h-10 rounded-bia-md bg-gradient-to-br from-bia-primary to-bia-secondary flex items-center justify-center">
+        <div className={`flex items-center gap-3 p-4 border-b border-white/5 ${sidebarCollapsed ? 'justify-center' : ''}`}>
+          <div className="flex-shrink-0 w-10 h-10 rounded-bia-md bg-gradient-to-br from-bia-primary to-bia-secondary flex items-center justify-center shadow-lg shadow-bia-primary/20">
             <Shield className="w-6 h-6 text-white" />
           </div>
-          {!sidebarCollapsed && (
-            <div>
-              <h1 className="text-lg font-semibold text-bia-text-primary">BIA Tool</h1>
-              <p className="text-xs text-bia-text-tertiary">ISO 22301:2019</p>
-            </div>
-          )}
+          <div className={`transition-all duration-300 overflow-hidden ${sidebarCollapsed ? 'w-0 opacity-0' : 'w-40 opacity-100'}`}>
+            <h1 className="text-lg font-bold text-bia-text-primary tracking-tight whitespace-nowrap">BIA MiniMax</h1>
+            <p className="text-[10px] text-bia-text-tertiary font-bold uppercase tracking-widest whitespace-nowrap">Enterprise GRC</p>
+          </div>
         </div>
 
         {/* Navigation */}

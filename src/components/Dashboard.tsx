@@ -31,7 +31,7 @@ export function Dashboard() {
 
   const criticalCount = processes.filter(p => p.criticality === 'critical').length;
   const highCount = processes.filter(p => p.criticality === 'high').length;
-  const avgRiskScore = processes.length > 0 
+  const avgRiskScore = processes.length > 0
     ? (processes.reduce((acc, p) => acc + calculateRiskScore(p.id), 0) / processes.length).toFixed(2)
     : 0;
 
@@ -65,35 +65,78 @@ export function Dashboard() {
     dimension: cat.name,
     value: processes.length > 0 ? (aggregateMaxImpacts[cat.id] || 0) / processes.length : 0,
     max: 5,
-    color: cat.color
   }));
 
   const kpis = [
-    { label: 'Total Processes', value: processes.length, icon: Activity, color: 'text-bia-primary' },
-    { label: 'Critical Processes', value: criticalCount, icon: AlertTriangle, color: 'text-bia-critical' },
-    { label: 'Avg Impact Score', value: avgRiskScore, icon: TrendingUp, color: 'text-bia-warning' },
-    { label: 'Compliant', value: `${Math.round((processes.filter(p => p.status === 'approved').length / processes.length) * 100) || 0}%`, icon: Shield, color: 'text-bia-success' },
+    { label: 'Total Processes', value: processes.length, icon: Activity, color: 'text-bia-primary', trend: '+2 this week' },
+    { label: 'Critical Processes', value: criticalCount, icon: AlertTriangle, color: 'text-bia-critical', trend: 'High Priority' },
+    { label: 'Avg Impact Score', value: avgRiskScore, icon: TrendingUp, color: 'text-bia-warning', trend: 'Weighted Avg' },
+    { label: 'Compliant', value: `${Math.round((processes.filter(p => p.status === 'approved').length / processes.length) * 100) || 0}%`, icon: Shield, color: 'text-bia-success', trend: 'Target: 95%' },
   ];
+
+  const CustomTooltip = ({ active, payload, label }: any) => {
+    if (active && payload && payload.length) {
+      return (
+        <div className="bg-slate-900/90 backdrop-blur-md border border-white/10 p-3 rounded-lg shadow-xl">
+          <p className="text-white font-medium text-sm mb-1">{label || payload[0].name}</p>
+          <div className="space-y-1">
+            {payload.map((entry: any, index: number) => (
+              <div key={index} className="flex items-center gap-2">
+                <div className="w-2 h-2 rounded-full" style={{ backgroundColor: entry.color || entry.fill }} />
+                <span className="text-slate-300 text-xs">
+                  {entry.name}: <span className="text-white font-bold">{entry.value}</span>
+                </span>
+              </div>
+            ))}
+          </div>
+        </div>
+      );
+    }
+    return null;
+  };
 
   return (
     <div className="animate-fade-in space-y-6">
+      {/* Chart Gradients */}
+      <svg width="0" height="0" className="absolute">
+        <defs>
+          <linearGradient id="gradientPrimary" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%" stopColor="#38BDF8" stopOpacity={0.8} />
+            <stop offset="100%" stopColor="#38BDF8" stopOpacity={0.2} />
+          </linearGradient>
+          <linearGradient id="gradientSecondary" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%" stopColor="#818CF8" stopOpacity={0.8} />
+            <stop offset="100%" stopColor="#818CF8" stopOpacity={0.2} />
+          </linearGradient>
+          <linearGradient id="gradientCritical" x1="0" y1="0" x2="1" y2="0">
+            <stop offset="0%" stopColor="#F87171" stopOpacity={1} />
+            <stop offset="100%" stopColor="#EF4444" stopOpacity={0.8} />
+          </linearGradient>
+        </defs>
+      </svg>
+
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-3xl font-bold text-bia-text-primary">Dashboard</h1>
-          <p className="text-bia-text-secondary mt-1">Business Impact Analysis Overview</p>
+          <h1 className="text-3xl font-bold text-bia-text-primary tracking-tight">Executive Dashboard</h1>
+          <p className="text-bia-text-secondary mt-1">Real-time Business Impact Analysis Intelligence</p>
         </div>
       </div>
 
       {/* KPI Cards */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
         {kpis.map((kpi, idx) => (
-          <div key={idx} className="glass-panel-hover p-6">
-            <div className="flex items-center justify-between">
+          <div key={idx} className="glass-panel-hover p-6 group">
+            <div className="flex items-start justify-between">
               <div>
-                <p className="text-bia-text-secondary text-sm">{kpi.label}</p>
-                <p className={`text-3xl font-bold mt-1 ${kpi.color}`}>{kpi.value}</p>
+                <p className="text-bia-text-secondary text-sm font-medium">{kpi.label}</p>
+                <p className={`text-4xl font-bold mt-2 tracking-tighter ${kpi.color}`}>{kpi.value}</p>
+                <p className="text-[10px] text-bia-text-tertiary mt-2 uppercase tracking-widest font-bold opacity-0 group-hover:opacity-100 transition-opacity">
+                  {kpi.trend}
+                </p>
               </div>
-              <kpi.icon className={`w-10 h-10 ${kpi.color} opacity-50`} />
+              <div className={`p-3 rounded-bia-md bg-white/5 group-hover:bg-white/10 transition-colors`}>
+                <kpi.icon className={`w-6 h-6 ${kpi.color}`} />
+              </div>
             </div>
           </div>
         ))}
@@ -103,42 +146,73 @@ export function Dashboard() {
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         {/* Risk Distribution Pie */}
         <div className="glass-panel p-6">
-          <h3 className="text-lg font-semibold text-bia-text-primary mb-4">Risk Distribution</h3>
-          <ResponsiveContainer width="100%" height={220}>
+          <h3 className="text-sm font-bold text-bia-text-secondary uppercase tracking-widest mb-6">Criticality Distribution</h3>
+          <ResponsiveContainer width="100%" height={240}>
             <PieChart>
-              <Pie data={criticalityData} cx="50%" cy="50%" innerRadius={50} outerRadius={80} dataKey="value" labelLine={false}
-                label={({ name, percent }) => `${name} ${(percent * 100).toFixed(0)}%`}>
+              <Pie
+                data={criticalityData}
+                cx="50%"
+                cy="50%"
+                innerRadius={60}
+                outerRadius={90}
+                paddingAngle={5}
+                dataKey="value"
+                stroke="none"
+              >
                 {criticalityData.map((entry, i) => (
                   <Cell key={i} fill={entry.color} />
                 ))}
               </Pie>
-              <Tooltip contentStyle={{ backgroundColor: 'rgba(30, 41, 59, 0.9)', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '8px' }} />
+              <Tooltip content={<CustomTooltip />} />
             </PieChart>
           </ResponsiveContainer>
+          <div className="flex flex-wrap justify-center gap-4 mt-2">
+            {criticalityData.map((d, i) => (
+              <div key={i} className="flex items-center gap-1.5">
+                <div className="w-2.5 h-2.5 rounded-full" style={{ backgroundColor: d.color }} />
+                <span className="text-[10px] text-bia-text-secondary font-medium">{d.name}</span>
+              </div>
+            ))}
+          </div>
         </div>
 
         {/* Risk by Department */}
         <div className="glass-panel p-6">
-          <h3 className="text-lg font-semibold text-bia-text-primary mb-4">Impact by Department</h3>
-          <ResponsiveContainer width="100%" height={220}>
-            <BarChart data={deptRiskData} layout="vertical">
-              <XAxis type="number" domain={[0, 5]} stroke="#94A3B8" />
-              <YAxis type="category" dataKey="department" stroke="#94A3B8" width={80} tick={{ fontSize: 12 }} />
-              <Tooltip contentStyle={{ backgroundColor: 'rgba(30, 41, 59, 0.9)', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '8px' }} />
-              <Bar dataKey="avgRisk" fill="#38BDF8" radius={[0, 4, 4, 0]} />
+          <h3 className="text-sm font-bold text-bia-text-secondary uppercase tracking-widest mb-6">Impact by Department</h3>
+          <ResponsiveContainer width="100%" height={240}>
+            <BarChart data={deptRiskData} layout="vertical" margin={{ left: -20, right: 20 }}>
+              <XAxis type="number" domain={[0, 5]} hide />
+              <YAxis
+                type="category"
+                dataKey="department"
+                stroke="#64748B"
+                width={100}
+                tick={{ fontSize: 11, fontWeight: 500 }}
+                axisLine={false}
+                tickLine={false}
+              />
+              <Tooltip content={<CustomTooltip />} cursor={{ fill: 'rgba(255,255,255,0.05)' }} />
+              <Bar dataKey="avgRisk" fill="url(#gradientPrimary)" radius={[0, 4, 4, 0]} barSize={24} />
             </BarChart>
           </ResponsiveContainer>
         </div>
 
         {/* Impact Radar */}
         <div className="glass-panel p-6">
-          <h3 className="text-lg font-semibold text-bia-text-primary mb-4">Impact Profile</h3>
-          <ResponsiveContainer width="100%" height={220}>
+          <h3 className="text-sm font-bold text-bia-text-secondary uppercase tracking-widest mb-6">Impact Profile</h3>
+          <ResponsiveContainer width="100%" height={240}>
             <RadarChart data={radarData}>
-              <PolarGrid stroke="rgba(255,255,255,0.1)" />
-              <PolarAngleAxis dataKey="dimension" stroke="#94A3B8" tick={{ fontSize: 10 }} />
-              <Radar name="Impact" dataKey="value" stroke="#818CF8" fill="#818CF8" fillOpacity={0.4} />
-              <Tooltip contentStyle={{ backgroundColor: 'rgba(30, 41, 59, 0.9)', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '8px' }} />
+              <PolarGrid stroke="rgba(255,255,255,0.05)" />
+              <PolarAngleAxis dataKey="dimension" stroke="#64748B" tick={{ fontSize: 10, fontWeight: 600 }} />
+              <Radar
+                name="Impact"
+                dataKey="value"
+                stroke="#818CF8"
+                fill="url(#gradientSecondary)"
+                fillOpacity={0.6}
+                strokeWidth={2}
+              />
+              <Tooltip content={<CustomTooltip />} />
             </RadarChart>
           </ResponsiveContainer>
         </div>

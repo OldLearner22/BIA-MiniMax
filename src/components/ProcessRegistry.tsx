@@ -134,41 +134,51 @@ export function ProcessRegistry() {
       <div className="glass-panel overflow-hidden">
         <div className="overflow-x-auto">
           <table className="w-full">
-            <thead className="bg-black/20">
-              <tr className="text-left text-xs text-bia-text-secondary uppercase tracking-wider">
-                <th className="p-4">ID</th>
-                <th className="p-4">Process Name</th>
+            <thead className="bg-white/5 border-b border-white/5">
+              <tr className="text-left text-[10px] text-bia-text-tertiary font-bold uppercase tracking-[0.2em]">
+                <th className="p-4">Reference</th>
+                <th className="p-4">Business Process</th>
                 <th className="p-4">Owner</th>
                 <th className="p-4">Department</th>
                 <th className="p-4">Criticality</th>
                 <th className="p-4">Risk Score</th>
                 <th className="p-4">Status</th>
-                <th className="p-4">Actions</th>
+                <th className="p-4 text-center">Actions</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-[rgba(255,255,255,0.05)]">
+            <tbody className="divide-y divide-white/5">
               {filtered.map((proc) => (
-                <tr key={proc.id} className="hover:bg-[rgba(255,255,255,0.02)] transition-colors">
-                  <td className="p-4 text-bia-text-tertiary font-mono text-sm">{proc.id}</td>
-                  <td className="p-4 text-bia-text-primary font-medium">{proc.name}</td>
-                  <td className="p-4 text-bia-text-secondary">{proc.owner}</td>
-                  <td className="p-4 text-bia-text-secondary">{proc.department}</td>
+                <tr key={proc.id} className="group hover:bg-white/[0.03] transition-all duration-200">
+                  <td className="p-4 text-bia-text-tertiary font-mono text-xs opacity-75">{proc.id}</td>
+                  <td className="p-4 text-bia-text-primary font-semibold">{proc.name}</td>
+                  <td className="p-4 text-bia-text-secondary text-sm">{proc.owner}</td>
+                  <td className="p-4 text-bia-text-secondary text-sm">{proc.department}</td>
                   <td className="p-4">
-                    <span className={`px-2 py-1 rounded-full text-xs font-medium criticality-${proc.criticality}`}>
+                    <span className={`px-2.5 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider criticality-${proc.criticality}`}>
                       {proc.criticality}
-                    </span>
-                  </td>
-                  <td className="p-4 text-bia-text-primary font-medium">{calculateRiskScore(proc.id)}</td>
-                  <td className="p-4">
-                    <span className={`px-2 py-1 rounded text-xs ${proc.status === 'approved' ? 'bg-bia-success/20 text-bia-success' : proc.status === 'in-review' ? 'bg-bia-warning/20 text-bia-warning' : 'bg-bia-text-tertiary/20 text-bia-text-tertiary'}`}>
-                      {proc.status.replace('-', ' ')}
                     </span>
                   </td>
                   <td className="p-4">
                     <div className="flex items-center gap-2">
-                      <button onClick={() => handleAssess(proc.id)} className="text-bia-primary hover:text-bia-primary/80 text-sm">Assess</button>
-                      <button onClick={() => handleEdit(proc)} className="p-1.5 hover:bg-bia-glass-hover rounded"><Pencil className="w-4 h-4 text-bia-text-secondary" /></button>
-                      <button onClick={() => deleteProcess(proc.id)} className="p-1.5 hover:bg-bia-critical/20 rounded"><Trash2 className="w-4 h-4 text-bia-critical" /></button>
+                      <div className="w-16 bg-white/5 rounded-full h-1 overflow-hidden">
+                        <div
+                          className={`h-full rounded-full ${calculateRiskScore(proc.id) >= 4 ? 'bg-bia-critical' : calculateRiskScore(proc.id) >= 3 ? 'bg-bia-warning' : 'bg-bia-primary'}`}
+                          style={{ width: `${(calculateRiskScore(proc.id) / 5) * 100}%` }}
+                        />
+                      </div>
+                      <span className="text-bia-text-primary font-bold text-xs">{calculateRiskScore(proc.id)}</span>
+                    </div>
+                  </td>
+                  <td className="p-4">
+                    <span className={`px-2 py-0.5 rounded text-[10px] font-bold uppercase ${proc.status === 'approved' ? 'bg-bia-success/10 text-bia-success border border-bia-success/20' : proc.status === 'in-review' ? 'bg-bia-warning/10 text-bia-warning border border-bia-warning/20' : 'bg-bia-text-tertiary/10 text-bia-text-tertiary border border-bia-text-tertiary/20'}`}>
+                      {proc.status.replace('-', ' ')}
+                    </span>
+                  </td>
+                  <td className="p-4">
+                    <div className="flex items-center justify-center gap-2 opacity-0 group-hover:opacity-100 transition-opacity duration-200">
+                      <button onClick={() => handleAssess(proc.id)} className="glass-button text-[10px] px-3 py-1 uppercase tracking-tighter">Assess</button>
+                      <button onClick={() => handleEdit(proc)} className="p-2 hover:bg-white/10 rounded-bia-sm transition-colors"><Pencil className="w-3.5 h-3.5 text-bia-text-secondary" /></button>
+                      <button onClick={() => deleteProcess(proc.id)} className="p-2 hover:bg-bia-critical/10 rounded-bia-sm transition-colors"><Trash2 className="w-3.5 h-3.5 text-bia-critical" /></button>
                     </div>
                   </td>
                 </tr>
