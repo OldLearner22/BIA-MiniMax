@@ -381,7 +381,7 @@ export function TemporalAnalysis() {
               <tr className="text-left text-xs text-bia-text-secondary uppercase">
                 <th className="p-2">Time</th>
                 {categories.map((cat) => (
-                  <th key={cat.id} className="p-2">
+                  <th key={cat.id} className="p-2 min-w-[180px]">
                     <div className="flex items-center gap-1">
                       <div className="w-2 h-2 rounded" style={{ backgroundColor: cat.color }} />
                       {cat.name}
@@ -396,19 +396,19 @@ export function TemporalAnalysis() {
                 const timeLabel = point.timeLabel;
                 return (
                   <tr key={idx} className="border-t border-bia-border hover:bg-white/5">
-                    <td className="p-2 text-bia-text-primary font-medium">{timeLabel}</td>
+                    <td className="p-2 text-bia-text-primary font-medium whitespace-nowrap">{timeLabel}</td>
                     {categories.map((cat) => {
                       const isHovered = hoveredCell?.idx === idx && hoveredCell?.catId === cat.id;
                       const definition = timelinePointId ? getTimeBasedDefinition(cat.id, timelinePointId) : null;
                       return (
-                        <td key={cat.id} className="p-2 relative"
+                        <td key={cat.id} className="p-2 relative min-w-[180px]"
                           onMouseEnter={() => setHoveredCell({ idx, catId: cat.id })}
                           onMouseLeave={() => setHoveredCell(null)}>
-                          <div className="flex items-center gap-2">
+                          <div className="flex items-center gap-3">
                             <input type="range" min="0" max="5" value={(point[cat.id] as number) || 0}
                               onChange={(e) => handleSliderChange(idx, cat.id, parseInt(e.target.value))}
-                              className="w-20 accent-bia-primary" />
-                            <span className="text-bia-text-primary w-4">{point[cat.id] || 0}</span>
+                              className="w-40 h-1.5 accent-bia-primary bg-white/10 rounded-lg appearance-none cursor-pointer" />
+                            <span className="text-bia-text-primary w-4 font-bold">{point[cat.id] || 0}</span>
                             {definition && (
                               <Info className="w-4 h-4 text-bia-info cursor-help shrink-0" />
                             )}
