@@ -1,0 +1,101 @@
+{
+  "theme": {
+    "name": "BIA Glass Dark",
+    "mode": "dark"
+  },
+  "colors": {
+    "background": {
+      "main": "linear-gradient(135deg, #0F172A 0%, #1E293B 100%)",
+      "overlay": "rgba(0, 0, 0, 0.4)"
+    },
+    "surface": {
+      "glass": "rgba(30, 41, 59, 0.7)",
+      "glass_hover": "rgba(51, 65, 85, 0.6)",
+      "glass_active": "rgba(56, 189, 248, 0.15)",
+      "glass_input": "rgba(15, 23, 42, 0.6)"
+    },
+    "border": {
+      "subtle": "rgba(255, 255, 255, 0.08)",
+      "focus": "rgba(56, 189, 248, 0.5)"
+    },
+    "text": {
+      "primary": "#F8FAFC",
+      "secondary": "#94A3B8",
+      "tertiary": "#64748B",
+      "inverse": "#0F172A"
+    },
+    "brand": {
+      "primary": "#38BDF8",
+      "primary_glow": "rgba(56, 189, 248, 0.4)",
+      "secondary": "#818CF8",
+      "accent": "#C084FC"
+    },
+    "status": {
+      "critical": "#F87171",
+      "warning": "#FBBF24",
+      "success": "#34D399",
+      "info": "#60A5FA"
+    }
+  },
+  "typography": {
+    "fontFamily": {
+      "sans": "Inter, system-ui, -apple-system, sans-serif",
+      "mono": "JetBrains Mono, monospace"
+    },
+    "weights": {
+      "regular": 400,
+      "medium": 500,
+      "semibold": 600,
+      "bold": 700
+    },
+    "sizes": {
+      "xs": "12px",
+      "sm": "14px",
+      "base": "16px",
+      "lg": "18px",
+      "xl": "20px",
+      "2xl": "24px",
+      "3xl": "32px"
+    },
+    "lineHeights": {
+      "tight": 1.2,
+      "normal": 1.5,
+      "relaxed": 1.75
+    }
+  },
+  "spacing": {
+    "1": "4px",
+    "2": "8px",
+    "3": "12px",
+    "4": "16px",
+    "6": "24px",
+    "8": "32px",
+    "12": "48px",
+    "16": "64px"
+  },
+  "effects": {
+    "blur": {
+      "sm": "backdrop-filter: blur(4px)",
+      "md": "backdrop-filter: blur(12px)",
+      "lg": "backdrop-filter: blur(20px)"
+    },
+    "shadows": {
+      "glass": "0 8px 32px 0 rgba(0, 0, 0, 0.37)",
+      "lift": "0 10px 40px 0 rgba(0, 0, 0, 0.45)",
+      "glow_primary": "0 0 15px rgba(56, 189, 248, 0.3)",
+      "glow_critical": "0 0 15px rgba(248, 113, 113, 0.3)"
+    },
+    "radius": {
+      "sm": "8px",
+      "md": "12px",
+      "lg": "16px",
+      "xl": "24px",
+      "full": "9999px"
+    },
+    "transition": {
+      "fast": "150ms ease-out",
+      "normal": "300ms ease-out",
+      "slow": "500ms ease-out"
+    }
+  }
+}

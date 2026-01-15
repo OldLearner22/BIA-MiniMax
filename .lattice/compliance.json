@@ -1,0 +1,44 @@
+{
+  "runs": [
+    {
+      "timestamp": "2026-01-15T09:07:32.021Z",
+      "passed": true,
+      "checksRun": [
+        "lint",
+        "typecheck"
+      ],
+      "missingScripts": [],
+      "failedScripts": [],
+      "preset": "startup"
+    },
+    {
+      "timestamp": "2026-01-15T09:09:21.108Z",
+      "passed": true,
+      "checksRun": [
+        "lint",
+        "typecheck"
+      ],
+      "missingScripts": [],
+      "failedScripts": [],
+      "preset": "startup"
+    },
+    {
+      "timestamp": "2026-01-15T09:12:50.058Z",
+      "passed": true,
+      "checksRun": [
+        "lint",
+        "typecheck"
+      ],
+      "missingScripts": [],
+      "failedScripts": [],
+      "preset": "startup"
+    }
+  ],
+  "stats": {
+    "totalRuns": 3,
+    "passed": 3,
+    "failed": 0,
+    "streak": 3,
+    "lastRun": "2026-01-15T09:12:50.058Z"
+  }
+}

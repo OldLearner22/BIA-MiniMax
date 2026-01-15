@@ -1,0 +1,84 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  * {
+    @apply border-bia-border;
+  }
+  
+  body {
+    @apply bg-gradient-to-br from-bia-bg-start to-bia-bg-end min-h-screen text-bia-text-primary font-sans antialiased;
+  }
+}
+
+@layer components {
+  .glass-panel {
+    @apply bg-bia-glass backdrop-blur-[12px] border border-bia-border rounded-bia-lg shadow-glass;
+  }
+  
+  .glass-panel-hover {
+    @apply glass-panel transition-all duration-300 hover:bg-bia-glass-hover hover:-translate-y-1 hover:shadow-lift;
+  }
+  
+  .glass-input {
+    @apply bg-bia-glass-input backdrop-blur-[8px] border border-bia-border rounded-bia-sm px-4 py-2 text-bia-text-primary placeholder:text-bia-text-tertiary focus:outline-none focus:border-bia-border-focus focus:ring-1 focus:ring-bia-border-focus transition-all;
+  }
+  
+  .glass-button {
+    @apply bg-bia-primary/20 backdrop-blur-[8px] border border-bia-primary/30 text-bia-primary rounded-bia-sm px-4 py-2 font-medium transition-all hover:bg-bia-primary/30 hover:shadow-glow-primary;
+  }
+  
+  .glass-button-solid {
+    @apply bg-bia-primary text-bia-bg-start rounded-bia-sm px-4 py-2 font-medium transition-all hover:bg-bia-primary/90 hover:shadow-glow-primary;
+  }
+  
+  .glass-sidebar {
+    @apply bg-[rgba(15,23,42,0.8)] backdrop-blur-[20px] border-r border-[rgba(255,255,255,0.05)];
+  }
+  
+  .nav-item {
+    @apply flex items-center gap-3 px-4 py-3 text-bia-text-secondary transition-all rounded-lg hover:bg-bia-glass-hover hover:text-bia-text-primary;
+  }
+  
+  .nav-item-active {
+    @apply bg-bia-glass-active text-bia-text-primary border-l-[3px] border-bia-primary;
+  }
+  
+  .criticality-critical {
+    @apply bg-bia-critical/20 text-bia-critical border border-bia-critical/30;
+  }
+  
+  .criticality-high {
+    @apply bg-bia-warning/20 text-bia-warning border border-bia-warning/30;
+  }
+  
+  .criticality-medium {
+    @apply bg-bia-info/20 text-bia-info border border-bia-info/30;
+  }
+  
+  .criticality-low {
+    @apply bg-bia-success/20 text-bia-success border border-bia-success/30;
+  }
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: rgba(0, 0, 0, 0.2);
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(255, 255, 255, 0.2);
+}

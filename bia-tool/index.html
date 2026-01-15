@@ -1,0 +1,1856 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ISO 22301:2019 Business Impact Analysis Tool</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="libs/fontawesome/css/all.min.css">
+    <script src="libs/chart.min.js"></script>
+    <script src="libs/chartjs-plugin-datalabels.min.js"></script>
+</head>
+<body>
+    <!-- Loading Screen -->
+    <div id="loading-screen" class="loading-screen">
+        <div class="loading-content">
+            <div class="loading-logo">
+                <i class="fas fa-shield-alt"></i>
+            </div>
+            <h1>BIA Master Pro</h1>
+            <p>ISO 22301:2019 Compliant Business Impact Analysis</p>
+            <div class="loading-bar">
+                <div class="loading-progress"></div>
+            </div>
+            <p class="loading-status">Initializing modules...</p>
+        </div>
+    </div>
+
+    <!-- Main Application -->
+    <div id="app" class="app-container hidden">
+        <!-- Sidebar Navigation -->
+        <aside class="sidebar" id="sidebar">
+            <div class="sidebar-header">
+                <div class="logo">
+                    <i class="fas fa-shield-alt"></i>
+                    <span>BIA Master Pro</span>
+                </div>
+                <button class="sidebar-toggle" onclick="toggleSidebar()">
+                    <i class="fas fa-chevron-left"></i>
+                </button>
+            </div>
+            
+            <nav class="sidebar-nav">
+                <a href="#" class="nav-item active" data-section="dashboard" onclick="showSection('dashboard')">
+                    <i class="fas fa-tachometer-alt"></i>
+                    <span>Dashboard</span>
+                </a>
+                <a href="#" class="nav-item" data-section="processes" onclick="showSection('processes')">
+                    <i class="fas fa-cogs"></i>
+                    <span>Process Identification</span>
+                </a>
+                <a href="#" class="nav-item" data-section="assessment" onclick="showSection('assessment')">
+                    <i class="fas fa-clipboard-check"></i>
+                    <span>Process Assessment</span>
+                </a>
+                <a href="#" class="nav-item" data-section="impact" onclick="showSection('impact')">
+                    <i class="fas fa-chart-line"></i>
+                    <span>Impact Assessment</span>
+                </a>
+                <a href="#" class="nav-item" data-section="temporal" onclick="showSection('temporal')">
+                    <i class="fas fa-clock"></i>
+                    <span>Temporal Analysis</span>
+                </a>
+                <a href="#" class="nav-item" data-section="recovery" onclick="showSection('recovery')">
+                    <i class="fas fa-redo"></i>
+                    <span>Recovery Objectives</span>
+                </a>
+                <a href="#" class="nav-item" data-section="prioritisation" onclick="showSection('prioritisation')">
+                    <i class="fas fa-sort-amount-down"></i>
+                    <span>Prioritisation Engine</span>
+                </a>
+                <a href="#" class="nav-item" data-section="dependencies" onclick="showSection('dependencies')">
+                    <i class="fas fa-project-diagram"></i>
+                    <span>Dependency Mapping</span>
+                </a>
+                <a href="#" class="nav-item" data-section="resources" onclick="showSection('resources')">
+                    <i class="fas fa-boxes"></i>
+                    <span>Resource Analysis</span>
+                </a>
+                <a href="#" class="nav-item" data-section="reports" onclick="showSection('reports')">
+                    <i class="fas fa-file-alt"></i>
+                    <span>Reports & Export</span>
+                </a>
+                <a href="#" class="nav-item" data-section="compliance" onclick="showSection('compliance')">
+                    <i class="fas fa-certificate"></i>
+                    <span>ISO Compliance</span>
+                </a>
+                <a href="#" class="nav-item" data-section="settings" onclick="showSection('settings')">
+                    <i class="fas fa-cog"></i>
+                    <span>Settings & Controls</span>
+                </a>
+            </nav>
+
+            <div class="sidebar-footer">
+                <div class="compliance-badge">
+                    <i class="fas fa-check-circle"></i>
+                    <span>ISO 22301:2019</span>
+                </div>
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Header -->
+            <header class="main-header">
+                <div class="header-left">
+                    <button class="mobile-menu-btn" onclick="toggleMobileMenu()">
+                        <i class="fas fa-bars"></i>
+                    </button>
+                    <h1 id="page-title">Dashboard</h1>
+                </div>
+                <div class="header-right">
+                    <div class="search-box">
+                        <i class="fas fa-search"></i>
+                        <input type="text" placeholder="Search processes, reports..." id="global-search">
+                    </div>
+                    <div class="notifications" onclick="showNotifications()">
+                        <i class="fas fa-bell"></i>
+                        <span class="notification-badge">3</span>
+                    </div>
+                    <div class="user-menu">
+                        <div class="user-avatar">JD</div>
+                        <span class="user-name">John Doe</span>
+                        <i class="fas fa-chevron-down"></i>
+                    </div>
+                </div>
+            </header>
+
+            <!-- Content Sections -->
+            <div class="content-wrapper">
+                <!-- Dashboard Section -->
+                <section id="dashboard" class="content-section active">
+                    <div class="section-header">
+                        <h2>Business Impact Analysis Overview</h2>
+                        <div class="section-actions">
+                            <button class="btn btn-secondary" onclick="importData()">
+                                <i class="fas fa-file-import"></i> Import
+                            </button>
+                            <button class="btn btn-primary" onclick="startNewBIA()">
+                                <i class="fas fa-plus"></i> New Assessment
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- KPI Cards -->
+                    <div class="kpi-grid">
+                        <div class="kpi-card">
+                            <div class="kpi-icon processes">
+                                <i class="fas fa-cogs"></i>
+                            </div>
+                            <div class="kpi-content">
+                                <h3 id="total-processes">0</h3>
+                                <p>Total Processes</p>
+                            </div>
+                        </div>
+                        <div class="kpi-card">
+                            <div class="kpi-icon critical">
+                                <i class="fas fa-exclamation-triangle"></i>
+                            </div>
+                            <div class="kpi-content">
+                                <h3 id="critical-processes">0</h3>
+                                <p>Critical (Tier 1)</p>
+                            </div>
+                        </div>
+                        <div class="kpi-card">
+                            <div class="kpi-icon compliance">
+                                <i class="fas fa-shield-alt"></i>
+                            </div>
+                            <div class="kpi-content">
+                                <h3 id="compliance-score">0%</h3>
+                                <p>Compliance Score</p>
+                            </div>
+                        </div>
+                        <div class="kpi-card">
+                            <div class="kpi-icon review">
+                                <i class="fas fa-clock"></i>
+                            </div>
+                            <div class="kpi-content">
+                                <h3 id="pending-reviews">0</h3>
+                                <p>Pending Reviews</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Charts Row -->
+                    <div class="charts-row">
+                        <div class="chart-card">
+                            <h3>Process Criticality Distribution</h3>
+                            <div class="chart-container">
+                                <canvas id="criticality-chart"></canvas>
+                            </div>
+                        </div>
+                        <div class="chart-card">
+                            <h3>Impact by Category</h3>
+                            <div class="chart-container">
+                                <canvas id="impact-chart"></canvas>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Recovery Timeline -->
+                    <div class="chart-card full-width">
+                        <h3>Recovery Timeline Overview</h3>
+                        <div class="chart-container-wide">
+                            <canvas id="recovery-timeline-chart"></canvas>
+                        </div>
+                    </div>
+
+                    <!-- Recent Activity & Alerts -->
+                    <div class="activity-alerts-row">
+                        <div class="activity-card">
+                            <h3>Recent Activity</h3>
+                            <div class="activity-list" id="activity-list">
+                                <!-- Populated by JS -->
+                            </div>
+                        </div>
+                        <div class="alerts-card">
+                            <h3>Action Required</h3>
+                            <div class="alerts-list" id="alerts-list">
+                                <!-- Populated by JS -->
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Progress Overview -->
+                    <div class="progress-overview">
+                        <h3>BIA Completion Status</h3>
+                        <div class="progress-grid">
+                            <div class="progress-item">
+                                <span class="progress-label">Process Identification</span>
+                                <div class="progress-bar-container">
+                                    <div class="progress-bar" id="progress-processes" style="width: 0%"></div>
+                                </div>
+                                <span class="progress-value" id="progress-processes-value">0%</span>
+                            </div>
+                            <div class="progress-item">
+                                <span class="progress-label">Impact Assessment</span>
+                                <div class="progress-bar-container">
+                                    <div class="progress-bar" id="progress-impact" style="width: 0%"></div>
+                                </div>
+                                <span class="progress-value" id="progress-impact-value">0%</span>
+                            </div>
+                            <div class="progress-item">
+                                <span class="progress-label">Recovery Objectives</span>
+                                <div class="progress-bar-container">
+                                    <div class="progress-bar" id="progress-recovery" style="width: 0%"></div>
+                                </div>
+                                <span class="progress-value" id="progress-recovery-value">0%</span>
+                            </div>
+                            <div class="progress-item">
+                                <span class="progress-label">Dependency Mapping</span>
+                                <div class="progress-bar-container">
+                                    <div class="progress-bar" id="progress-dependencies" style="width: 0%"></div>
+                                </div>
+                                <span class="progress-value" id="progress-dependencies-value">0%</span>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Process Identification Section -->
+                <section id="processes" class="content-section">
+                    <div class="section-header">
+                        <h2>Process Identification Module</h2>
+                        <div class="section-actions">
+                            <button class="btn btn-secondary" onclick="showHelp('process-help')">
+                                <i class="fas fa-question-circle"></i> Help
+                            </button>
+                            <button class="btn btn-primary" onclick="openProcessModal()">
+                                <i class="fas fa-plus"></i> Add Process
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="module-info">
+                        <i class="fas fa-info-circle"></i>
+                        <p>This module captures all critical business processes, their owners, dependencies, and supporting resources as per <strong>ISO 22301:2019 Clause 4.1 & 4.2</strong> requirements for understanding the organisation and interested parties.</p>
+                    </div>
+
+                    <!-- Process Table -->
+                    <div class="table-container">
+                        <div class="table-header">
+                            <div class="table-filters">
+                                <select id="process-filter" onchange="filterProcesses()">
+                                    <option value="all">All Processes</option>
+                                    <option value="critical">Critical</option>
+                                    <option value="essential">Essential</option>
+                                    <option value="necessary">Necessary</option>
+                                    <option value="desirable">Desirable</option>
+                                </select>
+                                <input type="text" placeholder="Search processes..." id="process-search" onkeyup="filterProcesses()">
+                            </div>
+                            <div class="table-actions">
+                                <button class="btn btn-icon" onclick="exportProcesses()" title="Export">
+                                    <i class="fas fa-file-export"></i>
+                                </button>
+                                <button class="btn btn-icon" onclick="refreshProcesses()" title="Refresh">
+                                    <i class="fas fa-sync-alt"></i>
+                                </button>
+                            </div>
+                        </div>
+                        <table class="data-table" id="processes-table">
+                            <thead>
+                                <tr>
+                                    <th>Process ID</th>
+                                    <th>Process Name</th>
+                                    <th>Owner</th>
+                                    <th>Department</th>
+                                    <th>Tier</th>
+                                    <th>Status</th>
+                                    <th>Assessment</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="processes-tbody">
+                                <!-- Populated by JS -->
+                            </tbody>
+                        </table>
+                        <div class="table-footer">
+                            <span id="process-count">0 processes</span>
+                            <div class="pagination" id="process-pagination">
+                                <!-- Populated by JS -->
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- NEW: Process Assessment Section (Per-Process Assessment Workflow) -->
+                <section id="assessment" class="content-section">
+                    <div class="section-header">
+                        <h2>Process Assessment Center</h2>
+                        <div class="section-actions">
+                            <button class="btn btn-secondary" onclick="showHelp('assessment-help')">
+                                <i class="fas fa-question-circle"></i> Help
+                            </button>
+                            <button class="btn btn-primary" onclick="openAssessmentWizard()">
+                                <i class="fas fa-magic"></i> Start Assessment Wizard
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="module-info">
+                        <i class="fas fa-info-circle"></i>
+                        <p>Conduct comprehensive BIA assessments per process. Select a process below to define impacts, temporal effects, recovery objectives, dependencies, and resource requirements in one unified workflow. <strong>ISO 22301:2019 Clause 8.2.2</strong> compliant.</p>
+                    </div>
+
+                    <!-- Process Selection for Assessment -->
+                    <div class="assessment-process-selector">
+                        <div class="process-select-card">
+                            <h3>Select Process to Assess</h3>
+                            <div class="process-select-row">
+                                <select id="assessment-process-select" onchange="loadProcessAssessment()">
+                                    <option value="">Choose a process...</option>
+                                </select>
+                                <div class="quick-filter">
+                                    <button class="filter-btn active" data-filter="all" onclick="filterAssessmentList('all')">All</button>
+                                    <button class="filter-btn" data-filter="pending" onclick="filterAssessmentList('pending')">Pending</button>
+                                    <button class="filter-btn" data-filter="in-progress" onclick="filterAssessmentList('in-progress')">In Progress</button>
+                                    <button class="filter-btn" data-filter="completed" onclick="filterAssessmentList('completed')">Completed</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Process Assessment List -->
+                    <div class="assessment-list-container">
+                        <div class="assessment-list-header">
+                            <h3>Process Assessment Status</h3>
+                            <div class="list-stats">
+                                <span class="stat-badge pending" id="stat-pending">0 Pending</span>
+                                <span class="stat-badge in-progress" id="stat-inprogress">0 In Progress</span>
+                                <span class="stat-badge completed" id="stat-completed">0 Completed</span>
+                            </div>
+                        </div>
+                        <div class="assessment-cards" id="assessment-cards">
+                            <!-- Populated by JS -->
+                        </div>
+                    </div>
+
+                    <!-- Per-Process Assessment Panel (shown when process is selected) -->
+                    <div class="process-assessment-panel" id="process-assessment-panel">
+                        <div class="panel-header">
+                            <div class="process-info">
+                                <h3 id="assessment-process-name">Process Name</h3>
+                                <span class="process-id-badge" id="assessment-process-id">PROC-000</span>
+                                <span class="process-owner-badge" id="assessment-process-owner">Owner: Name</span>
+                            </div>
+                            <div class="panel-actions">
+                                <button class="btn btn-secondary" onclick="closeProcessAssessment()">
+                                    <i class="fas fa-times"></i> Close
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Assessment Progress -->
+                        <div class="assessment-progress-bar">
+                            <div class="progress-step completed" data-step="1">
+                                <div class="step-indicator">1</div>
+                                <span class="step-label">Basic Info</span>
+                            </div>
+                            <div class="progress-line"></div>
+                            <div class="progress-step" data-step="2">
+                                <div class="step-indicator">2</div>
+                                <span class="step-label">Impacts</span>
+                            </div>
+                            <div class="progress-line"></div>
+                            <div class="progress-step" data-step="3">
+                                <div class="step-indicator">3</div>
+                                <span class="step-label">Temporal</span>
+                            </div>
+                            <div class="progress-line"></div>
+                            <div class="progress-step" data-step="4">
+                                <div class="step-indicator">4</div>
+                                <span class="step-label">Recovery</span>
+                            </div>
+                            <div class="progress-line"></div>
+                            <div class="progress-step" data-step="5">
+                                <div class="step-indicator">5</div>
+                                <span class="step-label">Dependencies</span>
+                            </div>
+                            <div class="progress-line"></div>
+                            <div class="progress-step" data-step="6">
+                                <div class="step-indicator">6</div>
+                                <span class="step-label">Resources</span>
+                            </div>
+                        </div>
+
+                        <!-- Assessment Tabs -->
+                        <div class="assessment-tabs">
+                            <button class="assessment-tab active" data-tab="basic" onclick="switchAssessmentTab('basic')">
+                                <i class="fas fa-info-circle"></i> Basic Information
+                            </button>
+                            <button class="assessment-tab" data-tab="impacts" onclick="switchAssessmentTab('impacts')">
+                                <i class="fas fa-chart-line"></i> Impact Assessment
+                            </button>
+                            <button class="assessment-tab" data-tab="temporal" onclick="switchAssessmentTab('temporal')">
+                                <i class="fas fa-clock"></i> Temporal Analysis
+                            </button>
+                            <button class="assessment-tab" data-tab="recovery" onclick="switchAssessmentTab('recovery')">
+                                <i class="fas fa-redo"></i> Recovery Objectives
+                            </button>
+                            <button class="assessment-tab" data-tab="dependencies" onclick="switchAssessmentTab('dependencies')">
+                                <i class="fas fa-project-diagram"></i> Dependencies
+                            </button>
+                            <button class="assessment-tab" data-tab="resources" onclick="switchAssessmentTab('resources')">
+                                <i class="fas fa-boxes"></i> Resources
+                            </button>
+                        </div>
+
+                        <!-- Tab Contents -->
+                        <div class="assessment-tab-content active" id="basic-tab-content">
+                            <div class="form-section">
+                                <h4>Process Basic Information</h4>
+                                <div class="form-row">
+                                    <div class="form-group">
+                                        <label for="assessment-name">Process Name <span class="required">*</span></label>
+                                        <input type="text" id="assessment-name" placeholder="Enter process name">
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="assessment-id">Process ID <span class="required">*</span></label>
+                                        <input type="text" id="assessment-id" placeholder="e.g., PROC-001" readonly>
+                                    </div>
+                                </div>
+                                <div class="form-row">
+                                    <div class="form-group">
+                                        <label for="assessment-owner">Process Owner <span class="required">*</span></label>
+                                        <input type="text" id="assessment-owner" placeholder="Enter owner name">
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="assessment-department">Department <span class="required">*</span></label>
+                                        <select id="assessment-department">
+                                            <option value="">Select department</option>
+                                            <option value="operations">Operations</option>
+                                            <option value="finance">Finance</option>
+                                            <option value="it">IT</option>
+                                            <option value="hr">Human Resources</option>
+                                            <option value="sales">Sales</option>
+                                            <option value="marketing">Marketing</option>
+                                            <option value="legal">Legal</option>
+                                            <option value="facilities">Facilities</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label for="assessment-description">Description <span class="required">*</span></label>
+                                    <textarea id="assessment-description" rows="3" placeholder="Describe the process and its purpose"></textarea>
+                                </div>
+                                <div class="form-row">
+                                    <div class="form-group">
+                                        <label for="assessment-criticality">Initial Criticality Assessment</label>
+                                        <select id="assessment-criticality">
+                                            <option value="">Select assessment level</option>
+                                            <option value="critical">Critical - Tier 1</option>
+                                            <option value="essential">Essential - Tier 2</option>
+                                            <option value="necessary">Necessary - Tier 3</option>
+                                            <option value="desirable">Desirable - Tier 4</option>
+                                        </select>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="assessment-status">Assessment Status</label>
+                                        <select id="assessment-status">
+                                            <option value="draft">Draft</option>
+                                            <option value="in-progress">In Progress</option>
+                                            <option value="review">Under Review</option>
+                                            <option value="completed">Completed</option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="assessment-tab-content" id="impacts-tab-content">
+                            <div class="impact-assessment-inline">
+                                <h4>Impact Assessment - Six Impact Categories</h4>
+                                <p class="impact-instruction">Rate the impact severity for each category on a scale of 1-5 (Negligible to Catastrophic)</p>
+                                
+                                <div class="impact-inline-grid">
+                                    <!-- Financial Impact -->
+                                    <div class="impact-inline-card">
+                                        <div class="impact-inline-header">
+                                            <i class="fas fa-dollar-sign financial"></i>
+                                            <h5>Financial Impact</h5>
+                                        </div>
+                                        <div class="impact-inline-input">
+                                            <label>Severity Level</label>
+                                            <select id="impact-financial" onchange="updateInlineImpactScore('financial')">
+                                                <option value="0">Not Applicable</option>
+                                                <option value="1">Negligible - Less than $10K</option>
+                                                <option value="2">Minor - $10K to $100K</option>
+                                                <option value="3">Moderate - $100K to $1M</option>
+                                                <option value="4">Major - $1M to $10M</option>
+                                                <option value="5">Catastrophic - More than $10M</option>
+                                            </select>
+                                        </div>
+                                        <div class="impact-inline-description">
+                                            <textarea id="impact-financial-desc" placeholder="Describe financial impact details..." rows="2"></textarea>
+                                        </div>
+                                        <div class="impact-inline-score">
+                                            <span>Score:</span>
+                                            <span class="score-value" id="score-financial">0</span>
+                                        </div>
+                                    </div>
+
+                                    <!-- Operational Impact -->
+                                    <div class="impact-inline-card">
+                                        <div class="impact-inline-header">
+                                            <i class="fas fa-industry operational"></i>
+                                            <h5>Operational Impact</h5>
+                                        </div>
+                                        <div class="impact-inline-input">
+                                            <label>Severity Level</label>
+                                            <select id="impact-operational" onchange="updateInlineImpactScore('operational')">
+                                                <option value="0">Not Applicable</option>
+                                                <option value="1">Negligible - Minor inconvenience</option>
+                                                <option value="2">Minor - Reduced efficiency</option>
+                                                <option value="3">Moderate - Significant degradation</option>
+                                                <option value="4">Major - Service interruption</option>
+                                                <option value="5">Catastrophic - Complete shutdown</option>
+                                            </select>
+                                        </div>
+                                        <div class="impact-inline-description">
+                                            <textarea id="impact-operational-desc" placeholder="Describe operational impact details..." rows="2"></textarea>
+                                        </div>
+                                        <div class="impact-inline-score">
+                                            <span>Score:</span>
+                                            <span class="score-value" id="score-operational">0</span>
+                                        </div>
+                                    </div>
+
+                                    <!-- Reputational Impact -->
+                                    <div class="impact-inline-card">
+                                        <div class="impact-inline-header">
+                                            <i class="fas fa-building reputational"></i>
+                                            <h5>Reputational Impact</h5>
+                                        </div>
+                                        <div class="impact-inline-input">
+                                            <label>Severity Level</label>
+                                            <select id="impact-reputational" onchange="updateInlineImpactScore('reputational')">
+                                                <option value="0">Not Applicable</option>
+                                                <option value="1">Negligible - No public awareness</option>
+                                                <option value="2">Minor - Local media mention</option>
+                                                <option value="3">Moderate - Regional coverage</option>
+                                                <option value="4">Major - National attention</option>
+                                                <option value="5">Catastrophic - International scandal</option>
+                                            </select>
+                                        </div>
+                                        <div class="impact-inline-description">
+                                            <textarea id="impact-reputational-desc" placeholder="Describe reputational impact details..." rows="2"></textarea>
+                                        </div>
+                                        <div class="impact-inline-score">
+                                            <span>Score:</span>
+                                            <span class="score-value" id="score-reputational">0</span>
+                                        </div>
+                                    </div>
+
+                                    <!-- Legal/Regulatory Impact -->
+                                    <div class="impact-inline-card">
+                                        <div class="impact-inline-header">
+                                            <i class="fas fa-gavel legal"></i>
+                                            <h5>Legal/Regulatory Impact</h5>
+                                        </div>
+                                        <div class="impact-inline-input">
+                                            <label>Severity Level</label>
+                                            <select id="impact-legal" onchange="updateInlineImpactScore('legal')">
+                                                <option value="0">Not Applicable</option>
+                                                <option value="1">Negligible - Minor documentation issue</option>
+                                                <option value="2">Minor - Internal compliance issue</option>
+                                                <option value="3">Moderate - External audit finding</option>
+                                                <option value="4">Major - Regulatory investigation</option>
+                                                <option value="5">Catastrophic - Licence revocation</option>
+                                            </select>
+                                        </div>
+                                        <div class="impact-inline-description">
+                                            <textarea id="impact-legal-desc" placeholder="Describe legal/regulatory impact details..." rows="2"></textarea>
+                                        </div>
+                                        <div class="impact-inline-score">
+                                            <span>Score:</span>
+                                            <span class="score-value" id="score-legal">0</span>
+                                        </div>
+                                    </div>
+
+                                    <!-- Health & Safety Impact -->
+                                    <div class="impact-inline-card">
+                                        <div class="impact-inline-header">
+                                            <i class="fas fa-heartbeat health"></i>
+                                            <h5>Health & Safety Impact</h5>
+                                        </div>
+                                        <div class="impact-inline-input">
+                                            <label>Severity Level</label>
+                                            <select id="impact-health" onchange="updateInlineImpactScore('health')">
+                                                <option value="0">Not Applicable</option>
+                                                <option value="1">Negligible - No impact</option>
+                                                <option value="2">Minor - First aid incident</option>
+                                                <option value="3">Moderate - Medical treatment required</option>
+                                                <option value="4">Major - Serious injury</option>
+                                                <option value="5">Catastrophic - Fatality</option>
+                                            </select>
+                                        </div>
+                                        <div class="impact-inline-description">
+                                            <textarea id="impact-health-desc" placeholder="Describe health & safety impact details..." rows="2"></textarea>
+                                        </div>
+                                        <div class="impact-inline-score">
+                                            <span>Score:</span>
+                                            <span class="score-value" id="score-health">0</span>
+                                        </div>
+                                    </div>
+
+                                    <!-- Environmental Impact -->
+                                    <div class="impact-inline-card">
+                                        <div class="impact-inline-header">
+                                            <i class="fas fa-leaf environmental"></i>
+                                            <h5>Environmental Impact</h5>
+                                        </div>
+                                        <div class="impact-inline-input">
+                                            <label>Severity Level</label>
+                                            <select id="impact-environmental" onchange="updateInlineImpactScore('environmental')">
+                                                <option value="0">Not Applicable</option>
+                                                <option value="1">Negligible - No environmental impact</option>
+                                                <option value="2">Minor - Minor waste/spillage</option>
+                                                <option value="3">Moderate - Reportable incident</option>
+                                                <option value="4">Major - Environmental damage</option>
+                                                <option value="5">Catastrophic - Major contamination</option>
+                                            </select>
+                                        </div>
+                                        <div class="impact-inline-description">
+                                            <textarea id="impact-environmental-desc" placeholder="Describe environmental impact details..." rows="2"></textarea>
+                                        </div>
+                                        <div class="impact-inline-score">
+                                            <span>Score:</span>
+                                            <span class="score-value" id="score-environmental">0</span>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="impact-summary">
+                                    <div class="summary-item">
+                                        <span class="summary-label">Total Impact Score:</span>
+                                        <span class="summary-value" id="total-impact-score">0</span>
+                                    </div>
+                                    <div class="summary-item">
+                                        <span class="summary-label">Average Impact:</span>
+                                        <span class="summary-value" id="average-impact-score">0.0</span>
+                                    </div>
+                                    <div class="summary-item">
+                                        <span class="summary-label">Highest Impact Category:</span>
+                                        <span class="summary-value" id="highest-impact-category">-</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="assessment-tab-content" id="temporal-tab-content">
+                            <div class="temporal-assessment-inline">
+                                <h4>Temporal Impact Analysis</h4>
+                                <p class="impact-instruction">Define how impacts escalate over time following a disruption</p>
+
+                                <div class="temporal-table-container">
+                                    <table class="temporal-table">
+                                        <thead>
+                                            <tr>
+                                                <th>Impact Category</th>
+                                                <th>Immediate<br><span class="time-label">(0-4 hours)</span></th>
+                                                <th>Short-term<br><span class="time-label">(4-24 hours)</span></th>
+                                                <th>Medium-term<br><span class="time-label">(1-3 days)</span></th>
+                                                <th>Extended<br><span class="time-label">(3-7 days)</span></th>
+                                                <th>Prolonged<br><span class="time-label">(1-4 weeks)</span></th>
+                                            </tr>
+                                        </thead>
+                                        <tbody id="temporal-table-body">
+                                            <!-- Populated by JS -->
+                                        </tbody>
+                                    </table>
+                                </div>
+
+                                <div class="temporal-chart-section">
+                                    <h5>Temporal Impact Curve</h5>
+                                    <div class="chart-container-wide">
+                                        <canvas id="temporal-inline-chart"></canvas>
+                                    </div>
+                                </div>
+
+                                <div class="temporal-mtpd-section">
+                                    <h5>Maximum Tolerable Period of Disruption (MTPD)</h5>
+                                    <div class="mtpd-input-row">
+                                        <div class="form-group">
+                                            <label>MTPD for this process:</label>
+                                            <div class="time-input-group">
+                                                <input type="number" id="assessment-mtpd" min="0" max="720" value="24" onchange="updateMtpdVisual()">
+                                                <select id="assessment-mtpd-unit">
+                                                    <option value="hours">Hours</option>
+                                                    <option value="days">Days</option>
+                                                    <option value="weeks">Weeks</option>
+                                                </select>
+                                            </div>
+                                        </div>
+                                        <div class="form-group">
+                                            <label>MTPD Justification:</label>
+                                            <textarea id="assessment-mtpd-justification" rows="2" placeholder="Explain why this MTPD is appropriate..."></textarea>
+                                        </div>
+                                    </div>
+                                    <div class="mtpd-visual" id="mtpd-visual">
+                                        <div class="mtpd-bar">
+                                            <div class="mtpd-fill" id="mtpd-fill"></div>
+                                            <div class="mtpd-marker" id="mtpd-marker"></div>
+                                        </div>
+                                        <div class="mtpd-labels">
+                                            <span>0h</span>
+                                            <span>24h</span>
+                                            <span>48h</span>
+                                            <span>72h</span>
+                                            <span>1 week</span>
+                                            <span>2 weeks</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="assessment-tab-content" id="recovery-tab-content">
+                            <div class="recovery-assessment-inline">
+                                <h4>Recovery Objectives</h4>
+                                <p class="impact-instruction">Define recovery targets based on impact analysis and MTPD</p>
+
+                                <div class="recovery-objectives-grid">
+                                    <div class="recovery-objective-card">
+                                        <div class="objective-header">
+                                            <i class="fas fa-hourglass-end mtpd"></i>
+                                            <h5>MTPD</h5>
+                                        </div>
+                                        <p class="objective-description">Maximum Tolerable Period of Disruption</p>
+                                        <div class="objective-input">
+                                            <div class="time-input-group">
+                                                <input type="number" id="recovery-mtpd" min="0" max="720" onchange="validateRecoveryObjectives()">
+                                                <select id="recovery-mtpd-unit">
+                                                    <option value="hours">Hours</option>
+                                                    <option value="days">Days</option>
+                                                    <option value="weeks">Weeks</option>
+                                                </select>
+                                            </div>
+                                        </div>
+                                        <div class="objective-validation" id="mtpd-validation"></div>
+                                    </div>
+
+                                    <div class="recovery-objective-card">
+                                        <div class="objective-header">
+                                            <i class="fas fa-stopwatch rto"></i>
+                                            <h5>RTO</h5>
+                                        </div>
+                                        <p class="objective-description">Recovery Time Objective</p>
+                                        <div class="objective-input">
+                                            <div class="time-input-group">
+                                                <input type="number" id="recovery-rto" min="0" max="720" onchange="validateRecoveryObjectives()">
+                                                <select id="recovery-rto-unit">
+                                                    <option value="hours">Hours</option>
+                                                    <option value="days">Days</option>
+                                                    <option value="weeks">Weeks</option>
+                                                </select>
+                                            </div>
+                                        </div>
+                                        <div class="objective-validation" id="rto-validation"></div>
+                                    </div>
+
+                                    <div class="recovery-objective-card">
+                                        <div class="objective-header">
+                                            <i class="fas fa-database rpo"></i>
+                                            <h5>RPO</h5>
+                                        </div>
+                                        <p class="objective-description">Recovery Point Objective</p>
+                                        <div class="objective-input">
+                                            <div class="time-input-group">
+                                                <input type="number" id="recovery-rpo" min="0" max="1440">
+                                                <select id="recovery-rpo-unit">
+                                                    <option value="minutes">Minutes</option>
+                                                    <option value="hours">Hours</option>
+                                                    <option value="days">Days</option>
+                                                </select>
+                                            </div>
+                                        </div>
+                                        <div class="objective-validation" id="rpo-validation"></div>
+                                    </div>
+
+                                    <div class="recovery-objective-card">
+                                        <div class="objective-header">
+                                            <i class="fas fa-tasks mbco"></i>
+                                            <h5>MBCO</h5>
+                                        </div>
+                                        <p class="objective-description">Minimum Business Continuity Objective</p>
+                                        <div class="objective-input mbco-inline">
+                                            <input type="range" id="recovery-mbco" min="0" max="100" value="50" oninput="updateMbcoInlineDisplay()">
+                                            <span id="recovery-mbco-display">50%</span>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="recovery-strategy-section">
+                                    <h5>Recovery Strategy</h5>
+                                    <div class="form-group">
+                                        <label>Recommended Recovery Approach:</label>
+                                        <select id="recovery-strategy">
+                                            <option value="">Select strategy...</option>
+                                            <option value="manual">Manual Workaround</option>
+                                            <option value="quick">Quick Recovery (Enhanced Procedures)</option>
+                                            <option value="backup">Standard Backup & Restore</option>
+                                            <option value="ha">High Availability (Redundancy)</option>
+                                            <option value="cloud">Cloud-Based Recovery</option>
+                                            <option value="hot-site">Hot Site / Alternate Site</option>
+                                        </select>
+                                    </div>
+                                    <div class="form-group">
+                                        <label>Recovery Procedure Notes:</label>
+                                        <textarea id="recovery-procedure-notes" rows="3" placeholder="Describe recovery procedures, workarounds, or special requirements..."></textarea>
+                                    </div>
+                                </div>
+
+                                <div class="recovery-timeline-visual">
+                                    <h5>Recovery Timeline Visualization</h5>
+                                    <div class="timeline-visual-inline" id="recovery-timeline-inline">
+                                        <div class="timeline-track">
+                                            <div class="timeline-event disruption">
+                                                <span class="event-time">T0</span>
+                                                <span class="event-label">Disruption</span>
+                                            </div>
+                                            <div class="timeline-event detection">
+                                                <span class="event-time">T+15min</span>
+                                                <span class="event-label">Detection</span>
+                                            </div>
+                                            <div class="timeline-event response">
+                                                <span class="event-time">T+30min</span>
+                                                <span class="event-label">Response</span>
+                                            </div>
+                                            <div class="timeline-event recovery">
+                                                <span class="event-time" id="rto-marker">T+4h</span>
+                                                <span class="event-label">Recovery (RTO)</span>
+                                            </div>
+                                            <div class="timeline-event restored">
+                                                <span class="event-time">T+6h</span>
+                                                <span class="event-label">Full Restoration</span>
+                                            </div>
+                                        </div>
+                                        <div class="timeline-phases">
+                                            <div class="phase phase-disrupted">Disrupted</div>
+                                            <div class="phase phase-recovery">Recovery</div>
+                                            <div class="phase phase-restored">Restored</div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="assessment-tab-content" id="dependencies-tab-content">
+                            <div class="dependencies-assessment-inline">
+                                <h4>Dependency Mapping</h4>
+                                <p class="impact-instruction">Identify internal and external dependencies for this process</p>
+
+                                <div class="dependency-section">
+                                    <h5>Upstream Dependencies (Inputs)</h5>
+                                    <p class="section-help">Processes, systems, or resources that this process depends on to function</p>
+                                    <div class="dependency-input-list" id="upstream-dependencies">
+                                        <div class="dependency-input-row">
+                                            <select class="dep-type-select">
+                                                <option value="process">Process</option>
+                                                <option value="system">System/Application</option>
+                                                <option value="personnel">Personnel</option>
+                                                <option value="supplier">Supplier</option>
+                                                <option value="facility">Facility</option>
+                                                <option value="utility">Utility</option>
+                                                <option value="data">Data/Information</option>
+                                            </select>
+                                            <input type="text" placeholder="Dependency name">
+                                            <select class="dep-criticality">
+                                                <option value="critical">Critical</option>
+                                                <option value="high">High</option>
+                                                <option value="medium">Medium</option>
+                                                <option value="low">Low</option>
+                                            </select>
+                                            <button class="btn btn-icon remove-btn" onclick="removeDependencyRow(this)">
+                                                <i class="fas fa-times"></i>
+                                            </button>
+                                        </div>
+                                    </div>
+                                    <button class="btn btn-secondary" onclick="addDependencyRow('upstream-dependencies')">
+                                        <i class="fas fa-plus"></i> Add Dependency
+                                    </button>
+                                </div>
+
+                                <div class="dependency-section">
+                                    <h5>Downstream Dependencies (Outputs)</h5>
+                                    <p class="section-help">Processes, customers, or stakeholders that depend on this process</p>
+                                    <div class="dependency-input-list" id="downstream-dependencies">
+                                        <div class="dependency-input-row">
+                                            <select class="dep-type-select">
+                                                <option value="process">Process</option>
+                                                <option value="customer">Customer</option>
+                                                <option value="stakeholder">Stakeholder</option>
+                                                <option value="system">System/Application</option>
+                                            </select>
+                                            <input type="text" placeholder="Dependent name">
+                                            <select class="dep-criticality">
+                                                <option value="critical">Critical</option>
+                                                <option value="high">High</option>
+                                                <option value="medium">Medium</option>
+                                                <option value="low">Low</option>
+                                            </select>
+                                            <button class="btn btn-icon remove-btn" onclick="removeDependencyRow(this)">
+                                                <i class="fas fa-times"></i>
+                                            </button>
+                                        </div>
+                                    </div>
+                                    <button class="btn btn-secondary" onclick="addDependencyRow('downstream-dependencies')">
+                                        <i class="fas fa-plus"></i> Add Dependent
+                                    </button>
+                                </div>
+
+                                <div class="dependency-summary">
+                                    <h5>Dependency Analysis Summary</h5>
+                                    <div class="dependency-stats-row">
+                                        <div class="dep-stat-item">
+                                            <span class="stat-number" id="dep-total-count">0</span>
+                                            <span class="stat-label">Total Dependencies</span>
+                                        </div>
+                                        <div class="dep-stat-item critical">
+                                            <span class="stat-number" id="dep-critical-count">0</span>
+                                            <span class="stat-label">Critical</span>
+                                        </div>
+                                        <div class="dep-stat-item spof">
+                                            <span class="stat-number" id="dep-spof-count">0</span>
+                                            <span class="stat-label">Single Points of Failure</span>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="cascade-analysis-section">
+                                    <h5>Cascade Impact Analysis</h5>
+                                    <div class="form-group">
+                                        <label>Potential Cascade Effects:</label>
+                                        <textarea id="cascade-effects" rows="3" placeholder="Describe what happens to dependent processes if this process fails..."></textarea>
+                                    </div>
+                                    <div class="form-group">
+                                        <label>Mitigation Strategies:</label>
+                                        <textarea id="cascade-mitigation" rows="3" placeholder="Describe strategies to mitigate cascade failures..."></textarea>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="assessment-tab-content" id="resources-tab-content">
+                            <div class="resources-assessment-inline">
+                                <h4>Resource Requirements</h4>
+                                <p class="impact-instruction">Document minimum resource requirements for business continuity</p>
+
+                                <div class="resource-categories-mini">
+                                    <button class="resource-cat-btn active" onclick="showResourceMiniTab('personnel')">
+                                        <i class="fas fa-users"></i> Personnel
+                                    </button>
+                                    <button class="resource-cat-btn" onclick="showResourceMiniTab('technology')">
+                                        <i class="fas fa-laptop"></i> Technology
+                                    </button>
+                                    <button class="resource-cat-btn" onclick="showResourceMiniTab('equipment')">
+                                        <i class="fas fa-tools"></i> Equipment
+                                    </button>
+                                    <button class="resource-cat-btn" onclick="showResourceMiniTab('facilities')">
+                                        <i class="fas fa-building"></i> Facilities
+                                    </button>
+                                    <button class="resource-cat-btn" onclick="showResourceMiniTab('suppliers')">
+                                        <i class="fas fa-truck"></i> Suppliers
+                                    </button>
+                                </div>
+
+                                <!-- Personnel Resources -->
+                                <div class="resource-mini-tab active" id="personnel-mini-tab">
+                                    <div class="resource-input-section">
+                                        <h5>Personnel Requirements</h5>
+                                        <div class="form-row">
+                                            <div class="form-group">
+                                                <label>Role/Position</label>
+                                                <input type="text" id="resource-personnel-role" placeholder="e.g., Payment Specialist">
+                                            </div>
+                                            <div class="form-group">
+                                                <label>Minimum Staffing</label>
+                                                <input type="number" id="resource-personnel-staffing" min="0" placeholder="Number required">
+                                            </div>
+                                        </div>
+                                        <div class="form-row">
+                                            <div class="form-group">
+                                                <label>Key Personnel</label>
+                                                <input type="text" id="resource-personnel-key" placeholder="Name(s)">
+                                            </div>
+                                            <div class="form-group">
+                                                <label>Critical Skills</label>
+                                                <input type="text" id="resource-personnel-skills" placeholder="Required skills">
+                                            </div>
+                                        </div>
+                                        <div class="form-group">
+                                            <label>Alternatives / Backup</label>
+                                            <input type="text" id="resource-personnel-alternatives" placeholder="Alternative personnel sources">
+                                        </div>
+                                        <button class="btn btn-primary" onclick="addPersonnelResource()">
+                                            <i class="fas fa-plus"></i> Add Requirement
+                                        </button>
+                                    </div>
+                                    <div class="resource-added-list" id="personnel-resource-list">
+                                        <!-- Populated by JS -->
+                                    </div>
+                                </div>
+
+                                <!-- Technology Resources -->
+                                <div class="resource-mini-tab" id="technology-mini-tab">
+                                    <div class="resource-input-section">
+                                        <h5>Technology Requirements</h5>
+                                        <div class="form-row">
+                                            <div class="form-group">
+                                                <label>System/Application</label>
+                                                <input type="text" id="resource-tech-system" placeholder="e.g., Payment Gateway">
+                                            </div>
+                                            <div class="form-group">
+                                                <label>Data Criticality</label>
+                                                <select id="resource-tech-criticality">
+                                                    <option value="high">High</option>
+                                                    <option value="medium">Medium</option>
+                                                    <option value="low">Low</option>
+                                                </select>
+                                            </div>
+                                        </div>
+                                        <div class="form-group">
+                                            <label>Alternative/Workaround</label>
+                                            <input type="text" id="resource-tech-alternative" placeholder="Alternative method if system unavailable">
+                                        </div>
+                                        <button class="btn btn-primary" onclick="addTechnologyResource()">
+                                            <i class="fas fa-plus"></i> Add Requirement
+                                        </button>
+                                    </div>
+                                    <div class="resource-added-list" id="technology-resource-list">
+                                        <!-- Populated by JS -->
+                                    </div>
+                                </div>
+
+                                <!-- Equipment Resources -->
+                                <div class="resource-mini-tab" id="equipment-mini-tab">
+                                    <div class="resource-input-section">
+                                        <h5>Equipment Requirements</h5>
+                                        <div class="form-row">
+                                            <div class="form-group">
+                                                <label>Equipment</label>
+                                                <input type="text" id="resource-equip-name" placeholder="Equipment name">
+                                            </div>
+                                            <div class="form-group">
+                                                <label>Location</label>
+                                                <input type="text" id="resource-equip-location" placeholder="Primary location">
+                                            </div>
+                                        </div>
+                                        <div class="form-row">
+                                            <div class="form-group">
+                                                <label>Lead Time</label>
+                                                <input type="text" id="resource-equip-lead" placeholder="e.g., 24 hours">
+                                            </div>
+                                            <div class="form-group">
+                                                <label>Alternative Source</label>
+                                                <input type="text" id="resource-equip-alt" placeholder="Alternative supplier/source">
+                                            </div>
+                                        </div>
+                                        <button class="btn btn-primary" onclick="addEquipmentResource()">
+                                            <i class="fas fa-plus"></i> Add Requirement
+                                        </button>
+                                    </div>
+                                    <div class="resource-added-list" id="equipment-resource-list">
+                                        <!-- Populated by JS -->
+                                    </div>
+                                </div>
+
+                                <!-- Facilities Resources -->
+                                <div class="resource-mini-tab" id="facilities-mini-tab">
+                                    <div class="resource-input-section">
+                                        <h5>Facility Requirements</h5>
+                                        <div class="form-row">
+                                            <div class="form-group">
+                                                <label>Facility</label>
+                                                <input type="text" id="resource-facility-name" placeholder="Facility name/location">
+                                            </div>
+                                            <div class="form-group">
+                                                <label>Type</label>
+                                                <select id="resource-facility-type">
+                                                    <option value="office">Office</option>
+                                                    <option value="datacenter">Data Center</option>
+                                                    <option value="warehouse">Warehouse</option>
+                                                    <option value="manufacturing">Manufacturing</option>
+                                                    <option value="retail">Retail Location</option>
+                                                </select>
+                                            </div>
+                                        </div>
+                                        <div class="form-group">
+                                            <label>Recovery Site</label>
+                                            <input type="text" id="resource-facility-recovery" placeholder="Alternate recovery location">
+                                        </div>
+                                        <button class="btn btn-primary" onclick="addFacilityResource()">
+                                            <i class="fas fa-plus"></i> Add Requirement
+                                        </button>
+                                    </div>
+                                    <div class="resource-added-list" id="facilities-resource-list">
+                                        <!-- Populated by JS -->
+                                    </div>
+                                </div>
+
+                                <!-- Suppliers Resources -->
+                                <div class="resource-mini-tab" id="suppliers-mini-tab">
+                                    <div class="resource-input-section">
+                                        <h5>Third-Party Supplier Requirements</h5>
+                                        <div class="form-row">
+                                            <div class="form-group">
+                                                <label>Supplier Name</label>
+                                                <input type="text" id="resource-supplier-name" placeholder="Supplier name">
+                                            </div>
+                                            <div class="form-group">
+                                                <label>Service/Product</label>
+                                                <input type="text" id="resource-supplier-service" placeholder="What they provide">
+                                            </div>
+                                        </div>
+                                        <div class="form-row">
+                                            <div class="form-group">
+                                                <label>Contract SLA</label>
+                                                <input type="text" id="resource-supplier-sla" placeholder="e.g., 4 hours response">
+                                            </div>
+                                            <div class="form-group">
+                                                <label>Backup Supplier</label>
+                                                <input type="text" id="resource-supplier-backup" placeholder="Alternative supplier">
+                                            </div>
+                                        </div>
+                                        <button class="btn btn-primary" onclick="addSupplierResource()">
+                                            <i class="fas fa-plus"></i> Add Supplier
+                                        </button>
+                                    </div>
+                                    <div class="resource-added-list" id="suppliers-resource-list">
+                                        <!-- Populated by JS -->
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Assessment Actions Footer -->
+                        <div class="assessment-footer">
+                            <div class="footer-left">
+                                <button class="btn btn-secondary" onclick="savePartialAssessment()">
+                                    <i class="fas fa-save"></i> Save Draft
+                                </button>
+                                <span class="last-saved" id="last-saved-time">Never saved</span>
+                            </div>
+                            <div class="footer-right">
+                                <button class="btn btn-secondary" onclick="previousAssessmentStep()">
+                                    <i class="fas fa-arrow-left"></i> Previous
+                                </button>
+                                <button class="btn btn-primary" onclick="nextAssessmentStep()">
+                                    Next <i class="fas fa-arrow-right"></i>
+                                </button>
+                                <button class="btn btn-success" onclick="completeAssessment()">
+                                    <i class="fas fa-check"></i> Complete Assessment
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Impact Assessment Section -->
+                <section id="impact" class="content-section">
+                    <div class="section-header">
+                        <h2>Impact Assessment Framework</h2>
+                        <div class="section-actions">
+                            <button class="btn btn-secondary" onclick="showHelp('impact-help')">
+                                <i class="fas fa-question-circle"></i> Help
+                            </button>
+                            <button class="btn btn-primary" onclick="openImpactAssessment()">
+                                <i class="fas fa-plus"></i> New Assessment
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="module-info">
+                        <i class="fas fa-info-circle"></i>
+                        <p>Assess impacts across six categories aligned with <strong>ISO 22301:2019 Clause 8.2.2</strong>: Financial, Operational, Reputational, Legal/Regulatory, Health & Safety, and Environmental.</p>
+                    </div>
+
+                    <!-- Impact Matrix -->
+                    <div class="impact-matrix-container">
+                        <h3>Impact Severity Matrix</h3>
+                        <div class="impact-matrix" id="impact-matrix">
+                            <!-- Populated by JS -->
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Temporal Analysis Section -->
+                <section id="temporal" class="content-section">
+                    <div class="section-header">
+                        <h2>Temporal Impact Analysis</h2>
+                        <div class="section-actions">
+                            <button class="btn btn-secondary" onclick="showHelp('temporal-help')">
+                                <i class="fas fa-question-circle"></i> Help
+                            </button>
+                            <button class="btn btn-primary" onclick="generateImpactCurves()">
+                                <i class="fas fa-chart-line"></i> Generate Curves
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="module-info">
+                        <i class="fas fa-info-circle"></i>
+                        <p>Analyse how impacts escalate over time across defined time horizons. Understanding temporal degradation helps determine appropriate recovery objectives and resource allocation priorities.</p>
+                    </div>
+
+                    <!-- Time Horizon Configuration -->
+                    <div class="time-horizons-config">
+                        <h3>Time Horizon Definitions</h3>
+                        <div class="horizon-cards">
+                            <div class="horizon-card immediate">
+                                <div class="horizon-icon"><i class="fas fa-clock"></i></div>
+                                <h4>Immediate</h4>
+                                <p>0-4 hours</p>
+                                <span class="horizon-label">Initial Response</span>
+                            </div>
+                            <div class="horizon-card short">
+                                <div class="horizon-icon"><i class="fas fa-hourglass-half"></i></div>
+                                <h4>Short-term</h4>
+                                <p>4-24 hours</p>
+                                <span class="horizon-label">Emergency Response</span>
+                            </div>
+                            <div class="horizon-card medium">
+                                <div class="horizon-icon"><i class="fas fa-calendar-alt"></i></div>
+                                <h4>Medium-term</h4>
+                                <p>1-3 days</p>
+                                <span class="horizon-label">Temporary Operations</span>
+                            </div>
+                            <div class="horizon-card extended">
+                                <div class="horizon-icon"><i class="fas fa-calendar-week"></i></div>
+                                <h4>Extended</h4>
+                                <p>3-7 days</p>
+                                <span class="horizon-label">Extended Disruption</span>
+                            </div>
+                            <div class="horizon-card prolonged">
+                                <div class="horizon-icon"><i class="fas fa-calendar"></i></div>
+                                <h4>Prolonged</h4>
+                                <p>1-4 weeks</p>
+                                <span class="horizon-label">Major Crisis</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Impact Curves -->
+                    <div class="impact-curves-container">
+                        <div class="process-selector">
+                            <label for="temporal-process-select">Select Process:</label>
+                            <select id="temporal-process-select" onchange="updateTemporalChart()">
+                                <option value="">Select a process...</option>
+                            </select>
+                        </div>
+                        <div class="chart-container-wide">
+                            <canvas id="temporal-impact-chart"></canvas>
+                        </div>
+                        <div class="temporal-insights" id="temporal-insights">
+                            <!-- Populated by JS -->
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Recovery Objectives Section -->
+                <section id="recovery" class="content-section">
+                    <div class="section-header">
+                        <h2>Recovery Objectives Calculator</h2>
+                        <div class="section-actions">
+                            <button class="btn btn-secondary" onclick="showHelp('recovery-help')">
+                                <i class="fas fa-question-circle"></i> Help
+                            </button>
+                            <button class="btn btn-primary" onclick="calculateAllRecovery()">
+                                <i class="fas fa-calculator"></i> Calculate All
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="module-info">
+                        <i class="fas fa-info-circle"></i>
+                        <p>Calculate and validate recovery objectives including MTPD, RTO, RPO, and MBCO. The system validates that RTO &lt; MTPD and identifies any inconsistencies requiring review.</p>
+                    </div>
+
+                    <!-- Recovery Objectives Explanation -->
+                    <div class="objectives-explanation">
+                        <div class="objective-card">
+                            <div class="objective-icon mtpd">
+                                <i class="fas fa-hourglass-end"></i>
+                            </div>
+                            <h4>MTPD</h4>
+                            <p><strong>Maximum Tolerable Period of Disruption</strong></p>
+                            <p>The maximum time after which the organisation's viability will be seriously threatened if a product or service is not delivered.</p>
+                        </div>
+                        <div class="objective-card">
+                            <div class="objective-icon rto">
+                                <i class="fas fa-stopwatch"></i>
+                            </div>
+                            <h4>RTO</h4>
+                            <p><strong>Recovery Time Objective</strong></p>
+                            <p>The target time set for resumption of product or service delivery after an incident. Must be less than or equal to MTPD.</p>
+                        </div>
+                        <div class="objective-card">
+                            <div class="objective-icon rpo">
+                                <i class="fas fa-database"></i>
+                            </div>
+                            <h4>RPO</h4>
+                            <p><strong>Recovery Point Objective</strong></p>
+                            <p>The maximum acceptable amount of data loss measured in time. Defines the age of data that can be lost during a disruption.</p>
+                        </div>
+                        <div class="objective-card">
+                            <div class="objective-icon mbco">
+                                <i class="fas fa-tasks"></i>
+                            </div>
+                            <h4>MBCO</h4>
+                            <p><strong>Minimum Business Continuity Objective</strong></p>
+                            <p>The minimum level of services that can be provided during a disruption. Often expressed as a percentage of normal capacity.</p>
+                        </div>
+                    </div>
+
+                    <!-- Recovery Objectives Table -->
+                    <div class="recovery-table-container">
+                        <table class="data-table" id="recovery-table">
+                            <thead>
+                                <tr>
+                                    <th>Process</th>
+                                    <th>MTPD</th>
+                                    <th>RTO</th>
+                                    <th>RPO</th>
+                                    <th>MBCO</th>
+                                    <th>Status</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="recovery-tbody">
+                                <!-- Populated by JS -->
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <!-- Validation Alerts -->
+                    <div class="validation-alerts" id="validation-alerts">
+                        <h3><i class="fas fa-exclamation-triangle"></i> Validation Alerts</h3>
+                        <div class="alerts-container" id="validation-alerts-container">
+                            <!-- Populated by JS -->
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Prioritisation Engine Section -->
+                <section id="prioritisation" class="content-section">
+                    <div class="section-header">
+                        <h2>Prioritisation Engine</h2>
+                        <div class="section-actions">
+                            <button class="btn btn-secondary" onclick="showHelp('prioritisation-help')">
+                                <i class="fas fa-question-circle"></i> Help
+                            </button>
+                            <button class="btn btn-primary" onclick="recalculatePriorities()">
+                                <i class="fas fa-sync-alt"></i> Recalculate Scores
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="module-info">
+                        <i class="fas fa-info-circle"></i>
+                        <p>Calculates composite criticality scores based on weighted impact categories, ranks processes by recovery priority, and groups them into recovery tiers (Critical, Essential, Necessary, Desirable).</p>
+                    </div>
+
+                    <!-- Weight Configuration -->
+                    <div class="weight-configuration">
+                        <h3>Impact Category Weights</h3>
+                        <p class="weight-info">Configure how much each impact category contributes to the overall criticality score. Weights must sum to 100%.</p>
+                        <div class="weight-sliders" id="weight-sliders">
+                            <!-- Populated by JS -->
+                        </div>
+                        <div class="weight-total">
+                            <span>Total Weight:</span>
+                            <span id="weight-total-value">100%</span>
+                            <span id="weight-status" class="weight-valid">Valid</span>
+                        </div>
+                    </div>
+
+                    <!-- Recovery Tiers -->
+                    <div class="recovery-tiers-container">
+                        <h3>Recovery Priority Tiers</h3>
+                        <div class="tiers-overview">
+                            <div class="tier-card tier-1">
+                                <div class="tier-header">
+                                    <span class="tier-badge">TIER 1</span>
+                                    <h4>CRITICAL</h4>
+                                </div>
+                                <div class="tier-description">
+                                    <p>Immediate restoration required. Loss unacceptable within hours.</p>
+                                </div>
+                                <div class="tier-stats">
+                                    <span class="tier-count" id="tier1-count">0</span>
+                                    <span class="tier-label">Processes</span>
+                                </div>
+                            </div>
+                            <div class="tier-card tier-2">
+                                <div class="tier-header">
+                                    <span class="tier-badge">TIER 2</span>
+                                    <h4>ESSENTIAL</h4>
+                                </div>
+                                <div class="tier-description">
+                                    <p>Restoration within 24 hours. Significant impact if delayed.</p>
+                                </div>
+                                <div class="tier-stats">
+                                    <span class="tier-count" id="tier2-count">0</span>
+                                    <span class="tier-label">Processes</span>
+                                </div>
+                            </div>
+                            <div class="tier-card tier-3">
+                                <div class="tier-header">
+                                    <span class="tier-badge">TIER 3</span>
+                                    <h4>NECESSARY</h4>
+                                </div>
+                                <div class="tier-description">
+                                    <p>Restoration within 1 week. Moderate impact if delayed.</p>
+                                </div>
+                                <div class="tier-stats">
+                                    <span class="tier-count" id="tier3-count">0</span>
+                                    <span class="tier-label">Processes</span>
+                                </div>
+                            </div>
+                            <div class="tier-card tier-4">
+                                <div class="tier-header">
+                                    <span class="tier-badge">TIER 4</span>
+                                    <h4>DESIRABLE</h4>
+                                </div>
+                                <div class="tier-description">
+                                    <p>Restoration when practical. Limited impact if delayed.</p>
+                                </div>
+                                <div class="tier-stats">
+                                    <span class="tier-count" id="tier4-count">0</span>
+                                    <span class="tier-label">Processes</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Dependency Mapping Section -->
+                <section id="dependencies" class="content-section">
+                    <div class="section-header">
+                        <h2>Dependency Mapping</h2>
+                        <div class="section-actions">
+                            <button class="btn btn-secondary" onclick="showHelp('dependency-help')">
+                                <i class="fas fa-question-circle"></i> Help
+                            </button>
+                            <button class="btn btn-primary" onclick="generateDependencyGraph()">
+                                <i class="fas fa-project-diagram"></i> Generate Graph
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="module-info">
+                        <i class="fas fa-info-circle"></i>
+                        <p>Map internal and external dependencies, identify single points of failure, and analyse cascade failure scenarios.</p>
+                    </div>
+
+                    <!-- Dependency Stats -->
+                    <div class="dependency-stats-grid">
+                        <div class="dep-stat-card">
+                            <h4>Internal Dependencies</h4>
+                            <div class="dep-stat-value" id="internal-deps-count">0</div>
+                            <p>Process-to-process links</p>
+                        </div>
+                        <div class="dep-stat-card">
+                            <h4>Technology Dependencies</h4>
+                            <div class="dep-stat-value" id="tech-deps-count">0</div>
+                            <p>Systems and applications</p>
+                        </div>
+                        <div class="dep-stat-card">
+                            <h4>Supplier Dependencies</h4>
+                            <div class="dep-stat-value" id="supplier-deps-count">0</div>
+                            <p>Third-party relationships</p>
+                        </div>
+                        <div class="dep-stat-card">
+                            <h4>Single Points of Failure</h4>
+                            <div class="dep-stat-value spof" id="spof-count">0</div>
+                            <p>Unmitigated risks</p>
+                        </div>
+                    </div>
+
+                    <!-- Dependency Graph Visualization -->
+                    <div class="dependency-graph-container">
+                        <div class="graph-controls">
+                            <div class="graph-filters">
+                                <label>Show:</label>
+                                <select id="dependency-filter" onchange="filterDependencyGraph()">
+                                    <option value="all">All Dependencies</option>
+                                    <option value="critical">Critical Only</option>
+                                    <option value="technology">Technology</option>
+                                    <option value="personnel">Personnel</option>
+                                    <option value="supplier">Supplier</option>
+                                    <option value="facility">Facility</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="dependency-visualization" id="dependency-graph">
+                            <!-- SVG-based graph populated by JS -->
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Resource Analysis Section -->
+                <section id="resources" class="content-section">
+                    <div class="section-header">
+                        <h2>Resource Requirements Analysis</h2>
+                        <div class="section-actions">
+                            <button class="btn btn-secondary" onclick="showHelp('resource-help')">
+                                <i class="fas fa-question-circle"></i> Help
+                            </button>
+                            <button class="btn btn-primary" onclick="exportResourceAnalysis()">
+                                <i class="fas fa-file-export"></i> Export Analysis
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="module-info">
+                        <i class="fas fa-info-circle"></i>
+                        <p>Document minimum resource requirements for each process including personnel, technology, equipment, facilities, and third-party services.</p>
+                    </div>
+
+                    <!-- Resource Summary -->
+                    <div class="resource-summary">
+                        <h3>Resource Gap Analysis</h3>
+                        <div class="gaps-overview" id="resource-gaps">
+                            <!-- Populated by JS -->
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Reports Section -->
+                <section id="reports" class="content-section">
+                    <div class="section-header">
+                        <h2>Reports & Export</h2>
+                        <div class="section-actions">
+                            <button class="btn btn-secondary" onclick="showHelp('reports-help')">
+                                <i class="fas fa-question-circle"></i> Help
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="module-info">
+                        <i class="fas fa-info-circle"></i>
+                        <p>Generate comprehensive BIA deliverables including executive summaries, detailed reports, and data exports.</p>
+                    </div>
+
+                    <!-- Report Types Grid -->
+                    <div class="report-types-grid">
+                        <div class="report-type-card">
+                            <div class="report-icon">
+                                <i class="fas fa-file-alt"></i>
+                            </div>
+                            <h3>Executive Summary</h3>
+                            <p>High-level overview for senior management with key findings and recommendations.</p>
+                            <button class="btn btn-primary" onclick="generateReport('executive')">Generate</button>
+                        </div>
+                        <div class="report-type-card">
+                            <div class="report-icon">
+                                <i class="fas fa-list-ul"></i>
+                            </div>
+                            <h3>Detailed BIA Report</h3>
+                            <p>Complete process-by-process analysis with full impact assessments.</p>
+                            <button class="btn btn-primary" onclick="generateReport('detailed')">Generate</button>
+                        </div>
+                        <div class="report-type-card">
+                            <div class="report-icon">
+                                <i class="fas fa-sort-amount-down"></i>
+                            </div>
+                            <h3>Recovery Priority List</h3>
+                            <p>Ranked processes with justifications and resource requirements.</p>
+                            <button class="btn btn-primary" onclick="generateReport('priority')">Generate</button>
+                        </div>
+                    </div>
+
+                    <!-- Export Options -->
+                    <div class="export-options">
+                        <h3>Data Export</h3>
+                        <div class="export-buttons">
+                            <button class="export-btn" onclick="exportData('json')">
+                                <i class="fas fa-file-code"></i>
+                                <span>Export as JSON</span>
+                            </button>
+                            <button class="export-btn" onclick="exportData('csv')">
+                                <i class="fas fa-file-csv"></i>
+                                <span>Export as CSV</span>
+                            </button>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- ISO Compliance Section -->
+                <section id="compliance" class="content-section">
+                    <div class="section-header">
+                        <h2>ISO 22301:2019 Compliance Mapping</h2>
+                        <div class="section-actions">
+                            <button class="btn btn-primary" onclick="generateComplianceReport()">
+                                <i class="fas fa-certificate"></i> Generate Compliance Report
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="module-info">
+                        <i class="fas fa-info-circle"></i>
+                        <p>Traceability matrix linking BIA activities to specific ISO 22301:2019 clauses.</p>
+                    </div>
+
+                    <!-- Compliance Score -->
+                    <div class="compliance-score-container">
+                        <h3>Overall Compliance Score</h3>
+                        <div class="compliance-gauge">
+                            <div class="gauge-container">
+                                <canvas id="compliance-gauge-chart"></canvas>
+                                <div class="gauge-value">85%</div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Settings Section -->
+                <section id="settings" class="content-section">
+                    <div class="section-header">
+                        <h2>Settings & Data Quality Controls</h2>
+                        <div class="section-actions">
+                            <button class="btn btn-primary" onclick="saveSettings()">
+                                <i class="fas fa-save"></i> Save Settings
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="module-info">
+                        <i class="fas fa-info-circle"></i>
+                        <p>Configure data quality controls, validation rules, and system settings.</p>
+                    </div>
+
+                    <!-- Settings Tabs -->
+                    <div class="settings-tabs">
+                        <button class="settings-tab active" onclick="showSettingsTab('mandatory')">Mandatory Fields</button>
+                        <button class="settings-tab" onclick="showSettingsTab('validation')">Validation Rules</button>
+                        <button class="settings-tab" onclick="showSettingsTab('version')">Version Control</button>
+                    </div>
+
+                    <!-- Mandatory Fields Settings -->
+                    <div class="settings-content active" id="mandatory-settings">
+                        <h3>Mandatory Field Configuration</h3>
+                        <div class="mandatory-fields-list" id="mandatory-fields-list">
+                            <!-- Populated by JS -->
+                        </div>
+                    </div>
+
+                    <!-- Version Control Settings -->
+                    <div class="settings-content" id="version-settings">
+                        <h3>Version Control Configuration</h3>
+                        <div class="version-config">
+                            <div class="config-item">
+                                <label>Enable automatic versioning</label>
+                                <label class="toggle">
+                                    <input type="checkbox" checked>
+                                    <span class="toggle-slider"></span>
+                                </label>
+                            </div>
+                            <div class="config-item">
+                                <label>Track all field changes</label>
+                                <label class="toggle">
+                                    <input type="checkbox" checked>
+                                    <span class="toggle-slider"></span>
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+            </div>
+        </main>
+    </div>
+
+    <!-- Process Modal -->
+    <div id="process-modal" class="modal">
+        <div class="modal-content large">
+            <div class="modal-header">
+                <h2 id="process-modal-title">Add New Process</h2>
+                <button class="modal-close" onclick="closeModal('process-modal')">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="form-tabs">
+                    <button class="form-tab active" onclick="showFormTab('basic')">Basic Information</button>
+                    <button class="form-tab" onclick="showFormTab('dependencies')">Dependencies</button>
+                </div>
+                
+                <div class="form-tab-content active" id="basic-tab">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="process-name">Process Name <span class="required">*</span></label>
+                            <input type="text" id="process-name" placeholder="Enter process name">
+                        </div>
+                        <div class="form-group">
+                            <label for="process-id">Process ID <span class="required">*</span></label>
+                            <input type="text" id="process-id" placeholder="e.g., PROC-001">
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="process-owner">Process Owner <span class="required">*</span></label>
+                            <input type="text" id="process-owner" placeholder="Enter owner name">
+                        </div>
+                        <div class="form-group">
+                            <label for="process-department">Department <span class="required">*</span></label>
+                            <select id="process-department">
+                                <option value="">Select department</option>
+                                <option value="operations">Operations</option>
+                                <option value="finance">Finance</option>
+                                <option value="it">IT</option>
+                                <option value="hr">Human Resources</option>
+                                <option value="sales">Sales</option>
+                                <option value="marketing">Marketing</option>
+                                <option value="legal">Legal</option>
+                                <option value="facilities">Facilities</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="process-description">Description <span class="required">*</span></label>
+                        <textarea id="process-description" rows="3" placeholder="Describe the process and its purpose"></textarea>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="process-criticality">Initial Criticality Assessment</label>
+                            <select id="process-criticality">
+                                <option value="">Select assessment level</option>
+                                <option value="critical">Critical - Tier 1</option>
+                                <option value="essential">Essential - Tier 2</option>
+                                <option value="necessary">Necessary - Tier 3</option>
+                                <option value="desirable">Desirable - Tier 4</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="process-status">Status</label>
+                            <select id="process-status">
+                                <option value="draft">Draft</option>
+                                <option value="review">Under Review</option>
+                                <option value="approved">Approved</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-tab-content" id="dependencies-tab">
+                    <div class="form-group">
+                        <label>Upstream Dependencies</label>
+                        <div class="dependency-input-list" id="modal-upstream-deps">
+                            <div class="dependency-input-row">
+                                <select class="dep-type-select">
+                                    <option value="process">Process</option>
+                                    <option value="system">System/Application</option>
+                                    <option value="personnel">Personnel</option>
+                                    <option value="supplier">Supplier</option>
+                                    <option value="facility">Facility</option>
+                                </select>
+                                <input type="text" placeholder="Enter dependency">
+                                <button class="btn btn-icon remove-btn" onclick="removeDependencyRow(this)">
+                                    <i class="fas fa-times"></i>
+                                </button>
+                            </div>
+                        </div>
+                        <button class="btn btn-secondary" onclick="addDependencyRow('modal-upstream-deps')">
+                            <i class="fas fa-plus"></i> Add Dependency
+                        </button>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" onclick="closeModal('process-modal')">Cancel</button>
+                <button class="btn btn-primary" onclick="saveProcess()">Save Process</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Help Modal -->
+    <div id="help-modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 id="help-modal-title">Help</h2>
+                <button class="modal-close" onclick="closeModal('help-modal')">&times;</button>
+            </div>
+            <div class="modal-body" id="help-modal-content">
+                <!-- Dynamic content -->
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-primary" onclick="closeModal('help-modal')">Close</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Notifications Panel -->
+    <div id="notifications-panel" class="notifications-panel">
+        <div class="notifications-header">
+            <h3>Notifications</h3>
+            <button onclick="hideNotifications()"><i class="fas fa-times"></i></button>
+        </div>
+        <div class="notifications-list" id="notifications-list">
+            <!-- Populated by JS -->
+        </div>
+    </div>
+
+    <!-- Toast Notifications -->
+    <div id="toast-container" class="toast-container"></div>
+
+    <!-- Database Scripts -->
+    <script src="libs/sql-wasm.js"></script>
+    <script src="database/db.js"></script>
+    <script src="database/integration.js"></script>
+    <script src="database/sample-data.js"></script>
+    <script src="database/test-db.js"></script>
+    <script src="database/reports.js"></script>
+
+    <!-- Main Application -->
+    <script src="app.js"></script>
+</body>
+</html>

@@ -1,0 +1,24 @@
+# <type>(<scope>): <subject>
+#
+# <body>
+#
+# <footer>
+#
+# Types:
+#   feat     - New feature
+#   fix      - Bug fix
+#   docs     - Documentation only
+#   style    - Formatting, no code change
+#   refactor - Code change that neither fixes a bug nor adds a feature
+#   test     - Adding or updating tests
+#   chore    - Maintenance tasks
+#
+# Scope: Component or area affected (optional)
+#
+# Subject: Imperative mood, no period, max 50 chars
+#
+# Body: Explain what and why (not how), wrap at 72 chars
+#
+# Footer: Reference issues, breaking changes
+#   Fixes #123
+#   BREAKING CHANGE: description

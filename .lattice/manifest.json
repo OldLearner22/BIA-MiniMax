@@ -1,0 +1,59 @@
+{
+  "generatorVersion": "0.6.19",
+  "policyVersion": "1.0.0",
+  "configHash": "3abc9c7598c5907ed3a95c759b4644dd45454d81b902619a677e4d051a32534b",
+  "files": [
+    {
+      "path": ".cursor/rules.md",
+      "sha256": "43701e9d604434492894c837f5ba116db8e1193e52b2aa46097257ad7a32c8e2"
+    },
+    {
+      "path": ".github/PULL_REQUEST_TEMPLATE.md",
+      "sha256": "c07f140e2d52e9cdb883d1fe19c9bdfff5f031b251a56132d3afa2eb37559f98"
+    },
+    {
+      "path": ".gitmessage",
+      "sha256": "8d11181ede010137b2df421988b5a33b2e62eb2d7b88daf40fd0dc63ff0aa39c"
+    },
+    {
+      "path": ".lattice/prompts/01-feature.md",
+      "sha256": "ce392957b736e3731734284f5b012d481fd44d50a50f858f2eb83b69b150ab82"
+    },
+    {
+      "path": ".lattice/prompts/02-bugfix.md",
+      "sha256": "9e80b4cb5cb1ecdaadb53877fe4b332c9dbe29fc28bb08be13e7563f26440ffe"
+    },
+    {
+      "path": ".lattice/prompts/03-refactor.md",
+      "sha256": "04ac3628ab539c7e91fc91189a95b7ce199b13f7d6dfb18dabb3e94928ddc4b7"
+    },
+    {
+      "path": ".lattice/prompts/04-test.md",
+      "sha256": "c5a5167b1d33fb41aef77a2b0bfaab282f831e1a0baa3434131fd34ee58d19f8"
+    },
+    {
+      "path": ".lattice/prompts/05-polish.md",
+      "sha256": "64aaff33cfa9c806cf8c0d10a0e049f2bb1c946f92e06f1c14f44882551ea978"
+    },
+    {
+      "path": ".lattice/prompts/06-security.md",
+      "sha256": "f32a71b05e474be8c5bbbea87b4dce315a7664f5b1e7e5b31524475a9385a740"
+    },
+    {
+      "path": "CLAUDE.md",
+      "sha256": "e203b160667c4f6678e459eb25712304d070fdc381b16d0cf38270ec8e44f788"
+    },
+    {
+      "path": "eslint.config.mjs",
+      "sha256": "2ed9f666b9713a5ad489ad51b25c8a8b9e21f1a282ba3dfa0cb5222e314bafd9"
+    },
+    {
+      "path": "package.json",
+      "sha256": "3d9444d47c57e943951bb2d4e4f8eec08096ae3a97bd282c552beec4cb22641e"
+    },
+    {
+      "path": "tsconfig.json",
+      "sha256": "b3ff28e241f4eb552d45c2f7869581e14cffc92a28541eec2b52fe7593a195b7"
+    }
+  ]
+}

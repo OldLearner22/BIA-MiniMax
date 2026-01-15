@@ -1,0 +1,288 @@
+[
+  {
+    "query": "Glassmorphism Dashboard UI, dark mode, frosted glass cards, neon blue accents, modern tech",
+    "image_info": {
+      "url": "https://s3-alpha.figma.com/hub/file/4194689827/50eb914e-f941-4374-84dc-4ce864a11b61-cover.png",
+      "img_format": "PNG",
+      "mode": "RGBA",
+      "file_size": 962702,
+      "width": 1600,
+      "height": 960,
+      "total_pixels": 1536000,
+      "basic_score": 0.8871246104355012,
+      "file_name": "dark-glassmorphism-dashboard-ui-design.jpg"
+    },
+    "llm_score": {
+      "success": true,
+      "relevance_score": 98.0,
+      "clarity_score": 95.0,
+      "watermark_score": 100.0,
+      "overall_score": 96.0,
+      "explanation": "The image perfectly matches the search query and prompt. It showcases a high-quality dashboard design utilizing the glassmorphism aesthetic with frosted glass effects and a dark color palette. The resolution is sharp, and the text is legible.",
+      "file_name": "dark-glassmorphism-dashboard-ui-design.jpg",
+      "caption": "A modern dark-themed dashboard UI design featuring glassmorphism aesthetics with frosted glass panels, a sidebar navigation menu, and a translucent profile dropdown menu on a deep purple background.",
+      "recommend": true,
+      "error": ""
+    }
+  },
+  {
+    "query": "Glassmorphism Dashboard UI, dark mode, frosted glass cards, neon blue accents, modern tech",
+    "image_info": {
+      "url": "https://onyx8agency.com/wp-content/uploads/2024/05/Financial-dashboard-with-glassmorphis-background.webp",
+      "img_format": "WEBP",
+      "mode": "RGB",
+      "file_size": 66918,
+      "width": 1200,
+      "height": 900,
+      "total_pixels": 1080000,
+      "basic_score": 0.9399516268240131,
+      "file_name": "glassmorphism-dashboard-ui-dark-purple-theme.jpg"
+    },
+    "llm_score": {
+      "success": true,
+      "relevance_score": 95.0,
+      "clarity_score": 90.0,
+      "watermark_score": 100.0,
+      "overall_score": 95.0,
+      "explanation": "The image perfectly matches the search query for a dark glassmorphism dashboard. It features the signature frosted glass effect, dark background, and modern layout. While the prompt requested 'neon blue accents', the design leans more towards neon purple/magenta, but the overall aesthetic is incredibly strong and professional.",
+      "file_name": "glassmorphism-dashboard-ui-dark-purple-theme.jpg",
+      "caption": "A futuristic dark mode dashboard interface design showcasing glassmorphism style with frosted glass panels, financial data visualizations, credit card widgets, and neon purple gradients.",
+      "recommend": true,
+      "error": ""
+    }
+  },
+  {
+    "query": "Glassmorphism Dashboard UI, dark mode, frosted glass cards, neon blue accents, modern tech",
+    "image_info": {
+      "url": "https://s3-alpha.figma.com/hub/file/1594503879/37d5be63-fb87-4553-841b-66f1b10202d8-cover.png",
+      "img_format": "PNG",
+      "mode": "RGBA",
+      "file_size": 159999,
+      "width": 800,
+      "height": 450,
+      "total_pixels": 360000,
+      "basic_score": 0.8118198112573316,
+      "file_name": "dark-glassmorphism-financial-dashboard-ui.jpg"
+    },
+    "llm_score": {
+      "success": true,
+      "relevance_score": 95.0,
+      "clarity_score": 90.0,
+      "watermark_score": 100.0,
+      "overall_score": 92.0,
+      "explanation": "The image matches the search query exceptionally well, featuring a clear example of glassmorphism in a dark UI setting. While the prompt specified 'neon blue accents,' the design uses a broader spectrum of gradient neon colors (lime, purple, teal), which fits the style effectively even if it deviates slightly from the specific color request. The layout is professional and the resolution is high.",
+      "file_name": "dark-glassmorphism-financial-dashboard-ui.jpg",
+      "caption": "A modern dark-mode financial dashboard UI featuring glassmorphism cards with frosted effects, vibrant gradient accents in lime and purple, and a bar chart visual.",
+      "recommend": true,
+      "error": ""
+    }
+  },
+  {
+    "query": "Glassmorphism Dashboard UI, dark mode, frosted glass cards, neon blue accents, modern tech",
+    "image_info": {
+      "url": "https://mir-s3-cdn-cf.behance.net/project_modules/1400/b8ffd7190227507.65b7e7687575b.jpg",
+      "img_format": "JPEG",
+      "mode": "RGB",
+      "file_size": 389246,
+      "width": 1400,
+      "height": 1103,
+      "total_pixels": 1544200,
+      "basic_score": 0.8854803446128654,
+      "file_name": "glassmorphism_dark_financial_dashboard_ui.jpg"
+    },
+    "llm_score": {
+      "success": true,
+      "relevance_score": 90.0,
+      "clarity_score": 95.0,
+      "watermark_score": 100.0,
+      "overall_score": 92.0,
+      "explanation": "The image is an excellent representation of glassmorphism UI design in dark mode, featuring high-quality frosted glass effects and a clean layout. While the prompt requested 'neon blue accents,' the image uses orange/gold accents, but this does not detract from its relevance to the general search query or its visual appeal.",
+      "file_name": "glassmorphism_dark_financial_dashboard_ui.jpg",
+      "caption": "A sophisticated dark-mode financial dashboard featuring glassmorphism design with frosted glass cards, orange accents, data visualization charts, and a virtual Visa card overlaying a blurred living room background.",
+      "recommend": true,
+      "error": ""
+    }
+  },
+  {
+    "query": "Modern Minimalist Enterprise SaaS Dashboard UI, clean white interface, indigo accents, high fidelity",
+    "image_info": {
+      "url": "https://www.bootstrapdash.com/blog/wp-content/uploads/2025/01/breeze.jpg",
+      "img_format": "JPEG",
+      "mode": "RGB",
+      "file_size": 640891,
+      "width": 1750,
+      "height": 1125,
+      "total_pixels": 1968750,
+      "basic_score": 0.7787549054606379,
+      "file_name": "modern-minimalist-saas-dashboard-breeze-ui.jpg"
+    },
+    "llm_score": {
+      "success": true,
+      "relevance_score": 95.0,
+      "clarity_score": 90.0,
+      "watermark_score": 100.0,
+      "overall_score": 92.0,
+      "explanation": "The image perfectly matches the search query for a modern, minimalist SaaS dashboard. It features a clean light interface with clear typography and distinct sections. The high-fidelity mockup is presented professionally on a stylized background. The design elements align well with enterprise standards.",
+      "file_name": "modern-minimalist-saas-dashboard-breeze-ui.jpg",
+      "caption": "A high-fidelity mockup of a modern SaaS dashboard interface named 'Breeze,' featuring a light theme, sidebar navigation, colorful data summary widgets, and a large business survey line chart, set against a soft abstract purple background.",
+      "recommend": true,
+      "error": ""
+    }
+  },
+  {
+    "query": "Modern Minimalist Enterprise SaaS Dashboard UI, clean white interface, indigo accents, high fidelity",
+    "image_info": {
+      "url": "https://www.bootstrapdash.com/blog/wp-content/uploads/2025/01/purple-2.jpg",
+      "img_format": "JPEG",
+      "mode": "RGB",
+      "file_size": 511283,
+      "width": 1750,
+      "height": 1125,
+      "total_pixels": 1968750,
+      "basic_score": 0.7748815141875721,
+      "file_name": "modern-saas-dashboard-ui-purple-light-theme.jpg"
+    },
+    "llm_score": {
+      "success": true,
+      "relevance_score": 90.0,
+      "clarity_score": 95.0,
+      "watermark_score": 100.0,
+      "overall_score": 92.0,
+      "explanation": "The image is an excellent representation of a modern, minimalist SaaS dashboard with a light interface. It features a clean layout with high-fidelity graphics. While the prompt specifically requested 'indigo accents,' the design utilizes a broader, vibrant color palette (purple, pink, blue, teal) consistent with the 'Purple' branding shown in the UI. This deviation is minor as the overall aesthetic fits the modern SaaS vibe perfectly.",
+      "file_name": "modern-saas-dashboard-ui-purple-light-theme.jpg",
+      "caption": "A high-fidelity UI design mockup of a SaaS dashboard named 'Purple' featuring a clean light theme. The interface includes a sidebar menu, colorful gradient summary cards for sales and orders, a bar chart for sales statistics, and a donut chart for traffic sources, presented against a stylized abstract purple background.",
+      "recommend": true,
+      "error": ""
+    }
+  },
+  {
+    "query": "Modern Minimalist Enterprise SaaS Dashboard UI, clean white interface, indigo accents, high fidelity",
+    "image_info": {
+      "url": "https://titanui.com/wp-content/uploads/2023/07/31/Minimalist-Light-Dashboard-UI-Kit-Figma.webp",
+      "img_format": "WEBP",
+      "mode": "RGB",
+      "file_size": 31046,
+      "width": 1271,
+      "height": 788,
+      "total_pixels": 1001548,
+      "basic_score": 0.9337368007309169,
+      "file_name": "modern-minimalist-saas-dashboard-ui-indigo-accents.jpg"
+    },
+    "llm_score": {
+      "success": true,
+      "relevance_score": 98.0,
+      "clarity_score": 90.0,
+      "watermark_score": 100.0,
+      "overall_score": 92.0,
+      "explanation": "The image is an excellent match for the search query and prompt. It showcases a pristine, modern, and minimalist SaaS dashboard with a clean white interface and distinct indigo accents as requested. The layout is standard and professional, featuring high-fidelity elements like charts, data tables, and navigation menus. There are no watermarks, and the text is sharp and legible.",
+      "file_name": "modern-minimalist-saas-dashboard-ui-indigo-accents.jpg",
+      "caption": "A high-fidelity modern SaaS dashboard UI mockup in light mode featuring a sidebar menu, key performance indicator cards, a sales trend line graph, active user profiles, and a transaction data table, designed with a minimalist white aesthetic and indigo blue accents.",
+      "recommend": true,
+      "error": ""
+    }
+  },
+  {
+    "query": "Modern Minimalist Enterprise SaaS Dashboard UI, clean white interface, indigo accents, high fidelity",
+    "image_info": {
+      "url": "https://www.bootstrapdash.com/blog/wp-content/uploads/2025/01/pollux-1.jpg",
+      "img_format": "JPEG",
+      "mode": "RGB",
+      "file_size": 587532,
+      "width": 1750,
+      "height": 1125,
+      "total_pixels": 1968750,
+      "basic_score": 0.7774707607992162,
+      "file_name": "modern-polluxui-saas-dashboard-light-theme.jpg"
+    },
+    "llm_score": {
+      "success": true,
+      "relevance_score": 92.0,
+      "clarity_score": 95.0,
+      "watermark_score": 100.0,
+      "overall_score": 90.0,
+      "explanation": "The image is highly relevant to the search query, showcasing a clean, modern, and light-themed SaaS dashboard. The design quality is high fidelity with legible text and sharp graphics. While the prompt requested indigo accents, the design features purple and teal, which is stylistically close and visually appealing. There are no obstructive watermarks.",
+      "file_name": "modern-polluxui-saas-dashboard-light-theme.jpg",
+      "caption": "A high-fidelity mockup of a modern SaaS dashboard interface named PolluxUI, featuring a clean light theme with purple and teal accents, displaying various data visualization charts including line graphs, pie charts, and bar charts against a stylized purple background.",
+      "recommend": true,
+      "error": ""
+    }
+  },
+  {
+    "query": "Swiss Style Dashboard UI, strong grid, bold typography, black and white with red accents, minimalist",
+    "image_info": {
+      "url": "https://cdn.prod.website-files.com/6440caaa307ba32175f16e1f/6601d2815bbe73a487edea4d_63b3c3bd23f1eb595b2c911ca7880f95.webp",
+      "img_format": "WEBP",
+      "mode": "RGB",
+      "file_size": 641374,
+      "width": 1600,
+      "height": 1200,
+      "total_pixels": 1920000,
+      "basic_score": 0.802092212112201,
+      "file_name": "swiss-style-typographic-mobile-ui-minimalist-architecture.jpg"
+    },
+    "llm_score": {
+      "success": true,
+      "relevance_score": 85.0,
+      "clarity_score": 95.0,
+      "watermark_score": 100.0,
+      "overall_score": 90.0,
+      "explanation": "The image perfectly embodies the 'Swiss Style' and 'typographic' aspects of the query with its strong grid, bold sans-serif fonts, and minimalist layout. However, it deviates from the specific prompt requirement for 'red accents,' as the design is strictly monochrome (black and white). It also depicts a mobile interface rather than a traditional desktop dashboard, but the quality is exceptional.",
+      "file_name": "swiss-style-typographic-mobile-ui-minimalist-architecture.jpg",
+      "caption": "Three mobile interface screens showcasing a minimalist Swiss Style design for an architecture gallery, featuring bold black typography, geometric shapes, and a high-contrast monochrome palette.",
+      "recommend": true,
+      "error": ""
+    }
+  },
+  {
+    "query": "Swiss Style Dashboard UI, strong grid, bold typography, black and white with red accents, minimalist",
+    "image_info": {
+      "url": "https://assets.justinmind.com/wp-content/uploads/2018/09/swiss-style-website-template.png",
+      "img_format": "PNG",
+      "mode": "P",
+      "file_size": 61572,
+      "width": 810,
+      "height": 481,
+      "total_pixels": 389610,
+      "basic_score": 0.806921463426832,
+      "file_name": "swiss_style_dark_web_interface_design.jpg"
+    },
+    "llm_score": {
+      "success": true,
+      "relevance_score": 75.0,
+      "clarity_score": 90.0,
+      "watermark_score": 100.0,
+      "overall_score": 85.0,
+      "explanation": "The image is a strong example of Swiss Style web design with a clear grid and bold typography, matching the primary search query well. However, it deviates from the specific prompt requirements by featuring cyan/blue accents instead of red, and presents a portfolio layout rather than a dashboard UI.",
+      "file_name": "swiss_style_dark_web_interface_design.jpg",
+      "caption": "A dark-themed minimalist website interface design featuring bold sans-serif typography, a structured grid layout, and cyan blue accents characteristic of Swiss Style graphic design.",
+      "recommend": true,
+      "error": ""
+    }
+  },
+  {
+    "query": "Swiss Style Dashboard UI, strong grid, bold typography, black and white with red accents, minimalist",
+    "image_info": {
+      "url": "https://cdn.prod.website-files.com/642f298d9bf5fd7536aebfa5/6769419d60f10cc9ca1576bd_67693f861f579fb962d8ec47_Shot-Credits.png",
+      "img_format": "PNG",
+      "mode": "RGBA",
+      "file_size": 1240575,
+      "width": 1536,
+      "height": 1200,
+      "total_pixels": 1843200,
+      "basic_score": 0.7884520702644535,
+      "file_name": "swiss_style_corporate_web_design_mockup.jpg"
+    },
+    "llm_score": {
+      "success": true,
+      "relevance_score": 75.0,
+      "clarity_score": 90.0,
+      "watermark_score": 100.0,
+      "overall_score": 85.0,
+      "explanation": "The image features a high-quality web design with strong Swiss Style influences, including a clean grid and bold sans-serif typography, aligning well with the general search query. However, it deviates from the specific prompt details as it depicts a corporate landing page rather than a \"Dashboard UI\" and lacks the requested \"red accents,\" utilizing a black, white, and blue/grey palette instead.",
+      "file_name": "swiss_style_corporate_web_design_mockup.jpg",
+      "caption": "A perspective presentation of a minimalist, Swiss Style web design interface for a construction company, featuring bold sans-serif typography, a structured grid layout, and architectural photography.",
+      "recommend": true,
+      "error": ""
+    }
+  }
+]
