@@ -367,14 +367,6 @@ export function TemporalAnalysis() {
             ))}
           </LineChart>
         </ResponsiveContainer>
-        <div className="flex flex-wrap justify-center gap-4 mt-4">
-          {categories.map(cat => (
-            <div key={cat.id} className="flex items-center gap-2">
-              <div className="w-3 h-3 rounded" style={{ backgroundColor: cat.color }} />
-              <span className="text-sm text-bia-text-secondary">{cat.name}</span>
-            </div>
-          ))}
-        </div>
       </div>
 
       {/* Timeline Point Editor */}
