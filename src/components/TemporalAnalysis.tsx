@@ -137,6 +137,27 @@ export function TemporalAnalysis() {
   };
 
   // Get process impact summary for list view
+  const getImpactValueDisplay = (catId: string, value: number) => {
+    if (value === 0) return 'None';
+    const cat = categories.find(c => c.id === catId);
+    // Map numerical level to standard labels or use description if available
+    const def = cat?.timeBasedDefinitions.find(d => d.timelinePointId === `ctp-${Math.min(7, Math.max(1, Math.round(value)))}`);
+    if (def) {
+      return def.description.split(',')[0];
+    }
+    const labels = ['None', 'Minimal', 'Low', 'Medium', 'High', 'Critical'];
+    return labels[Math.round(value)] || value.toString();
+  };
+
+  const getImpactLabel = (value: number) => {
+    if (value >= 4.5) return 'Critical';
+    if (value >= 3.5) return 'High';
+    if (value >= 2.5) return 'Medium';
+    if (value >= 1.5) return 'Low';
+    if (value >= 0.5) return 'Minimal';
+    return 'None';
+  };
+
   const getProcessImpactSummary = (processId: string) => {
     const score = calculateOverallCriticality(processId);
     const maxImpacts = getMaxImpactPerCategory(processId);
@@ -313,26 +334,26 @@ export function TemporalAnalysis() {
           <h3 className="text-lg font-semibold text-bia-text-primary mb-4">Overall Impact Summary</h3>
           <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-7 gap-4">
             {/* Overall Score */}
-            <div className="col-span-2 md:col-span-1 p-4 bg-black/30 rounded-lg text-center">
+            <div className="col-span-2 md:col-span-1 p-4 bg-black/30 rounded-lg text-center flex flex-col justify-center">
               <p className="text-xs text-bia-text-tertiary uppercase mb-1">Criticality</p>
-              <p className={`text-4xl font-bold ${calculateOverallCriticality(selectedProcessId) >= 4 ? 'text-bia-critical' : calculateOverallCriticality(selectedProcessId) >= 3 ? 'text-bia-warning' : 'text-bia-success'}`}>
-                {calculateOverallCriticality(selectedProcessId)}
+              <p className={`text-2xl font-bold tracking-tight ${calculateOverallCriticality(selectedProcessId) >= 4 ? 'text-bia-critical' : calculateOverallCriticality(selectedProcessId) >= 3 ? 'text-bia-warning' : 'text-bia-success'}`}>
+                {getImpactLabel(calculateOverallCriticality(selectedProcessId))}
               </p>
-              <p className="text-xs text-bia-text-tertiary mt-1">Weighted Avg</p>
+              <p className="text-[10px] text-bia-text-tertiary mt-1">Score: {calculateOverallCriticality(selectedProcessId)}</p>
             </div>
             {/* Per-category max impacts */}
             {categories.map(cat => {
               const maxVal = getMaxImpactPerCategory(selectedProcessId)[cat.id] || 0;
               return (
-                <div key={cat.id} className="p-3 bg-black/20 rounded-lg text-center">
-                  <div className="flex items-center justify-center gap-1 mb-1">
+                <div key={cat.id} className="p-3 bg-black/20 rounded-lg text-center flex flex-col justify-center min-h-[100px]">
+                  <div className="flex items-center justify-center gap-1 mb-2">
                     <div className="w-2 h-2 rounded" style={{ backgroundColor: cat.color }} />
-                    <p className="text-xs text-bia-text-tertiary truncate">{cat.name}</p>
+                    <p className="text-[10px] text-bia-text-tertiary uppercase tracking-wider truncate">{cat.name}</p>
                   </div>
-                  <p className={`text-2xl font-bold ${maxVal >= 4 ? 'text-bia-critical' : maxVal >= 3 ? 'text-bia-warning' : 'text-bia-text-primary'}`}>
-                    {maxVal}
+                  <p className={`text-lg font-bold leading-tight mb-1 ${maxVal >= 4 ? 'text-bia-critical' : maxVal >= 3 ? 'text-bia-warning' : 'text-bia-text-primary'}`}>
+                    {getImpactValueDisplay(cat.id, maxVal)}
                   </p>
-                  <p className="text-xs text-bia-text-tertiary">Peak</p>
+                  <p className="text-[10px] text-bia-text-tertiary">Peak Impact</p>
                 </div>
               );
             })}
