@@ -872,8 +872,10 @@ export interface RecoveryOption {
   description: string;
   strategyType: RecoveryStrategyType;
   tier: RecoveryTier;
-  rto: TimeValue;
-  rpo: TimeValue;
+  rtoValue: number;
+  rtoUnit: string;
+  rpoValue: number;
+  rpoUnit: string;
   recoveryCapacity: number;
   peopleRequired: number;
   technologyType: 'cloud' | 'on-premise' | 'hybrid' | 'manual' | 'external';
