@@ -919,22 +919,54 @@ export interface CostBenefitAnalysis {
   title: string;
   description: string;
   analysisDate: string;
-  recoveryOptionIds: string[];
-  implementationCosts: CostBreakdown;
-  operationalCosts: CostBreakdown;
-  maintenanceCosts: CostBreakdown;
-  avoidedLosses: AvoidedLossBreakdown;
-  riskReduction: number;
+
+  // Implementation costs (separate fields from Prisma)
+  implementationPersonnel: number;
+  implementationTech: number;
+  implementationInfra: number;
+  implementationTraining: number;
+  implementationExternal: number;
+  implementationOther: number;
+
+  // Operational costs (separate fields from Prisma)
+  operationalPersonnel: number;
+  operationalTech: number;
+  operationalInfra: number;
+  operationalTraining: number;
+  operationalExternal: number;
+  operationalOther: number;
+
+  // Maintenance costs (separate fields from Prisma)
+  maintenancePersonnel: number;
+  maintenanceTech: number;
+  maintenanceInfra: number;
+  maintenanceTraining: number;
+  maintenanceExternal: number;
+  maintenanceOther: number;
+
+  // Avoided losses (separate fields from Prisma)
+  avoidedFinancial: number;
+  avoidedOperational: number;
+  avoidedReputational: number;
+  avoidedLegal: number;
+
+  // Calculated metrics
   totalCost: number;
   totalBenefit: number;
   netBenefit: number;
   roi: number;
   paybackPeriod: number;
   bcRatio: number;
-  bestCase: { roi: number; netBenefit: number };
-  worstCase: { roi: number; netBenefit: number };
+  riskReduction: number;
+
+  // Scenario analysis (separate fields from Prisma)
+  bestCaseRoi: number;
+  bestCaseNetBenefit: number;
+  worstCaseRoi: number;
+  worstCaseNetBenefit: number;
+
   intangibleBenefits: string[];
-  recommendation: 'approve' | 'reject' | 'revise' | 'defer';
+  recommendation: string;
   recommendationNotes: string;
   status: 'draft' | 'submitted' | 'approved' | 'rejected';
   createdAt: string;
