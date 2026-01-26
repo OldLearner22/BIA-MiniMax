@@ -572,9 +572,6 @@ if (process.env.NODE_ENV !== "test") {
 
   // Keep the process alive
   setInterval(() => {}, 86400000);
-// If we reach here and NODE_ENV is test, we're done
-if (process.env.NODE_ENV === "test") {
-  console.log("[SERVER] Running in test mode, exporting app");
 }
 
 // Export the app for testing
