@@ -555,6 +555,28 @@ app.delete("/api/resource-dependencies/:id", async (req, res) => {
   }
 });
 
+// Health check endpoint for Railway
+app.get("/api/health", async (req, res) => {
+  try {
+    // Test database connection
+    await prisma.$queryRaw`SELECT 1`;
+
+    res.status(200).json({
+      status: "healthy",
+      timestamp: new Date().toISOString(),
+      uptime: process.uptime(),
+      database: "connected",
+    });
+  } catch (error) {
+    console.error("Health check failed:", error);
+    res.status(500).json({
+      status: "unhealthy",
+      timestamp: new Date().toISOString(),
+      error: "Database connection failed",
+    });
+  }
+});
+
 // Start server
 if (process.env.NODE_ENV !== "test") {
   const server = app.listen(port, () => {

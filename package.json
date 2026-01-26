@@ -7,6 +7,7 @@
     "predev": "npx tsx scripts/check_ports.ts",
     "dev": "concurrently \"npm run server\" \"npm run dotnet:run\" \"vite\"",
     "server": "tsx server/index.ts",
+    "server:prod": "npx prisma migrate deploy && npx prisma generate && tsx server/index.ts",
     "dotnet:run": "dotnet run --project backend/src/Nexus.BCMS.Core/Nexus.BCMS.Core.csproj --urls \"http://localhost:5000\"",
     "build": "npm install && rm -rf node_modules/.vite-temp && vite build",
     "build:prod": "npm install && rm -rf node_modules/.vite-temp && tsc -b && BUILD_MODE=prod vite build",
