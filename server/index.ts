@@ -1,6 +1,18 @@
 import express from "express";
 import cors from "cors";
 import { PrismaClient } from "@prisma/client";
+
+// Add global error handlers FIRST before any async operations
+process.on("unhandledRejection", (reason, promise) => {
+  console.error("Unhandled rejection at:", promise, "reason:", reason);
+  // Don't exit - let the server continue
+});
+
+process.on("uncaughtException", (err) => {
+  console.error("Uncaught exception:", err);
+  // Don't exit - let the server continue
+});
+
 import bcTeamStructureRoutes from "./routes/bcTeamStructure";
 import bcPeopleRoutes from "./routes/bcPeople";
 import bcRolesRoutes from "./routes/bcRoles";
@@ -408,12 +420,9 @@ app.delete("/api/dependencies/:id", async (req, res) => {
 
 app.get("/api/exercises", async (req, res) => {
   try {
-    console.log("GET /api/exercises - Starting request");
-    console.log("About to call prisma.exerciseRecord.findMany()");
     const exercises = await prisma.exerciseRecord.findMany({
       include: { followUpActions: true },
     });
-    console.log(`Received ${exercises.length} exercises from database`);
     res.json(exercises);
   } catch (error) {
     console.error("Error fetching exercises:", error);
@@ -547,7 +556,6 @@ app.delete("/api/resource-dependencies/:id", async (req, res) => {
 });
 
 // Start server
-// Start server
 if (process.env.NODE_ENV !== "test") {
   const server = app.listen(port, () => {
     console.log(`Server running at http://localhost:${port}`);
@@ -555,17 +563,18 @@ if (process.env.NODE_ENV !== "test") {
 
   server.on("error", (err: any) => {
     console.error("Server failed to start:", err);
-    // If port is already in use, avoid exiting the dev process. Keep this process alive so
-    // the concurrently supervisor doesn't kill other services (like the .NET backend).
     if (err && (err.code === "EADDRINUSE" || err.errno === -4091)) {
-      console.warn(`Port ${port} already in use. Skipping server start (continuing without local Node server).`);
-      // keep process alive but not serving; allow external server on the same port to handle requests
+      console.warn(`Port ${port} already in use. Skipping server start.`);
       return;
     }
-
-    // For all other errors, exit with failure to make the error visible to the dev pipeline
     process.exit(1);
   });
+
+  // Keep the process alive
+  setInterval(() => {}, 86400000);
+// If we reach here and NODE_ENV is test, we're done
+if (process.env.NODE_ENV === "test") {
+  console.log("[SERVER] Running in test mode, exporting app");
 }
 
 // Export the app for testing
