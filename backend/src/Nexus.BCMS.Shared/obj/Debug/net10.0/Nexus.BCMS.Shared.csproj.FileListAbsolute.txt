@@ -1,0 +1,13 @@
+C:\Code\BIA - MiniMax\backend\src\Nexus.BCMS.Shared\obj\Debug\net10.0\Nexus.BCMS.Shared.GeneratedMSBuildEditorConfig.editorconfig
+C:\Code\BIA - MiniMax\backend\src\Nexus.BCMS.Shared\obj\Debug\net10.0\Nexus.BCMS.Shared.AssemblyInfoInputs.cache
+C:\Code\BIA - MiniMax\backend\src\Nexus.BCMS.Shared\obj\Debug\net10.0\Nexus.BCMS.Shared.AssemblyInfo.cs
+C:\Code\BIA - MiniMax\backend\src\Nexus.BCMS.Shared\obj\Debug\net10.0\Nexus.BCMS.Shared.csproj.CoreCompileInputs.cache
+C:\Code\BIA - MiniMax\backend\src\Nexus.BCMS.Shared\obj\Debug\net10.0\Nexus.BCMS.Shared.sourcelink.json
+C:\Code\BIA - MiniMax\backend\src\Nexus.BCMS.Shared\bin\Debug\net10.0\Nexus.BCMS.Shared.deps.json
+C:\Code\BIA - MiniMax\backend\src\Nexus.BCMS.Shared\bin\Debug\net10.0\Nexus.BCMS.Shared.dll
+C:\Code\BIA - MiniMax\backend\src\Nexus.BCMS.Shared\bin\Debug\net10.0\Nexus.BCMS.Shared.pdb
+C:\Code\BIA - MiniMax\backend\src\Nexus.BCMS.Shared\obj\Debug\net10.0\Nexus.BCMS.Shared.csproj.AssemblyReference.cache
+C:\Code\BIA - MiniMax\backend\src\Nexus.BCMS.Shared\obj\Debug\net10.0\Nexus.BCMS.Shared.dll
+C:\Code\BIA - MiniMax\backend\src\Nexus.BCMS.Shared\obj\Debug\net10.0\refint\Nexus.BCMS.Shared.dll
+C:\Code\BIA - MiniMax\backend\src\Nexus.BCMS.Shared\obj\Debug\net10.0\Nexus.BCMS.Shared.pdb
+C:\Code\BIA - MiniMax\backend\src\Nexus.BCMS.Shared\obj\Debug\net10.0\ref\Nexus.BCMS.Shared.dll

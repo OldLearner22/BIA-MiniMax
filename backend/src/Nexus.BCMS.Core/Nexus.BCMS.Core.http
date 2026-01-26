@@ -1,0 +1,6 @@
+@Nexus.BCMS.Core_HostAddress = http://localhost:5259
+
+GET {{Nexus.BCMS.Core_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###

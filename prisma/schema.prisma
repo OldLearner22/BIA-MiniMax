@@ -1,0 +1,1336 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Diagram {
+  id             String   @id @default(uuid())
+  name           String
+  processId      String?  @unique
+  data           Json
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+  organizationId String   @default("00000000-0000-0000-0000-000000000001")
+  process        Process? @relation(fields: [processId], references: [id])
+}
+
+model Process {
+  id                   String                @id @default(uuid())
+  name                 String
+  owner                String
+  department           String
+  description          String
+  criticality          Criticality
+  status               ProcessStatus
+  createdAt            DateTime              @default(now())
+  updatedAt            DateTime              @updatedAt
+  layout               Json?
+  organizationId       String                @default("00000000-0000-0000-0000-000000000001")
+  dependenciesAsSource Dependency[]          @relation("SourceProcess")
+  dependenciesAsTarget Dependency[]          @relation("TargetProcess")
+  diagram              Diagram?
+  impactAssessment     ImpactAssessment?
+  resourceLinks        ProcessResourceLink[]
+  recoveryObjective    RecoveryObjective?
+}
+
+model ImpactAssessment {
+  id             String  @id @default(uuid())
+  processId      String  @unique
+  financial      Int
+  operational    Int
+  reputational   Int
+  legal          Int
+  health         Int
+  environmental  Int
+  organizationId String  @default("00000000-0000-0000-0000-000000000001")
+  process        Process @relation(fields: [processId], references: [id], onDelete: Cascade)
+}
+
+model RecoveryObjective {
+  id               String           @id @default(uuid())
+  processId        String           @unique
+  mtpd             Float
+  rto              Float
+  rpo              Float
+  mbco             Boolean
+  recoveryStrategy RecoveryStrategy
+  strategyNotes    String
+  organizationId   String           @default("00000000-0000-0000-0000-000000000001")
+  process          Process          @relation(fields: [processId], references: [id], onDelete: Cascade)
+}
+
+model Dependency {
+  id              String         @id @default(uuid())
+  sourceProcessId String
+  targetProcessId String
+  type            DependencyType
+  criticality     Int
+  description     String
+  sourceHandle    String?
+  targetHandle    String?
+  organizationId  String         @default("00000000-0000-0000-0000-000000000001")
+  sourceProcess   Process        @relation("SourceProcess", fields: [sourceProcessId], references: [id], onDelete: Cascade)
+  targetProcess   Process        @relation("TargetProcess", fields: [targetProcessId], references: [id], onDelete: Cascade)
+}
+
+model BusinessResource {
+  id                   String                @id @default(uuid())
+  name                 String
+  type                 ResourceType
+  description          String
+  rtoValue             Float
+  rtoUnit              String
+  rpoValue             Float?
+  rpoUnit              String?
+  redundancy           RedundancyLevel
+  recoveryProcedure    String?
+  organizationId       String                @default("00000000-0000-0000-0000-000000000001")
+  processLinks         ProcessResourceLink[]
+  dependenciesAsSource ResourceDependency[]  @relation("SourceResource")
+  dependenciesAsTarget ResourceDependency[]  @relation("TargetResource")
+  vendorDetails        VendorDetails?
+  workarounds          WorkaroundProcedure[]
+}
+
+model VendorDetails {
+  id                String           @id @default(uuid())
+  resourceId        String           @unique
+  name              String
+  contractReference String
+  contactPerson     String
+  contactEmail      String
+  contactPhone      String
+  guaranteedRto     Float
+  availability      Float
+  supportHours      String
+  penaltyClause     String?
+  organizationId    String           @default("00000000-0000-0000-0000-000000000001")
+  resource          BusinessResource @relation(fields: [resourceId], references: [id], onDelete: Cascade)
+}
+
+model WorkaroundProcedure {
+  id             String           @id @default(uuid())
+  resourceId     String
+  title          String
+  description    String
+  rtoImpact      Float
+  activationTime Float
+  steps          String[]
+  organizationId String           @default("00000000-0000-0000-0000-000000000001")
+  resource       BusinessResource @relation(fields: [resourceId], references: [id], onDelete: Cascade)
+}
+
+model ResourceDependency {
+  id               String           @id @default(uuid())
+  sourceResourceId String
+  targetResourceId String
+  type             DependencyType
+  isBlocking       Boolean
+  description      String
+  sourceHandle     String?
+  targetHandle     String?
+  organizationId   String           @default("00000000-0000-0000-0000-000000000001")
+  sourceResource   BusinessResource @relation("SourceResource", fields: [sourceResourceId], references: [id], onDelete: Cascade)
+  targetResource   BusinessResource @relation("TargetResource", fields: [targetResourceId], references: [id], onDelete: Cascade)
+}
+
+model ProcessResourceLink {
+  id                 String                      @id @default(uuid())
+  processId          String
+  resourceId         String
+  criticality        ResourceCriticality
+  quantityRequired   Int
+  notes              String
+  processHandle      String?
+  resourceHandle     String?
+  organizationId     String                      @default("00000000-0000-0000-0000-000000000001")
+  process            Process                     @relation(fields: [processId], references: [id], onDelete: Cascade)
+  resource           BusinessResource            @relation(fields: [resourceId], references: [id], onDelete: Cascade)
+  tieredRequirements TieredResourceRequirement[]
+}
+
+model TieredResourceRequirement {
+  id             String              @id @default(uuid())
+  linkId         String
+  timeLabel      String
+  timeOffset     Float
+  quantity       Int
+  organizationId String              @default("00000000-0000-0000-0000-000000000001")
+  link           ProcessResourceLink @relation(fields: [linkId], references: [id], onDelete: Cascade)
+}
+
+model ExerciseRecord {
+  id              String           @id @default(uuid())
+  title           String
+  type            ExerciseType
+  status          ExerciseStatus
+  scheduledDate   DateTime
+  completedDate   DateTime?
+  description     String
+  scope           Json
+  participants    String[]
+  findings        String
+  createdAt       DateTime         @default(now())
+  updatedAt       DateTime         @updatedAt
+  organizationId  String           @default("00000000-0000-0000-0000-000000000001")
+  followUpActions FollowUpAction[]
+}
+
+model FollowUpAction {
+  id               String         @id @default(uuid())
+  exerciseRecordId String
+  description      String
+  owner            String
+  dueDate          DateTime
+  status           String
+  completedDate    DateTime?
+  organizationId   String         @default("00000000-0000-0000-0000-000000000001")
+  exerciseRecord   ExerciseRecord @relation(fields: [exerciseRecordId], references: [id], onDelete: Cascade)
+}
+
+model Risk {
+  id                    String   @id @default(uuid())
+  title                 String
+  description           String
+  category              String
+  status                String
+  criticality           String
+  probability           Float
+  impact                Float
+  exposure              Float
+  minProbability        Float?
+  maxProbability        Float?
+  mostLikelyProbability Float?
+  minImpact             Float?
+  maxImpact             Float?
+  mostLikelyImpact      Float?
+  owner                 String?
+  mitigationStrategy    String?
+  createdAt             DateTime @default(now())
+  updatedAt             DateTime @updatedAt
+  organizationId        String   @default("00000000-0000-0000-0000-000000000001")
+}
+
+model Threat {
+  id             String   @id @default(uuid())
+  title          String
+  description    String
+  category       String
+  source         String
+  likelihood     Int
+  impact         Int
+  riskScore      Int
+  status         String
+  owner          String?
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+  organizationId String   @default("00000000-0000-0000-0000-000000000001")
+}
+
+model StrategicPlanning {
+  id             String   @id @default(uuid())
+  type           String
+  title          String
+  description    String
+  source         String
+  impact         String
+  actionPlan     String
+  priority       String
+  status         String
+  owner          String?
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+  organizationId String   @default("00000000-0000-0000-0000-000000000001")
+}
+
+model RiskTreatment {
+  id             String    @id @default(uuid())
+  title          String
+  description    String
+  strategy       String
+  actionPlan     String
+  priority       String
+  status         String
+  owner          String?
+  targetDate     DateTime?
+  residualRisk   String?
+  riskId         String?
+  threatId       String?
+  createdAt      DateTime  @default(now())
+  updatedAt      DateTime  @updatedAt
+  organizationId String    @default("00000000-0000-0000-0000-000000000001")
+}
+
+model StrategyAssessment {
+  id             String   @id @default(uuid())
+  dimension      String
+  currentScore   Float
+  targetScore    Float
+  assessmentDate DateTime @default(now())
+  organizationId String   @default("00000000-0000-0000-0000-000000000001")
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+}
+
+model StrategyObjective {
+  id             String   @id @default(uuid())
+  title          String
+  description    String
+  kpi            String
+  targetValue    Float
+  currentValue   Float
+  status         String
+  organizationId String   @default("00000000-0000-0000-0000-000000000001")
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+}
+
+model StrategyInitiative {
+  id             String   @id @default(uuid())
+  title          String
+  description    String
+  status         String
+  priority       String
+  owner          String?
+  progress       Int      @default(0)
+  organizationId String   @default("00000000-0000-0000-0000-000000000001")
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+}
+
+model RecoveryOption {
+  id                  String                      @id @default(uuid())
+  processId           String
+  title               String
+  description         String
+  tier                RecoveryTier
+  rtoValue            Float
+  rtoUnit             String
+  rpoValue            Float
+  rpoUnit             String
+  peopleRequired      Int
+  technologyType      String
+  facilityType        String
+  implementationCost  Float
+  operationalCost     Float
+  readinessScore      Int
+  lastTestedDate      DateTime?
+  testingStatus       TestingStatus
+  testingNotes        String?
+  dependsOn           String[]
+  activationTriggers  String[]
+  activationProcedure String?
+  status              StrategyStatus              @default(draft)
+  createdAt           DateTime                    @default(now())
+  updatedAt           DateTime                    @updatedAt
+  createdBy           String
+  organizationId      String                      @default("00000000-0000-0000-0000-000000000001")
+  recoveryCapacity    Int                         @default(100)
+  strategyType        RecoveryStrategyType
+  costBenefitAnalyses CostBenefitRecoveryOption[]
+
+  @@index([processId])
+  @@index([tier])
+  @@index([status])
+  @@index([organizationId])
+}
+
+model CostBenefitAnalysis {
+  id                      String                      @id @default(uuid())
+  title                   String
+  description             String
+  analysisDate            DateTime                    @default(now())
+  implementationPersonnel Float
+  implementationTech      Float
+  implementationInfra     Float
+  implementationTraining  Float
+  implementationExternal  Float
+  implementationOther     Float
+  operationalPersonnel    Float
+  operationalTech         Float
+  operationalInfra        Float
+  operationalTraining     Float
+  operationalExternal     Float
+  operationalOther        Float
+  maintenancePersonnel    Float
+  maintenanceTech         Float
+  maintenanceInfra        Float
+  maintenanceTraining     Float
+  maintenanceExternal     Float
+  maintenanceOther        Float
+  avoidedFinancial        Float
+  avoidedOperational      Float
+  avoidedReputational     Float
+  avoidedLegal            Float
+  totalCost               Float
+  totalBenefit            Float
+  netBenefit              Float
+  roi                     Float
+  paybackPeriod           Float
+  bcRatio                 Float
+  bestCaseRoi             Float
+  bestCaseNetBenefit      Float
+  worstCaseRoi            Float
+  worstCaseNetBenefit     Float
+  intangibleBenefits      String[]
+  recommendation          String
+  recommendationNotes     String
+  riskReduction           Float
+  status                  StrategyStatus              @default(draft)
+  createdAt               DateTime                    @default(now())
+  updatedAt               DateTime                    @updatedAt
+  createdBy               String
+  organizationId          String                      @default("00000000-0000-0000-0000-000000000001")
+  recoveryOptions         CostBenefitRecoveryOption[]
+
+  @@index([status])
+  @@index([organizationId])
+}
+
+model CostBenefitRecoveryOption {
+  id                    String              @id @default(uuid())
+  costBenefitAnalysisId String
+  recoveryOptionId      String
+  costBenefitAnalysis   CostBenefitAnalysis @relation(fields: [costBenefitAnalysisId], references: [id], onDelete: Cascade)
+  recoveryOption        RecoveryOption      @relation(fields: [recoveryOptionId], references: [id], onDelete: Cascade)
+
+  @@unique([costBenefitAnalysisId, recoveryOptionId])
+  @@index([costBenefitAnalysisId])
+  @@index([recoveryOptionId])
+}
+
+model StrategyApproval {
+  id                 String                 @id @default(uuid())
+  strategyType       ApprovalStrategyType
+  strategyId         String
+  strategyTitle      String
+  status             ApprovalWorkflowStatus @default(NOT_STARTED)
+  currentStep        Int                    @default(0)
+  submittedBy        String
+  submittedAt        DateTime               @default(now())
+  submissionNotes    String?
+  finalDecision      String?
+  finalDecisionDate  DateTime?
+  finalDecisionBy    String?
+  finalDecisionNotes String?
+  approvalConditions String[]
+  auditLog           Json
+  createdAt          DateTime               @default(now())
+  updatedAt          DateTime               @updatedAt
+  organizationId     String                 @default("00000000-0000-0000-0000-000000000001")
+  steps              StrategyApprovalStep[]
+
+  @@index([strategyType])
+  @@index([status])
+  @@index([organizationId])
+  @@index([strategyId])
+}
+
+model StrategyApprovalStep {
+  id           String             @id @default(uuid())
+  approvalId   String
+  stepNumber   Int
+  title        String
+  description  String?
+  requiredRole String?
+  approvers    String[]
+  status       ApprovalStepStatus @default(PENDING)
+  assignedTo   String?
+  comments     String?
+  decision     String?
+  decidedBy    String?
+  decidedAt    DateTime?
+  approval     StrategyApproval   @relation(fields: [approvalId], references: [id], onDelete: Cascade)
+
+  @@unique([approvalId, stepNumber])
+  @@index([approvalId])
+  @@index([status])
+}
+
+model Incident {
+  id                       String                  @id @default(uuid())
+  incidentNumber           String                  @unique
+  title                    String
+  description              String
+  category                 IncidentCategory
+  severity                 IncidentSeverity
+  status                   IncidentStatus          @default(REPORTED)
+  impactAreas              ImpactArea[]
+  businessImpact           String
+  estimatedFinancialImpact Float?
+  affectedProcessIds       String[]
+  affectedLocations        String[]
+  affectedSystems          String[]
+  detectionTime            DateTime                @default(now())
+  reportTime               DateTime                @default(now())
+  responseStartTime        DateTime?
+  resolutionTime           DateTime?
+  closureTime              DateTime?
+  initialResponseActions   String
+  escalationDetails        String?
+  rootCause                String?
+  correctiveActions        String?
+  preventiveActions        String?
+  reportedBy               String
+  assignedTo               String?
+  createdAt                DateTime                @default(now())
+  updatedAt                DateTime                @updatedAt
+  organizationId           String                  @default("00000000-0000-0000-0000-000000000001")
+  communications           IncidentCommunication[]
+  decisions                IncidentDecision[]
+  updates                  IncidentUpdate[]
+  recoveryTasks            RecoveryTask[]
+}
+
+model IncidentUpdate {
+  id             String             @id @default(uuid())
+  incidentId     String
+  updateType     IncidentUpdateType
+  title          String
+  description    String
+  previousStatus IncidentStatus?
+  newStatus      IncidentStatus?
+  actionsTaken   String[]
+  createdBy      String
+  createdAt      DateTime           @default(now())
+  incident       Incident           @relation(fields: [incidentId], references: [id], onDelete: Cascade)
+}
+
+model IncidentDecision {
+  id                 String   @id @default(uuid())
+  incidentId         String
+  decisionNumber     String
+  title              String
+  description        String
+  decisionMaker      String
+  decisionRationale  String
+  optionsConsidered  String[]
+  implementationPlan String?
+  decisionTimestamp  DateTime @default(now())
+  createdAt          DateTime @default(now())
+  incident           Incident @relation(fields: [incidentId], references: [id], onDelete: Cascade)
+
+  @@unique([incidentId, decisionNumber])
+}
+
+model IncidentCommunication {
+  id                String   @id @default(uuid())
+  incidentId        String
+  communicationType String
+  subject           String
+  message           String
+  recipients        String[]
+  sentBy            String
+  sentAt            DateTime @default(now())
+  incident          Incident @relation(fields: [incidentId], references: [id], onDelete: Cascade)
+}
+
+model RecoveryTask {
+  id          String             @id @default(uuid())
+  incidentId  String
+  taskNumber  String
+  title       String
+  description String
+  status      RecoveryTaskStatus @default(NOT_STARTED)
+  priority    TaskPriority
+  assignedTo  String?
+  dueDate     DateTime?
+  completedAt DateTime?
+  createdAt   DateTime           @default(now())
+  updatedAt   DateTime           @updatedAt
+  incident    Incident           @relation(fields: [incidentId], references: [id], onDelete: Cascade)
+
+  @@unique([incidentId, taskNumber])
+}
+
+model DocumentCategory {
+  id          String             @id @default(uuid())
+  name        String             @unique
+  description String?
+  color       String?
+  createdAt   DateTime           @default(now())
+  updatedAt   DateTime           @updatedAt
+  documents   Document[]
+  templates   DocumentTemplate[]
+}
+
+model Document {
+  id                     String                    @id @default(uuid())
+  title                  String
+  content                String
+  categoryId             String?
+  status                 DocumentStatus            @default(DRAFT)
+  version                Int                       @default(1)
+  createdBy              String
+  updatedBy              String?
+  createdAt              DateTime                  @default(now())
+  updatedAt              DateTime                  @updatedAt
+  organizationId         String                    @default("00000000-0000-0000-0000-000000000001")
+  approvalStatus         ApprovalWorkflowStatus    @default(NOT_STARTED)
+  approvedBy             String?
+  expiresAt              DateTime?
+  metadata               Json?
+  publishedAt            DateTime?
+  reviewedBy             String?
+  templateId             String?
+  type                   DocumentType?             @default(MANUAL)
+  complianceRequirements ComplianceRequirement[]
+  category               DocumentCategory?         @relation(fields: [categoryId], references: [id])
+  template               DocumentTemplate?         @relation(fields: [templateId], references: [id])
+  accessLogs             DocumentAccessLog[]
+  workflow               DocumentApprovalWorkflow?
+  changes                DocumentChange[]
+  collaborations         DocumentCollaboration[]
+  shares                 DocumentShare[]
+  versions               DocumentVersion[]
+
+  @@index([categoryId])
+  @@index([status])
+  @@index([approvalStatus])
+  @@index([type])
+  @@index([createdAt])
+  @@index([publishedAt])
+}
+
+model DocumentVersion {
+  id            String   @id @default(uuid())
+  documentId    String
+  version       Int
+  title         String
+  content       String
+  changes       String?
+  createdBy     String
+  createdAt     DateTime @default(now())
+  changeSummary Json?
+  document      Document @relation(fields: [documentId], references: [id], onDelete: Cascade)
+
+  @@unique([documentId, version])
+  @@index([documentId])
+  @@index([createdAt])
+}
+
+model DocumentChange {
+  id           String   @id @default(uuid())
+  documentId   String
+  version      Int
+  field        String
+  oldValue     String?
+  newValue     String?
+  changedBy    String
+  changeReason String?
+  createdAt    DateTime @default(now())
+  document     Document @relation(fields: [documentId], references: [id], onDelete: Cascade)
+
+  @@index([documentId])
+  @@index([createdAt])
+}
+
+model DocumentTemplate {
+  id           String            @id @default(uuid())
+  name         String            @unique
+  description  String?
+  categoryId   String?
+  type         DocumentType
+  content      String
+  placeholders Json?
+  isSystem     Boolean           @default(false)
+  createdBy    String
+  createdAt    DateTime          @default(now())
+  updatedAt    DateTime          @updatedAt
+  documents    Document[]
+  category     DocumentCategory? @relation(fields: [categoryId], references: [id])
+
+  @@index([type])
+  @@index([categoryId])
+}
+
+model DocumentAccessLog {
+  id         String       @id @default(uuid())
+  documentId String
+  userId     String?
+  action     AccessAction
+  ipAddress  String?
+  userAgent  String?
+  accessedAt DateTime     @default(now())
+  duration   Int?
+  document   Document     @relation(fields: [documentId], references: [id], onDelete: Cascade)
+
+  @@index([documentId])
+  @@index([userId])
+  @@index([accessedAt])
+}
+
+model DocumentApprovalWorkflow {
+  id              String                 @id @default(uuid())
+  documentId      String                 @unique
+  status          ApprovalWorkflowStatus @default(NOT_STARTED)
+  currentStep     Int                    @default(0)
+  initiatedBy     String
+  initiatedAt     DateTime               @default(now())
+  completedAt     DateTime?
+  rejectionReason String?
+  steps           ApprovalStep[]
+  document        Document               @relation(fields: [documentId], references: [id], onDelete: Cascade)
+
+  @@index([status])
+  @@index([initiatedAt])
+}
+
+model ApprovalStep {
+  id           String                   @id @default(uuid())
+  workflowId   String
+  stepNumber   Int
+  title        String
+  description  String?
+  requiredRole String?
+  approvers    String[]
+  status       ApprovalStepStatus       @default(PENDING)
+  assignedTo   String?
+  comments     String?
+  approvedAt   DateTime?
+  actions      ApprovalAction[]
+  workflow     DocumentApprovalWorkflow @relation(fields: [workflowId], references: [id], onDelete: Cascade)
+
+  @@unique([workflowId, stepNumber])
+  @@index([workflowId])
+  @@index([status])
+}
+
+model ApprovalAction {
+  id       String       @id @default(uuid())
+  stepId   String
+  action   String
+  comments String?
+  takenBy  String
+  takenAt  DateTime     @default(now())
+  step     ApprovalStep @relation(fields: [stepId], references: [id], onDelete: Cascade)
+
+  @@index([stepId])
+}
+
+model DocumentCollaboration {
+  id         String            @id @default(uuid())
+  documentId String
+  type       CollaborationType
+  content    String
+  position   Json?
+  resolved   Boolean           @default(false)
+  resolvedBy String?
+  resolvedAt DateTime?
+  createdBy  String
+  createdAt  DateTime          @default(now())
+  updatedAt  DateTime          @updatedAt
+  document   Document          @relation(fields: [documentId], references: [id], onDelete: Cascade)
+
+  @@index([documentId])
+  @@index([type])
+  @@index([resolved])
+  @@index([createdAt])
+}
+
+model DocumentShare {
+  id           String          @id @default(uuid())
+  documentId   String
+  sharedBy     String
+  sharedWith   String?
+  shareType    ShareType
+  permission   SharePermission
+  expiresAt    DateTime?
+  accessCount  Int             @default(0)
+  lastAccessed DateTime?
+  createdAt    DateTime        @default(now())
+  document     Document        @relation(fields: [documentId], references: [id], onDelete: Cascade)
+
+  @@index([documentId])
+  @@index([sharedWith])
+  @@index([expiresAt])
+}
+
+model ComplianceFramework {
+  id           String                  @id @default(uuid())
+  code         String                  @unique
+  name         String
+  description  String?
+  version      String?
+  isActive     Boolean                 @default(true)
+  createdAt    DateTime                @default(now())
+  updatedAt    DateTime                @updatedAt
+  requirements ComplianceRequirement[]
+}
+
+model ComplianceRequirement {
+  id                  String              @id @default(uuid())
+  frameworkId         String
+  clause              String
+  title               String
+  description         String
+  requiredDocument    String
+  priority            RequirementPriority @default(MEDIUM)
+  status              ComplianceStatus    @default(NOT_ASSESSED)
+  documentId          String?
+  lastReviewed        DateTime?
+  reviewedBy          String?
+  reviewNotes         String?
+  nextReviewDate      DateTime?
+  evidenceNotes       String?
+  implementationNotes String?
+  createdAt           DateTime            @default(now())
+  updatedAt           DateTime            @updatedAt
+  organizationId      String              @default("00000000-0000-0000-0000-000000000001")
+  document            Document?           @relation(fields: [documentId], references: [id])
+  framework           ComplianceFramework @relation(fields: [frameworkId], references: [id], onDelete: Cascade)
+
+  @@unique([frameworkId, clause])
+  @@index([frameworkId])
+  @@index([status])
+  @@index([documentId])
+  @@index([nextReviewDate])
+}
+
+model BCPerson {
+  id                      String               @id @default(uuid())
+  employee_id             String?              @unique
+  first_name              String
+  last_name               String
+  email                   String               @unique
+  phone                   String?
+  mobile                  String?
+  department              String?
+  job_title               String?
+  location                String?
+  manager_id              String?
+  hire_date               DateTime?
+  employment_status       EmploymentStatus     @default(active)
+  emergency_contact_name  String?
+  emergency_contact_phone String?
+  profile_photo_url       String?
+  created_at              DateTime             @default(now())
+  updated_at              DateTime             @updatedAt
+  organization_id         String               @default("00000000-0000-0000-0000-000000000001")
+  contactMethods          BCContactMethod[]
+  manager                 BCPerson?            @relation("PersonHierarchy", fields: [manager_id], references: [id])
+  subordinates            BCPerson[]           @relation("PersonHierarchy")
+  personCompetencies      BCPersonCompetency[]
+  roleAssignments         BCRoleAssignment[]
+  trainingRecords         BCTrainingRecord[]
+
+  @@index([organization_id])
+  @@index([employment_status])
+  @@index([manager_id])
+}
+
+model BCRole {
+  id                      String             @id @default(uuid())
+  name                    String
+  description             String?
+  role_type               RoleType
+  criticality_level       CriticalityLevel   @default(medium)
+  min_experience_years    Int                @default(0)
+  required_certifications String[]
+  key_responsibilities    String[]
+  authority_level         String?
+  reporting_line          String?
+  activation_criteria     String?
+  escalation_authority    Boolean            @default(false)
+  budget_authority_limit  Float?
+  geographic_scope        String?
+  created_at              DateTime           @default(now())
+  updated_at              DateTime           @updatedAt
+  organization_id         String             @default("00000000-0000-0000-0000-000000000001")
+  roleAssignments         BCRoleAssignment[]
+
+  @@index([organization_id])
+  @@index([role_type])
+}
+
+model BCTeamStructure {
+  id                    String             @id @default(uuid())
+  name                  String
+  description           String?
+  structure_type        TeamStructureType
+  parent_id             String?
+  level                 Int                @default(1)
+  display_order         Int                @default(0)
+  is_active             Boolean            @default(true)
+  activation_triggers   String[]
+  deactivation_criteria String?
+  meeting_frequency     String?
+  reporting_schedule    String?
+  position_x            Float?
+  position_y            Float?
+  created_at            DateTime           @default(now())
+  updated_at            DateTime           @updatedAt
+  organization_id       String             @default("00000000-0000-0000-0000-000000000001")
+  roleAssignments       BCRoleAssignment[]
+  parent                BCTeamStructure?   @relation("TeamHierarchy", fields: [parent_id], references: [id])
+  children              BCTeamStructure[]  @relation("TeamHierarchy")
+
+  @@index([organization_id])
+  @@index([parent_id])
+  @@index([is_active])
+}
+
+model BCRoleAssignment {
+  id                       String             @id @default(uuid())
+  person_id                String
+  role_id                  String
+  team_structure_id        String
+  assignment_type          AssignmentType     @default(primary)
+  start_date               DateTime           @default(now())
+  end_date                 DateTime?
+  is_active                Boolean            @default(true)
+  notification_preferences Json?
+  availability_status      AvailabilityStatus @default(available)
+  last_training_date       DateTime?
+  next_training_due        DateTime?
+  competency_score         Int?
+  created_at               DateTime           @default(now())
+  updated_at               DateTime           @updatedAt
+  person                   BCPerson           @relation(fields: [person_id], references: [id], onDelete: Cascade)
+  role                     BCRole             @relation(fields: [role_id], references: [id], onDelete: Cascade)
+  team_structure           BCTeamStructure    @relation(fields: [team_structure_id], references: [id], onDelete: Cascade)
+
+  @@unique([person_id, role_id, team_structure_id, assignment_type])
+  @@index([person_id])
+  @@index([role_id])
+  @@index([team_structure_id])
+  @@index([is_active])
+}
+
+model BCContactMethod {
+  id                   String      @id @default(uuid())
+  person_id            String
+  contact_type         ContactType
+  contact_value        String
+  priority_order       Int         @default(1)
+  is_primary           Boolean     @default(false)
+  is_24_7_available    Boolean     @default(false)
+  preferred_for_alerts Boolean     @default(false)
+  notes                String?
+  created_at           DateTime    @default(now())
+  updated_at           DateTime    @updatedAt
+  person               BCPerson    @relation(fields: [person_id], references: [id], onDelete: Cascade)
+
+  @@index([person_id])
+  @@index([is_primary])
+}
+
+model BCTrainingRecord {
+  id                    String         @id @default(uuid())
+  person_id             String
+  training_type         String
+  training_title        String
+  provider              String?
+  completion_date       DateTime
+  expiry_date           DateTime?
+  certificate_number    String?
+  certificate_url       String?
+  score                 Int?
+  status                TrainingStatus
+  renewal_required      Boolean        @default(false)
+  renewal_reminder_days Int            @default(30)
+  created_at            DateTime       @default(now())
+  updated_at            DateTime       @updatedAt
+  person                BCPerson       @relation(fields: [person_id], references: [id], onDelete: Cascade)
+
+  @@index([person_id])
+  @@index([expiry_date])
+  @@index([status])
+}
+
+model BCCompetency {
+  id                  String               @id @default(uuid())
+  name                String
+  description         String?
+  competency_category CompetencyCategory
+  required_for_roles  String[]
+  assessment_criteria String?
+  proficiency_levels  Json?
+  created_at          DateTime             @default(now())
+  updated_at          DateTime             @updatedAt
+  organization_id     String               @default("00000000-0000-0000-0000-000000000001")
+  personCompetencies  BCPersonCompetency[]
+
+  @@index([organization_id])
+  @@index([competency_category])
+}
+
+model BCPersonCompetency {
+  id                   String           @id @default(uuid())
+  person_id            String
+  competency_id        String
+  proficiency_level    Int
+  assessment_date      DateTime         @default(now())
+  assessor_id          String?
+  assessment_method    AssessmentMethod
+  evidence             String?
+  next_assessment_date DateTime?
+  created_at           DateTime         @default(now())
+  updated_at           DateTime         @updatedAt
+  competency           BCCompetency     @relation(fields: [competency_id], references: [id], onDelete: Cascade)
+  person               BCPerson         @relation(fields: [person_id], references: [id], onDelete: Cascade)
+
+  @@unique([person_id, competency_id])
+  @@index([person_id])
+  @@index([competency_id])
+}
+
+model DimensionTarget {
+  id              String   @id @default(uuid())
+  organizationId  String
+  dimension       String
+  targetLevel     Int
+  businessContext String
+  successCriteria String
+  timeline        String
+  owner           String
+  weight          Float    @default(0.2)
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+  createdBy       String
+
+  @@unique([organizationId, dimension])
+  @@index([organizationId])
+  @@map("dimension_targets")
+}
+
+model DimensionGapAnalysis {
+  id             String   @id @default(uuid())
+  organizationId String
+  dimension      String
+  currentLevel   Int
+  targetLevel    Int
+  currentScore   Float
+  gapPercentage  Float
+  status         String   @default("at-risk")
+  lastUpdated    DateTime @default(now())
+
+  @@unique([organizationId, dimension])
+  @@index([organizationId])
+  @@map("dimension_gap_analysis")
+}
+
+enum RecoveryTier {
+  immediate
+  rapid
+  standard
+  extended
+}
+
+enum TestingStatus {
+  pass
+  fail
+  pending
+  not_tested
+}
+
+enum StrategyStatus {
+  draft
+  submitted
+  approved
+  rejected
+  active
+  retired
+}
+
+enum ApprovalStrategyType {
+  recovery_option
+  cost_benefit
+  comprehensive_plan
+}
+
+enum RecoveryStrategyType {
+  prevention
+  response
+  recovery
+}
+
+enum Criticality {
+  critical
+  high
+  medium
+  low
+  minimal
+}
+
+enum ProcessStatus {
+  draft
+  in_review @map("in-review")
+  approved
+}
+
+enum RecoveryStrategy {
+  high_availability @map("high-availability")
+  warm_standby      @map("warm-standby")
+  cold_backup       @map("cold-backup")
+  manual
+  cloud_based       @map("cloud-based")
+}
+
+enum DependencyType {
+  technical
+  operational
+  resource
+}
+
+enum ResourceType {
+  personnel
+  systems
+  equipment
+  facilities
+  vendors
+  data
+}
+
+enum RedundancyLevel {
+  none
+  partial
+  full
+}
+
+enum ResourceCriticality {
+  essential
+  important
+  supporting
+}
+
+enum ExerciseStatus {
+  planned
+  scheduled
+  in_progress @map("in-progress")
+  completed
+  cancelled
+}
+
+enum ExerciseType {
+  tabletop
+  walkthrough
+  simulation
+  full_scale  @map("full-scale")
+}
+
+enum IncidentCategory {
+  TECHNICAL_FAILURE
+  HUMAN_ERROR
+  NATURAL_DISASTER
+  MALICIOUS_ACTIVITY
+  SUPPLY_CHAIN_DISRUPTION
+  UTILITY_OUTAGE
+  HEALTH_EMERGENCY
+  OTHER
+}
+
+enum IncidentSeverity {
+  LOW
+  MEDIUM
+  HIGH
+  CRITICAL
+}
+
+enum IncidentStatus {
+  REPORTED
+  ASSESSED
+  RESPONDING
+  ESCALATED
+  RESOLVED
+  CLOSED
+  CANCELLED
+}
+
+enum ImpactArea {
+  FINANCIAL
+  OPERATIONAL
+  REPUTATIONAL
+  LEGAL
+  SAFETY
+  ENVIRONMENTAL
+}
+
+enum IncidentUpdateType {
+  STATUS_CHANGE
+  ACTION_TAKEN
+  INFORMATION_UPDATE
+  ESCALATION
+}
+
+enum RecoveryTaskStatus {
+  NOT_STARTED
+  IN_PROGRESS
+  COMPLETED
+  BLOCKED
+  CANCELLED
+}
+
+enum TaskPriority {
+  CRITICAL
+  HIGH
+  MEDIUM
+  LOW
+}
+
+enum DocumentStatus {
+  DRAFT
+  REVIEW
+  APPROVED
+  PUBLISHED
+  ARCHIVED
+}
+
+enum DocumentType {
+  MANUAL
+  AUTO_GENERATED
+  TEMPLATE_BASED
+  POLICY
+  PROCEDURE
+  PLAYBOOK
+  CHECKLIST
+  REPORT
+}
+
+enum ApprovalWorkflowStatus {
+  NOT_STARTED
+  IN_PROGRESS
+  APPROVED
+  REJECTED
+  CANCELLED
+}
+
+enum ApprovalStepStatus {
+  PENDING
+  IN_REVIEW
+  APPROVED
+  REJECTED
+  SKIPPED
+}
+
+enum AccessAction {
+  VIEW
+  EDIT
+  CREATE
+  DELETE
+  DOWNLOAD
+  SHARE
+  APPROVE
+  REJECT
+}
+
+enum CollaborationType {
+  COMMENT
+  SUGGESTION
+  REVIEW
+  QUESTION
+}
+
+enum ShareType {
+  DIRECT_LINK
+  USER
+  GROUP
+  PUBLIC
+}
+
+enum SharePermission {
+  VIEW
+  COMMENT
+  EDIT
+  FULL_ACCESS
+}
+
+enum RequirementPriority {
+  CRITICAL
+  HIGH
+  MEDIUM
+  LOW
+}
+
+enum ComplianceStatus {
+  NOT_ASSESSED
+  NON_COMPLIANT
+  PARTIAL
+  COMPLIANT
+  NOT_APPLICABLE
+}
+
+enum EmploymentStatus {
+  active
+  inactive
+  on_leave
+  terminated
+}
+
+enum RoleType {
+  executive
+  strategic
+  operational
+  support
+  specialist
+}
+
+enum CriticalityLevel {
+  critical
+  high
+  medium
+  low
+}
+
+enum TeamStructureType {
+  crisis_team
+  recovery_team
+  emergency_response
+  communication_team
+  business_unit
+}
+
+enum AssignmentType {
+  primary
+  backup
+  alternate
+  deputy
+}
+
+enum AvailabilityStatus {
+  available
+  on_leave
+  unavailable
+  limited
+}
+
+enum ContactType {
+  email
+  phone
+  mobile
+  satellite_phone
+  radio
+  pager
+  teams
+  slack
+  whatsapp
+}
+
+enum TrainingStatus {
+  completed
+  in_progress
+  expired
+  failed
+}
+
+enum CompetencyCategory {
+  technical
+  leadership
+  communication
+  crisis_management
+  regulatory
+  business_specific
+}
+
+enum AssessmentMethod {
+  self_assessment
+  manager_assessment
+  peer_review
+  formal_test
+  observation
+}

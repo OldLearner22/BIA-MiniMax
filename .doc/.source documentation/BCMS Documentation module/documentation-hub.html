@@ -1,0 +1,1518 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Documentation Hub - Nexus BCMS</title>
+    <link href="https://fonts.googleapis.com/css2?family=Crimson+Text:ital,wght@0,400;0,600;1,400&family=IBM+Plex+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        :root {
+            /* Documentation-Focused Color Palette */
+            --doc-void: #0F1015;
+            --doc-obsidian: #181B22;
+            --doc-charcoal: #252832;
+            --doc-graphite: #333742;
+            --doc-steel: #525866;
+            --doc-silver: #838899;
+            --doc-pearl: #F7F8FA;
+            
+            /* Document Type Colors */
+            --policy-emerald: #059669;
+            --procedure-blue: #2563EB;
+            --template-amber: #D97706;
+            --external-violet: #7C3AED;
+            --version-slate: #475569;
+            
+            /* Status Colors */
+            --draft-yellow: #F59E0B;
+            --review-orange: #EA580C;
+            --approved-green: #10B981;
+            --archived-gray: #6B7280;
+            --current-blue: #3B82F6;
+            
+            /* Gradients */
+            --gradient-policy: linear-gradient(135deg, #059669 0%, #047857 100%);
+            --gradient-procedure: linear-gradient(135deg, #2563EB 0%, #1D4ED8 100%);
+            --gradient-template: linear-gradient(135deg, #D97706 0%, #B45309 100%);
+            --gradient-external: linear-gradient(135deg, #7C3AED 0%, #6D28D9 100%);
+            --gradient-surface: linear-gradient(145deg, #181B22 0%, #252832 100%);
+            --gradient-card: linear-gradient(135deg, rgba(255,255,255,0.04) 0%, rgba(255,255,255,0.02) 100%);
+            
+            /* Effects */
+            --shadow-soft: 0 2px 12px rgba(0,0,0,0.15);
+            --shadow-medium: 0 4px 20px rgba(0,0,0,0.2);
+            --shadow-strong: 0 8px 32px rgba(0,0,0,0.25);
+            --shadow-document: 0 0 24px rgba(37, 99, 235, 0.2);
+            --blur-surface: blur(24px);
+            
+            /* Spacing */
+            --space-xs: 0.25rem;
+            --space-sm: 0.5rem;
+            --space-md: 1rem;
+            --space-lg: 1.5rem;
+            --space-xl: 2rem;
+            --space-2xl: 3rem;
+            --space-3xl: 4rem;
+            
+            --radius-sm: 6px;
+            --radius-md: 10px;
+            --radius-lg: 14px;
+            --radius-xl: 18px;
+            --radius-2xl: 24px;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'IBM Plex Sans', system-ui, sans-serif;
+            background: var(--doc-void);
+            color: var(--doc-pearl);
+            line-height: 1.6;
+            overflow-x: hidden;
+            background-image: 
+                radial-gradient(circle at 20% 20%, rgba(37, 99, 235, 0.05) 0%, transparent 50%),
+                radial-gradient(circle at 80% 80%, rgba(5, 150, 105, 0.05) 0%, transparent 50%),
+                linear-gradient(180deg, var(--doc-void) 0%, var(--doc-obsidian) 100%);
+        }
+
+        .app-container {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Header */
+        .header {
+            background: rgba(24, 27, 34, 0.95);
+            backdrop-filter: var(--blur-surface);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+            padding: var(--space-lg) var(--space-xl);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: var(--gradient-procedure);
+            opacity: 0.8;
+        }
+
+        .header-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            max-width: 1800px;
+            margin: 0 auto;
+        }
+
+        .header-brand {
+            display: flex;
+            align-items: center;
+            gap: var(--space-md);
+        }
+
+        .brand-icon {
+            width: 52px;
+            height: 52px;
+            background: var(--gradient-procedure);
+            border-radius: var(--radius-xl);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 26px;
+            color: white;
+            font-weight: 700;
+            box-shadow: var(--shadow-document);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .brand-icon::before {
+            content: '';
+            position: absolute;
+            top: -2px;
+            left: -2px;
+            right: -2px;
+            bottom: -2px;
+            background: conic-gradient(from 0deg, var(--procedure-blue), var(--policy-emerald), var(--template-amber), var(--external-violet), var(--procedure-blue));
+            border-radius: var(--radius-xl);
+            z-index: -1;
+            animation: rotate-border 6s linear infinite;
+        }
+
+        @keyframes rotate-border {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+
+        .brand-text h1 {
+            font-size: 28px;
+            font-weight: 700;
+            background: var(--gradient-procedure);
+            background-clip: text;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 2px;
+            font-family: 'Crimson Text', serif;
+        }
+
+        .brand-text p {
+            font-size: 13px;
+            color: var(--doc-silver);
+            font-weight: 500;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+        }
+
+        .header-search {
+            flex: 1;
+            max-width: 600px;
+            margin: 0 var(--space-xl);
+            position: relative;
+        }
+
+        .search-input {
+            width: 100%;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: var(--radius-lg);
+            padding: var(--space-md) var(--space-lg);
+            color: var(--doc-pearl);
+            font-size: 15px;
+            outline: none;
+            transition: all 0.3s ease;
+            backdrop-filter: var(--blur-surface);
+        }
+
+        .search-input:focus {
+            border-color: var(--procedure-blue);
+            background: rgba(255, 255, 255, 0.08);
+            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+        }
+
+        .search-input::placeholder {
+            color: var(--doc-silver);
+        }
+
+        .header-actions {
+            display: flex;
+            gap: var(--space-sm);
+        }
+
+        .btn {
+            background: var(--gradient-surface);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: var(--radius-lg);
+            padding: var(--space-sm) var(--space-lg);
+            color: var(--doc-pearl);
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            display: flex;
+            align-items: center;
+            gap: var(--space-sm);
+            text-decoration: none;
+            backdrop-filter: var(--blur-surface);
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-medium);
+            border-color: var(--procedure-blue);
+        }
+
+        .btn.primary {
+            background: var(--gradient-procedure);
+            border-color: var(--procedure-blue);
+            color: white;
+            font-weight: 700;
+            box-shadow: var(--shadow-document);
+        }
+
+        /* Main Layout */
+        .main-layout {
+            display: grid;
+            grid-template-columns: 280px 1fr;
+            flex: 1;
+            max-width: 1800px;
+            margin: 0 auto;
+            width: 100%;
+        }
+
+        /* Sidebar Navigation */
+        .sidebar {
+            background: var(--gradient-surface);
+            backdrop-filter: var(--blur-surface);
+            border-right: 1px solid rgba(255, 255, 255, 0.08);
+            padding: var(--space-xl);
+            position: sticky;
+            top: 80px;
+            height: calc(100vh - 80px);
+            overflow-y: auto;
+        }
+
+        .nav-section {
+            margin-bottom: var(--space-2xl);
+        }
+
+        .nav-title {
+            font-size: 12px;
+            color: var(--doc-silver);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            font-weight: 600;
+            margin-bottom: var(--space-md);
+        }
+
+        .nav-list {
+            list-style: none;
+        }
+
+        .nav-item {
+            margin-bottom: var(--space-sm);
+        }
+
+        .nav-link {
+            display: flex;
+            align-items: center;
+            gap: var(--space-sm);
+            padding: var(--space-sm) var(--space-md);
+            color: var(--doc-silver);
+            text-decoration: none;
+            border-radius: var(--radius-md);
+            transition: all 0.3s ease;
+            font-size: 14px;
+        }
+
+        .nav-link:hover,
+        .nav-link.active {
+            background: rgba(255, 255, 255, 0.05);
+            color: var(--doc-pearl);
+        }
+
+        .nav-link.active {
+            background: rgba(37, 99, 235, 0.15);
+            color: var(--procedure-blue);
+            border: 1px solid rgba(37, 99, 235, 0.3);
+        }
+
+        .nav-count {
+            margin-left: auto;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            padding: 2px 8px;
+            font-size: 11px;
+            font-weight: 600;
+        }
+
+        /* Main Content */
+        .main-content {
+            padding: var(--space-xl);
+            min-height: calc(100vh - 80px);
+        }
+
+        /* Document Library Overview */
+        .library-overview {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: var(--space-xl);
+            margin-bottom: var(--space-3xl);
+        }
+
+        .overview-card {
+            background: var(--gradient-surface);
+            backdrop-filter: var(--blur-surface);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: var(--radius-xl);
+            padding: var(--space-xl);
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+            cursor: pointer;
+        }
+
+        .overview-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            opacity: 0.8;
+        }
+
+        .overview-card.policy::before {
+            background: var(--gradient-policy);
+        }
+
+        .overview-card.procedure::before {
+            background: var(--gradient-procedure);
+        }
+
+        .overview-card.template::before {
+            background: var(--gradient-template);
+        }
+
+        .overview-card.external::before {
+            background: var(--gradient-external);
+        }
+
+        .overview-card:hover {
+            transform: translateY(-4px);
+            box-shadow: var(--shadow-strong);
+            border-color: rgba(255, 255, 255, 0.2);
+        }
+
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: var(--space-lg);
+        }
+
+        .card-icon {
+            width: 48px;
+            height: 48px;
+            border-radius: var(--radius-lg);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+            color: white;
+        }
+
+        .card-icon.policy {
+            background: rgba(5, 150, 105, 0.2);
+            color: var(--policy-emerald);
+            border: 1px solid rgba(5, 150, 105, 0.3);
+        }
+
+        .card-icon.procedure {
+            background: rgba(37, 99, 235, 0.2);
+            color: var(--procedure-blue);
+            border: 1px solid rgba(37, 99, 235, 0.3);
+        }
+
+        .card-icon.template {
+            background: rgba(217, 119, 6, 0.2);
+            color: var(--template-amber);
+            border: 1px solid rgba(217, 119, 6, 0.3);
+        }
+
+        .card-icon.external {
+            background: rgba(124, 58, 237, 0.2);
+            color: var(--external-violet);
+            border: 1px solid rgba(124, 58, 237, 0.3);
+        }
+
+        .card-stats {
+            text-align: right;
+        }
+
+        .stat-number {
+            font-size: 32px;
+            font-weight: 700;
+            color: var(--doc-pearl);
+            margin-bottom: var(--space-xs);
+        }
+
+        .stat-label {
+            font-size: 12px;
+            color: var(--doc-silver);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .card-content h3 {
+            font-size: 20px;
+            font-weight: 700;
+            color: var(--doc-pearl);
+            margin-bottom: var(--space-sm);
+            font-family: 'Crimson Text', serif;
+        }
+
+        .card-content p {
+            font-size: 14px;
+            color: var(--doc-silver);
+            line-height: 1.6;
+            margin-bottom: var(--space-lg);
+        }
+
+        .card-metrics {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: var(--space-md);
+            padding: var(--space-md);
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            border-radius: var(--radius-lg);
+        }
+
+        .metric {
+            text-align: center;
+        }
+
+        .metric-value {
+            font-size: 16px;
+            font-weight: 600;
+            color: var(--doc-pearl);
+            margin-bottom: var(--space-xs);
+        }
+
+        .metric-label {
+            font-size: 11px;
+            color: var(--doc-silver);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        /* Document Grid */
+        .documents-section {
+            margin-bottom: var(--space-3xl);
+        }
+
+        .section-header {
+            display: flex;
+            justify-content: between;
+            align-items: center;
+            margin-bottom: var(--space-2xl);
+            padding-bottom: var(--space-lg);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .section-title {
+            font-size: 28px;
+            font-weight: 700;
+            color: var(--doc-pearl);
+            font-family: 'Crimson Text', serif;
+        }
+
+        .section-controls {
+            display: flex;
+            gap: var(--space-sm);
+            align-items: center;
+        }
+
+        .filter-btn {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: var(--radius-md);
+            padding: var(--space-sm) var(--space-md);
+            color: var(--doc-silver);
+            font-size: 12px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .filter-btn:hover,
+        .filter-btn.active {
+            background: var(--procedure-blue);
+            color: white;
+            border-color: var(--procedure-blue);
+        }
+
+        .documents-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(380px, 1fr));
+            gap: var(--space-lg);
+        }
+
+        .document-card {
+            background: var(--gradient-surface);
+            backdrop-filter: var(--blur-surface);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: var(--radius-xl);
+            padding: var(--space-lg);
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            overflow: hidden;
+            cursor: pointer;
+        }
+
+        .document-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            opacity: 0.8;
+            transition: all 0.3s ease;
+        }
+
+        .document-card.policy::before { background: var(--gradient-policy); }
+        .document-card.procedure::before { background: var(--gradient-procedure); }
+        .document-card.template::before { background: var(--gradient-template); }
+        .document-card.external::before { background: var(--gradient-external); }
+
+        .document-card:hover {
+            transform: translateY(-4px);
+            box-shadow: var(--shadow-strong);
+            border-color: rgba(255, 255, 255, 0.2);
+        }
+
+        .document-card:hover::before {
+            height: 5px;
+        }
+
+        .doc-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: var(--space-md);
+        }
+
+        .doc-type-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: var(--space-xs);
+            padding: var(--space-xs) var(--space-sm);
+            border-radius: var(--radius-sm);
+            font-size: 10px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .doc-type-badge.policy {
+            background: rgba(5, 150, 105, 0.15);
+            color: var(--policy-emerald);
+            border: 1px solid rgba(5, 150, 105, 0.3);
+        }
+
+        .doc-type-badge.procedure {
+            background: rgba(37, 99, 235, 0.15);
+            color: var(--procedure-blue);
+            border: 1px solid rgba(37, 99, 235, 0.3);
+        }
+
+        .doc-type-badge.template {
+            background: rgba(217, 119, 6, 0.15);
+            color: var(--template-amber);
+            border: 1px solid rgba(217, 119, 6, 0.3);
+        }
+
+        .doc-type-badge.external {
+            background: rgba(124, 58, 237, 0.15);
+            color: var(--external-violet);
+            border: 1px solid rgba(124, 58, 237, 0.3);
+        }
+
+        .status-badge {
+            padding: var(--space-xs) var(--space-sm);
+            border-radius: var(--radius-sm);
+            font-size: 10px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .status-badge.current {
+            background: rgba(59, 130, 246, 0.15);
+            color: var(--current-blue);
+            border: 1px solid rgba(59, 130, 246, 0.3);
+        }
+
+        .status-badge.draft {
+            background: rgba(245, 158, 11, 0.15);
+            color: var(--draft-yellow);
+            border: 1px solid rgba(245, 158, 11, 0.3);
+        }
+
+        .status-badge.approved {
+            background: rgba(16, 185, 129, 0.15);
+            color: var(--approved-green);
+            border: 1px solid rgba(16, 185, 129, 0.3);
+        }
+
+        .doc-title {
+            font-size: 18px;
+            font-weight: 700;
+            color: var(--doc-pearl);
+            margin-bottom: var(--space-sm);
+            line-height: 1.3;
+            font-family: 'Crimson Text', serif;
+        }
+
+        .doc-description {
+            font-size: 13px;
+            color: var(--doc-silver);
+            line-height: 1.5;
+            margin-bottom: var(--space-md);
+        }
+
+        .doc-meta {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: var(--space-sm);
+            padding: var(--space-sm);
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            border-radius: var(--radius-md);
+            margin-bottom: var(--space-md);
+        }
+
+        .meta-item {
+            font-size: 11px;
+            color: var(--doc-silver);
+        }
+
+        .meta-label {
+            display: block;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 2px;
+        }
+
+        .meta-value {
+            color: var(--doc-pearl);
+            font-weight: 600;
+        }
+
+        .doc-actions {
+            display: flex;
+            gap: var(--space-sm);
+            margin-top: var(--space-md);
+        }
+
+        .doc-action {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: var(--radius-md);
+            padding: var(--space-sm) var(--space-md);
+            color: var(--doc-pearl);
+            font-size: 11px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            flex: 1;
+            text-align: center;
+        }
+
+        .doc-action:hover {
+            background: var(--procedure-blue);
+            color: white;
+            border-color: var(--procedure-blue);
+        }
+
+        /* Version Control Panel */
+        .version-panel {
+            background: var(--gradient-surface);
+            backdrop-filter: var(--blur-surface);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: var(--radius-xl);
+            padding: var(--space-xl);
+            margin-bottom: var(--space-3xl);
+        }
+
+        .version-header {
+            text-align: center;
+            margin-bottom: var(--space-xl);
+        }
+
+        .version-title {
+            font-size: 24px;
+            font-weight: 700;
+            color: var(--doc-pearl);
+            margin-bottom: var(--space-sm);
+            font-family: 'Crimson Text', serif;
+        }
+
+        .version-subtitle {
+            font-size: 14px;
+            color: var(--doc-silver);
+        }
+
+        .version-timeline {
+            position: relative;
+            padding: var(--space-lg) 0;
+        }
+
+        .version-timeline::before {
+            content: '';
+            position: absolute;
+            left: 50%;
+            top: 0;
+            bottom: 0;
+            width: 2px;
+            background: linear-gradient(to bottom, var(--policy-emerald), var(--procedure-blue), var(--template-amber));
+            transform: translateX(-50%);
+        }
+
+        .version-item {
+            display: flex;
+            align-items: center;
+            margin-bottom: var(--space-xl);
+        }
+
+        .version-item:nth-child(even) {
+            flex-direction: row-reverse;
+        }
+
+        .version-content {
+            flex: 1;
+            max-width: 45%;
+            padding: var(--space-lg);
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            border-radius: var(--radius-lg);
+            margin: 0 var(--space-lg);
+        }
+
+        .version-badge {
+            position: absolute;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            border: 3px solid var(--doc-obsidian);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+            color: white;
+            font-weight: 700;
+            background: var(--procedure-blue);
+        }
+
+        .version-number {
+            font-size: 14px;
+            font-weight: 700;
+            color: var(--procedure-blue);
+            margin-bottom: var(--space-xs);
+        }
+
+        .version-date {
+            font-size: 12px;
+            color: var(--doc-silver);
+            margin-bottom: var(--space-sm);
+        }
+
+        .version-changes {
+            font-size: 13px;
+            color: var(--doc-pearl);
+            line-height: 1.5;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 1200px) {
+            .main-layout {
+                grid-template-columns: 1fr;
+            }
+            
+            .sidebar {
+                position: static;
+                height: auto;
+                border-right: none;
+                border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+            }
+            
+            .documents-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .header-content {
+                flex-direction: column;
+                gap: var(--space-md);
+            }
+            
+            .header-search {
+                max-width: none;
+                margin: 0;
+            }
+            
+            .library-overview {
+                grid-template-columns: 1fr;
+            }
+            
+            .card-metrics {
+                grid-template-columns: 1fr;
+            }
+            
+            .version-timeline::before {
+                left: 20px;
+            }
+            
+            .version-item {
+                flex-direction: row !important;
+            }
+            
+            .version-badge {
+                left: 20px;
+            }
+            
+            .version-content {
+                max-width: none;
+                margin-left: 60px;
+                margin-right: 0;
+            }
+        }
+
+        /* Animations */
+        @keyframes slideInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .slide-in {
+            animation: slideInUp 0.6s ease-out forwards;
+        }
+
+        .slide-in:nth-child(2) { animation-delay: 0.1s; }
+        .slide-in:nth-child(3) { animation-delay: 0.2s; }
+        .slide-in:nth-child(4) { animation-delay: 0.3s; }
+        .slide-in:nth-child(5) { animation-delay: 0.4s; }
+
+        /* Scrollbar Styling */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: var(--procedure-blue);
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: var(--policy-emerald);
+        }
+    </style>
+</head>
+<body>
+    <div class="app-container">
+        <!-- Header -->
+        <header class="header">
+            <div class="header-content">
+                <div class="header-brand">
+                    <div class="brand-icon">📚</div>
+                    <div class="brand-text">
+                        <h1>Documentation Hub</h1>
+                        <p>Knowledge Repository</p>
+                    </div>
+                </div>
+                <div class="header-search">
+                    <input type="text" class="search-input" placeholder="Search documents, policies, procedures..." onkeyup="searchDocuments(this.value)">
+                </div>
+                <div class="header-actions">
+                    <button class="btn" onclick="uploadDocument()">
+                        <span>📤</span> Upload
+                    </button>
+                    <button class="btn" onclick="createTemplate()">
+                        <span>📝</span> Template
+                    </button>
+                    <button class="btn primary" onclick="createDocument()">
+                        <span>✨</span> New Doc
+                    </button>
+                </div>
+            </div>
+        </header>
+
+        <div class="main-layout">
+            <!-- Sidebar Navigation -->
+            <aside class="sidebar">
+                <nav class="nav-section">
+                    <h3 class="nav-title">Document Types</h3>
+                    <ul class="nav-list">
+                        <li class="nav-item">
+                            <a href="#" class="nav-link active" onclick="filterDocuments('all')">
+                                <span>📋</span> All Documents
+                                <span class="nav-count">847</span>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="#" class="nav-link" onclick="filterDocuments('policy')">
+                                <span>🛡️</span> BCMS Policies
+                                <span class="nav-count">23</span>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="#" class="nav-link" onclick="filterDocuments('procedure')">
+                                <span>⚙️</span> Procedures
+                                <span class="nav-count">156</span>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="#" class="nav-link" onclick="filterDocuments('template')">
+                                <span>📝</span> Forms & Templates
+                                <span class="nav-count">89</span>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="#" class="nav-link" onclick="filterDocuments('external')">
+                                <span>🔗</span> External Docs
+                                <span class="nav-count">579</span>
+                            </a>
+                        </li>
+                    </ul>
+                </nav>
+                
+                <nav class="nav-section">
+                    <h3 class="nav-title">Status</h3>
+                    <ul class="nav-list">
+                        <li class="nav-item">
+                            <a href="#" class="nav-link" onclick="filterByStatus('current')">
+                                <span>✅</span> Current
+                                <span class="nav-count">724</span>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="#" class="nav-link" onclick="filterByStatus('draft')">
+                                <span>📝</span> Drafts
+                                <span class="nav-count">67</span>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="#" class="nav-link" onclick="filterByStatus('review')">
+                                <span>👁️</span> Under Review
+                                <span class="nav-count">34</span>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="#" class="nav-link" onclick="filterByStatus('archived')">
+                                <span>📦</span> Archived
+                                <span class="nav-count">22</span>
+                            </a>
+                        </li>
+                    </ul>
+                </nav>
+                
+                <nav class="nav-section">
+                    <h3 class="nav-title">Categories</h3>
+                    <ul class="nav-list">
+                        <li class="nav-item">
+                            <a href="#" class="nav-link" onclick="filterByCategory('governance')">
+                                <span>🏛️</span> Governance
+                                <span class="nav-count">45</span>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="#" class="nav-link" onclick="filterByCategory('operational')">
+                                <span>⚙️</span> Operational
+                                <span class="nav-count">298</span>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="#" class="nav-link" onclick="filterByCategory('compliance')">
+                                <span>📋</span> Compliance
+                                <span class="nav-count">167</span>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="#" class="nav-link" onclick="filterByCategory('training')">
+                                <span>🎓</span> Training
+                                <span class="nav-count">112</span>
+                            </a>
+                        </li>
+                    </ul>
+                </nav>
+            </aside>
+
+            <!-- Main Content -->
+            <main class="main-content">
+                <!-- Library Overview -->
+                <section class="library-overview">
+                    <div class="overview-card policy">
+                        <div class="card-header">
+                            <div class="card-icon policy">🛡️</div>
+                            <div class="card-stats">
+                                <div class="stat-number">23</div>
+                                <div class="stat-label">Policies</div>
+                            </div>
+                        </div>
+                        <div class="card-content">
+                            <h3>BCMS Policies</h3>
+                            <p>Core business continuity management policies defining organizational commitment, objectives, and governance framework.</p>
+                            <div class="card-metrics">
+                                <div class="metric">
+                                    <div class="metric-value">21</div>
+                                    <div class="metric-label">Current</div>
+                                </div>
+                                <div class="metric">
+                                    <div class="metric-value">2</div>
+                                    <div class="metric-label">Review</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="overview-card procedure">
+                        <div class="card-header">
+                            <div class="card-icon procedure">⚙️</div>
+                            <div class="card-stats">
+                                <div class="stat-number">156</div>
+                                <div class="stat-label">Procedures</div>
+                            </div>
+                        </div>
+                        <div class="card-content">
+                            <h3>Procedures Library</h3>
+                            <p>Detailed operational procedures covering response protocols, recovery processes, and business continuity operations.</p>
+                            <div class="card-metrics">
+                                <div class="metric">
+                                    <div class="metric-value">142</div>
+                                    <div class="metric-label">Current</div>
+                                </div>
+                                <div class="metric">
+                                    <div class="metric-value">14</div>
+                                    <div class="metric-label">Draft</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="overview-card template">
+                        <div class="card-header">
+                            <div class="card-icon template">📝</div>
+                            <div class="card-stats">
+                                <div class="stat-number">89</div>
+                                <div class="stat-label">Templates</div>
+                            </div>
+                        </div>
+                        <div class="card-content">
+                            <h3>Forms & Templates</h3>
+                            <p>Standardized forms, templates, and checklists for consistent documentation and process execution across the organization.</p>
+                            <div class="card-metrics">
+                                <div class="metric">
+                                    <div class="metric-value">76</div>
+                                    <div class="metric-label">Active</div>
+                                </div>
+                                <div class="metric">
+                                    <div class="metric-value">13</div>
+                                    <div class="metric-label">Updated</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="overview-card external">
+                        <div class="card-header">
+                            <div class="card-icon external">🔗</div>
+                            <div class="card-stats">
+                                <div class="stat-number">579</div>
+                                <div class="stat-label">External</div>
+                            </div>
+                        </div>
+                        <div class="card-content">
+                            <h3>External Documents</h3>
+                            <p>Regulatory guidance, industry standards, vendor documentation, and external references supporting BCMS implementation.</p>
+                            <div class="card-metrics">
+                                <div class="metric">
+                                    <div class="metric-value">534</div>
+                                    <div class="metric-label">Current</div>
+                                </div>
+                                <div class="metric">
+                                    <div class="metric-value">45</div>
+                                    <div class="metric-label">Archive</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Version Control Timeline -->
+                <section class="version-panel">
+                    <div class="version-header">
+                        <h2 class="version-title">Recent Document Activity</h2>
+                        <p class="version-subtitle">Latest updates and version changes across the document library</p>
+                    </div>
+                    
+                    <div class="version-timeline">
+                        <div class="version-item">
+                            <div class="version-badge">3.2</div>
+                            <div class="version-content">
+                                <div class="version-number">Version 3.2</div>
+                                <div class="version-date">Updated 2 hours ago</div>
+                                <div class="version-changes">
+                                    <strong>Crisis Response Procedures</strong> - Updated emergency contact lists and added new escalation matrix for cyber security incidents.
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="version-item">
+                            <div class="version-badge">2.1</div>
+                            <div class="version-content">
+                                <div class="version-number">Version 2.1</div>
+                                <div class="version-date">Updated yesterday</div>
+                                <div class="version-changes">
+                                    <strong>BCP Policy Framework</strong> - Annual review completed with updated risk appetite statements and governance structure changes.
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="version-item">
+                            <div class="version-badge">1.5</div>
+                            <div class="version-content">
+                                <div class="version-number">Version 1.5</div>
+                                <div class="version-date">Updated 3 days ago</div>
+                                <div class="version-changes">
+                                    <strong>Risk Assessment Template</strong> - Enhanced quantitative risk analysis sections and Monte Carlo simulation guidance.
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Recent Documents -->
+                <section class="documents-section">
+                    <div class="section-header">
+                        <h2 class="section-title">Recent Documents</h2>
+                        <div class="section-controls">
+                            <button class="filter-btn active" onclick="sortDocuments('recent')">Recent</button>
+                            <button class="filter-btn" onclick="sortDocuments('popular')">Popular</button>
+                            <button class="filter-btn" onclick="sortDocuments('updated')">Updated</button>
+                        </div>
+                    </div>
+                    
+                    <div class="documents-grid" id="documentsGrid">
+                        <!-- Documents will be populated here -->
+                    </div>
+                </section>
+            </main>
+        </div>
+    </div>
+
+    <script>
+        // Global variables
+        let allDocuments = [];
+        let currentFilter = 'all';
+
+        // Initialize application
+        document.addEventListener('DOMContentLoaded', function() {
+            loadDocuments();
+            renderDocuments();
+            animateOnLoad();
+        });
+
+        // Sample document data
+        function loadDocuments() {
+            allDocuments = [
+                {
+                    id: 'DOC-001',
+                    title: 'Business Continuity Management Policy',
+                    type: 'policy',
+                    status: 'current',
+                    category: 'governance',
+                    description: 'Core policy establishing organizational commitment to business continuity management and defining governance framework.',
+                    version: '3.1',
+                    lastModified: '2024-01-18',
+                    author: 'BC Manager',
+                    fileSize: '245 KB',
+                    downloads: 342,
+                    relatedModules: ['Strategy Framework', 'Risk Register'],
+                    tags: ['governance', 'policy', 'framework']
+                },
+                {
+                    id: 'DOC-002',
+                    title: 'Crisis Response Procedures Manual',
+                    type: 'procedure',
+                    status: 'current',
+                    category: 'operational',
+                    description: 'Comprehensive manual detailing step-by-step crisis response procedures and team coordination protocols.',
+                    version: '2.4',
+                    lastModified: '2024-01-20',
+                    author: 'Crisis Team Lead',
+                    fileSize: '1.2 MB',
+                    downloads: 789,
+                    relatedModules: ['Response Procedures', 'Contact Directory'],
+                    tags: ['crisis', 'response', 'emergency']
+                },
+                {
+                    id: 'DOC-003',
+                    title: 'Risk Assessment Template',
+                    type: 'template',
+                    status: 'approved',
+                    category: 'compliance',
+                    description: 'Standardized template for conducting quantitative risk assessments using Monte Carlo simulation.',
+                    version: '1.5',
+                    lastModified: '2024-01-17',
+                    author: 'Risk Analyst',
+                    fileSize: '156 KB',
+                    downloads: 445,
+                    relatedModules: ['Risk Register', 'Treatment Plans'],
+                    tags: ['risk', 'assessment', 'template']
+                },
+                {
+                    id: 'DOC-004',
+                    title: 'ISO 22301:2019 Standard',
+                    type: 'external',
+                    status: 'current',
+                    category: 'compliance',
+                    description: 'International standard specifying requirements for business continuity management systems.',
+                    version: '2019',
+                    lastModified: '2019-10-15',
+                    author: 'ISO Organization',
+                    fileSize: '2.8 MB',
+                    downloads: 234,
+                    relatedModules: ['Strategy Framework', 'BIA Module'],
+                    tags: ['iso', 'standard', 'compliance']
+                },
+                {
+                    id: 'DOC-005',
+                    title: 'Recovery Planning Checklist',
+                    type: 'template',
+                    status: 'current',
+                    category: 'operational',
+                    description: 'Comprehensive checklist for developing and validating business continuity recovery plans.',
+                    version: '2.2',
+                    lastModified: '2024-01-15',
+                    author: 'Recovery Team',
+                    fileSize: '89 KB',
+                    downloads: 567,
+                    relatedModules: ['Recovery Options', 'Testing Module'],
+                    tags: ['recovery', 'checklist', 'planning']
+                },
+                {
+                    id: 'DOC-006',
+                    title: 'Communication Protocol Procedures',
+                    type: 'procedure',
+                    status: 'draft',
+                    category: 'operational',
+                    description: 'Detailed procedures for stakeholder communication during business continuity incidents.',
+                    version: '1.0-draft',
+                    lastModified: '2024-01-19',
+                    author: 'Communications Manager',
+                    fileSize: '334 KB',
+                    downloads: 78,
+                    relatedModules: ['Response Procedures', 'Contact Directory'],
+                    tags: ['communication', 'stakeholder', 'protocol']
+                }
+            ];
+        }
+
+        function renderDocuments(filteredDocs = null) {
+            const container = document.getElementById('documentsGrid');
+            container.innerHTML = '';
+            
+            const docs = filteredDocs || allDocuments;
+            
+            docs.forEach((doc, index) => {
+                const card = createDocumentCard(doc);
+                card.style.animationDelay = `${index * 0.1}s`;
+                card.classList.add('slide-in');
+                container.appendChild(card);
+            });
+        }
+
+        function createDocumentCard(doc) {
+            const card = document.createElement('div');
+            card.className = `document-card ${doc.type}`;
+            
+            const typeIcon = getTypeIcon(doc.type);
+            const statusIcon = getStatusIcon(doc.status);
+            
+            card.innerHTML = `
+                <div class="doc-header">
+                    <div class="doc-type-badge ${doc.type}">
+                        ${typeIcon} ${doc.type.toUpperCase()}
+                    </div>
+                    <div class="status-badge ${doc.status}">
+                        ${statusIcon} ${doc.status}
+                    </div>
+                </div>
+                
+                <h3 class="doc-title">${doc.title}</h3>
+                <p class="doc-description">${doc.description}</p>
+                
+                <div class="doc-meta">
+                    <div class="meta-item">
+                        <span class="meta-label">Version</span>
+                        <span class="meta-value">${doc.version}</span>
+                    </div>
+                    <div class="meta-item">
+                        <span class="meta-label">Modified</span>
+                        <span class="meta-value">${formatDate(doc.lastModified)}</span>
+                    </div>
+                    <div class="meta-item">
+                        <span class="meta-label">Author</span>
+                        <span class="meta-value">${doc.author}</span>
+                    </div>
+                    <div class="meta-item">
+                        <span class="meta-label">Size</span>
+                        <span class="meta-value">${doc.fileSize}</span>
+                    </div>
+                </div>
+                
+                <div class="doc-actions">
+                    <button class="doc-action" onclick="viewDocument('${doc.id}')">View</button>
+                    <button class="doc-action" onclick="editDocument('${doc.id}')">Edit</button>
+                    <button class="doc-action" onclick="downloadDocument('${doc.id}')">Download</button>
+                </div>
+            `;
+            
+            return card;
+        }
+
+        function getTypeIcon(type) {
+            const icons = {
+                policy: '🛡️',
+                procedure: '⚙️',
+                template: '📝',
+                external: '🔗'
+            };
+            return icons[type] || '📄';
+        }
+
+        function getStatusIcon(status) {
+            const icons = {
+                current: '✅',
+                draft: '📝',
+                review: '👁️',
+                approved: '✅',
+                archived: '📦'
+            };
+            return icons[status] || '📄';
+        }
+
+        function formatDate(dateString) {
+            const date = new Date(dateString);
+            return date.toLocaleDateString('en-GB', { 
+                day: '2-digit', 
+                month: '2-digit', 
+                year: '2-digit' 
+            });
+        }
+
+        function filterDocuments(type) {
+            // Update active nav link
+            document.querySelectorAll('.nav-link').forEach(link => link.classList.remove('active'));
+            event.target.classList.add('active');
+            
+            currentFilter = type;
+            let filteredDocs = allDocuments;
+            
+            if (type !== 'all') {
+                filteredDocs = allDocuments.filter(doc => doc.type === type);
+            }
+            
+            renderDocuments(filteredDocs);
+        }
+
+        function filterByStatus(status) {
+            const filteredDocs = allDocuments.filter(doc => doc.status === status);
+            renderDocuments(filteredDocs);
+        }
+
+        function filterByCategory(category) {
+            const filteredDocs = allDocuments.filter(doc => doc.category === category);
+            renderDocuments(filteredDocs);
+        }
+
+        function sortDocuments(sortType) {
+            // Update active filter button
+            document.querySelectorAll('.filter-btn').forEach(btn => btn.classList.remove('active'));
+            event.target.classList.add('active');
+            
+            let sortedDocs = [...allDocuments];
+            
+            switch (sortType) {
+                case 'recent':
+                    sortedDocs.sort((a, b) => new Date(b.lastModified) - new Date(a.lastModified));
+                    break;
+                case 'popular':
+                    sortedDocs.sort((a, b) => b.downloads - a.downloads);
+                    break;
+                case 'updated':
+                    sortedDocs.sort((a, b) => new Date(b.lastModified) - new Date(a.lastModified));
+                    break;
+            }
+            
+            renderDocuments(sortedDocs);
+        }
+
+        function searchDocuments(query) {
+            if (!query.trim()) {
+                renderDocuments(allDocuments);
+                return;
+            }
+            
+            const searchResults = allDocuments.filter(doc => 
+                doc.title.toLowerCase().includes(query.toLowerCase()) ||
+                doc.description.toLowerCase().includes(query.toLowerCase()) ||
+                doc.tags.some(tag => tag.toLowerCase().includes(query.toLowerCase()))
+            );
+            
+            renderDocuments(searchResults);
+        }
+
+        function createDocument() {
+            alert('Document creation wizard would be implemented here\n\nThis would open a modal with templates and document type selection.');
+        }
+
+        function createTemplate() {
+            alert('Template creation interface would be implemented here\n\nThis would provide tools for creating standardized forms and templates.');
+        }
+
+        function uploadDocument() {
+            alert('Document upload interface would be implemented here\n\nThis would allow file uploads with metadata extraction and categorization.');
+        }
+
+        function viewDocument(docId) {
+            const doc = allDocuments.find(d => d.id === docId);
+            if (doc) {
+                alert(`View Document: ${doc.title}\n\nThis would open the document viewer with version history and collaboration tools.`);
+            }
+        }
+
+        function editDocument(docId) {
+            const doc = allDocuments.find(d => d.id === docId);
+            if (doc) {
+                alert(`Edit Document: ${doc.title}\n\nThis would open the document editor with version control and collaborative editing.`);
+            }
+        }
+
+        function downloadDocument(docId) {
+            const doc = allDocuments.find(d => d.id === docId);
+            if (doc) {
+                alert(`Download: ${doc.title}\n\nFile size: ${doc.fileSize}\nThis would initiate the document download.`);
+            }
+        }
+
+        function animateOnLoad() {
+            // Trigger animations on scroll
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach((entry) => {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add('slide-in');
+                    }
+                });
+            }, {
+                threshold: 0.1
+            });
+
+            document.querySelectorAll('.document-card, .overview-card, .version-item').forEach((el) => {
+                observer.observe(el);
+            });
+        }
+    </script>
+</body>
+</html>

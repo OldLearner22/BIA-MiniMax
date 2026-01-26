@@ -1,0 +1,47 @@
+// Helper function to render a single role slot
+const renderRoleSlot = (team: BCTeamStructureType, roleId: string) => {
+    const assignmentKey = `${team.id}-${roleId}`;
+    const assignment = assignments[assignmentKey];
+    
+    return (
+        <div
+            key={roleId}
+            className={`bc-role-slot ${assignment ? 'has-assignment' : ''}`}
+            onDragOver={handleDragOver}
+            onDrop={(e) => handleDrop(e, team.id, roleId)}
+        >
+            <div className="bc-role-label">{getRoleLabel(roleId)}</div>
+            {assignment ? (
+                <div className="bc-assigned-person">
+                    <div className="bc-assigned-avatar">
+                        {assignment.personName
+                            .split(' ')
+                            .map((n) => n[0])
+                            .join('')}
+                    </div>
+                    <div className="bc-assigned-info">
+                        <div className="bc-assigned-name">
+                            {assignment.personName}
+                        </div>
+                        <div className="bc-assigned-role">
+                            {assignment.personTitle}
+                        </div>
+                    </div>
+                    <button
+                        className="bc-remove-btn"
+                        onClick={() => handleRemoveAssignment(team.id, roleId)}
+                    >
+                        ×
+                    </button>
+                </div>
+            ) : (
+                <div className="bc-empty-state">Drop person here</div>
+            )}
+        </div>
+    );
+};
+
+// In the team roles section, replace hardcoded roles with:
+<div className="bc-team-roles">
+    {getTeamRoles(team).map((roleId) => renderRoleSlot(team, roleId))}
+</div>

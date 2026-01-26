@@ -1,0 +1,1432 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Response Procedures - Nexus BCMS</title>
+    <link href="https://fonts.googleapis.com/css2?family=Sora:wght@300;400;500;600;700;800&family=Fira+Code:wght@400;500;600&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        :root {
+            /* Response-Focused Color Palette */
+            --response-void: #0D0E15;
+            --response-obsidian: #161825;
+            --response-charcoal: #20222E;
+            --response-graphite: #2D3040;
+            --response-steel: #484B5A;
+            --response-silver: #7B7F8F;
+            --response-pearl: #F4F5F8;
+            
+            /* Crisis Response Colors */
+            --critical-alert: #DC2626;
+            --urgent-orange: #EA580C;
+            --active-amber: #D97706;
+            --standby-green: #059669;
+            --command-blue: #2563EB;
+            --coordination-purple: #7C3AED;
+            
+            /* Procedure Status Colors */
+            --activated-red: #EF4444;
+            --executing-blue: #3B82F6;
+            --completed-green: #10B981;
+            --pending-yellow: #F59E0B;
+            --paused-gray: #6B7280;
+            
+            /* Team Colors */
+            --crisis-team: #DC2626;
+            --response-team: #EA580C;
+            --recovery-team: #059669;
+            --support-team: #3B82F6;
+            --external-team: #7C3AED;
+            
+            /* Gradients */
+            --gradient-critical: linear-gradient(135deg, #DC2626 0%, #B91C1C 100%);
+            --gradient-urgent: linear-gradient(135deg, #EA580C 0%, #C2410C 100%);
+            --gradient-active: linear-gradient(135deg, #D97706 0%, #B45309 100%);
+            --gradient-command: linear-gradient(135deg, #2563EB 0%, #1D4ED8 100%);
+            --gradient-coordination: linear-gradient(135deg, #7C3AED 0%, #6D28D9 100%);
+            --gradient-surface: linear-gradient(145deg, #161825 0%, #20222E 100%);
+            --gradient-glass: linear-gradient(135deg, rgba(255,255,255,0.04) 0%, rgba(255,255,255,0.02) 100%);
+            
+            /* Effects */
+            --shadow-soft: 0 2px 12px rgba(0,0,0,0.15);
+            --shadow-medium: 0 4px 20px rgba(0,0,0,0.2);
+            --shadow-strong: 0 8px 32px rgba(0,0,0,0.25);
+            --shadow-alert: 0 0 24px rgba(220, 38, 38, 0.3);
+            --blur-surface: blur(20px);
+            
+            /* Spacing */
+            --space-xs: 0.25rem;
+            --space-sm: 0.5rem;
+            --space-md: 1rem;
+            --space-lg: 1.5rem;
+            --space-xl: 2rem;
+            --space-2xl: 3rem;
+            --space-3xl: 4rem;
+            
+            --radius-sm: 6px;
+            --radius-md: 10px;
+            --radius-lg: 14px;
+            --radius-xl: 18px;
+            --radius-2xl: 24px;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Sora', system-ui, sans-serif;
+            background: var(--response-void);
+            color: var(--response-pearl);
+            line-height: 1.6;
+            overflow-x: hidden;
+            background-image: 
+                radial-gradient(circle at 25% 25%, rgba(220, 38, 38, 0.06) 0%, transparent 50%),
+                radial-gradient(circle at 75% 75%, rgba(37, 99, 235, 0.06) 0%, transparent 50%),
+                linear-gradient(180deg, var(--response-void) 0%, var(--response-obsidian) 100%);
+        }
+
+        .app-container {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Header */
+        .header {
+            background: rgba(22, 24, 37, 0.95);
+            backdrop-filter: var(--blur-surface);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+            padding: var(--space-lg) var(--space-xl);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: var(--gradient-critical);
+            opacity: 0.8;
+            animation: pulse-alert 2s infinite;
+        }
+
+        @keyframes pulse-alert {
+            0%, 100% { opacity: 0.8; }
+            50% { opacity: 1; }
+        }
+
+        .header-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            max-width: 1800px;
+            margin: 0 auto;
+        }
+
+        .header-brand {
+            display: flex;
+            align-items: center;
+            gap: var(--space-md);
+        }
+
+        .brand-icon {
+            width: 50px;
+            height: 50px;
+            background: var(--gradient-critical);
+            border-radius: var(--radius-xl);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            color: white;
+            font-weight: 700;
+            box-shadow: var(--shadow-alert);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .brand-icon::after {
+            content: '';
+            position: absolute;
+            top: -2px;
+            left: -2px;
+            right: -2px;
+            bottom: -2px;
+            background: var(--gradient-critical);
+            border-radius: var(--radius-xl);
+            z-index: -1;
+            animation: glow-pulse 3s infinite;
+        }
+
+        @keyframes glow-pulse {
+            0%, 100% { 
+                box-shadow: 0 0 20px rgba(220, 38, 38, 0.3);
+                transform: scale(1);
+            }
+            50% { 
+                box-shadow: 0 0 40px rgba(220, 38, 38, 0.6);
+                transform: scale(1.02);
+            }
+        }
+
+        .brand-text h1 {
+            font-size: 28px;
+            font-weight: 800;
+            background: var(--gradient-critical);
+            background-clip: text;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 2px;
+        }
+
+        .brand-text p {
+            font-size: 13px;
+            color: var(--response-silver);
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+        }
+
+        .header-actions {
+            display: flex;
+            gap: var(--space-sm);
+        }
+
+        .btn {
+            background: var(--gradient-surface);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: var(--radius-lg);
+            padding: var(--space-sm) var(--space-lg);
+            color: var(--response-pearl);
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            display: flex;
+            align-items: center;
+            gap: var(--space-sm);
+            text-decoration: none;
+            backdrop-filter: var(--blur-surface);
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-medium);
+            border-color: var(--critical-alert);
+        }
+
+        .btn.emergency {
+            background: var(--gradient-critical);
+            border-color: var(--critical-alert);
+            color: white;
+            font-weight: 700;
+            box-shadow: var(--shadow-alert);
+            animation: emergency-pulse 2s infinite;
+        }
+
+        @keyframes emergency-pulse {
+            0%, 100% { 
+                transform: scale(1);
+                box-shadow: var(--shadow-alert);
+            }
+            50% { 
+                transform: scale(1.02);
+                box-shadow: 0 0 32px rgba(220, 38, 38, 0.5);
+            }
+        }
+
+        .btn.urgent {
+            background: var(--gradient-urgent);
+            border-color: var(--urgent-orange);
+            color: white;
+        }
+
+        /* Main Content */
+        .main-content {
+            flex: 1;
+            padding: var(--space-xl);
+            max-width: 1800px;
+            margin: 0 auto;
+            width: 100%;
+        }
+
+        /* Crisis Status Dashboard */
+        .crisis-dashboard {
+            display: grid;
+            grid-template-columns: 1fr 350px;
+            gap: var(--space-2xl);
+            margin-bottom: var(--space-3xl);
+        }
+
+        .status-overview {
+            background: var(--gradient-surface);
+            backdrop-filter: var(--blur-surface);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: var(--radius-2xl);
+            padding: var(--space-2xl);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .status-overview::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: var(--gradient-critical);
+            opacity: 0.8;
+        }
+
+        .overview-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: var(--space-xl);
+        }
+
+        .crisis-level {
+            font-size: 14px;
+            font-weight: 700;
+            color: var(--critical-alert);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: var(--space-sm);
+        }
+
+        .status-title {
+            font-size: 36px;
+            font-weight: 800;
+            color: var(--response-pearl);
+            margin-bottom: var(--space-sm);
+            line-height: 1.1;
+        }
+
+        .status-description {
+            font-size: 16px;
+            color: var(--response-silver);
+            margin-bottom: var(--space-xl);
+            line-height: 1.5;
+        }
+
+        .activation-time {
+            display: flex;
+            align-items: center;
+            gap: var(--space-sm);
+            padding: var(--space-md);
+            background: rgba(220, 38, 38, 0.1);
+            border: 1px solid rgba(220, 38, 38, 0.2);
+            border-radius: var(--radius-lg);
+            color: var(--critical-alert);
+            font-weight: 600;
+        }
+
+        .status-metrics {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: var(--space-lg);
+            margin-top: var(--space-xl);
+        }
+
+        .metric-card {
+            text-align: center;
+            padding: var(--space-lg);
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            border-radius: var(--radius-xl);
+            transition: all 0.3s ease;
+        }
+
+        .metric-card:hover {
+            background: rgba(255, 255, 255, 0.05);
+            border-color: rgba(255, 255, 255, 0.1);
+        }
+
+        .metric-value {
+            font-size: 28px;
+            font-weight: 800;
+            color: var(--command-blue);
+            margin-bottom: var(--space-xs);
+            font-family: 'Fira Code', monospace;
+        }
+
+        .metric-label {
+            font-size: 12px;
+            color: var(--response-silver);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            font-weight: 600;
+        }
+
+        .crisis-timeline {
+            background: var(--gradient-surface);
+            backdrop-filter: var(--blur-surface);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: var(--radius-xl);
+            padding: var(--space-xl);
+            position: relative;
+        }
+
+        .timeline-header {
+            text-align: center;
+            margin-bottom: var(--space-lg);
+            padding-bottom: var(--space-md);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .timeline-title {
+            font-size: 18px;
+            font-weight: 700;
+            color: var(--response-pearl);
+            margin-bottom: var(--space-sm);
+        }
+
+        .timeline-events {
+            max-height: 400px;
+            overflow-y: auto;
+        }
+
+        .timeline-event {
+            display: flex;
+            gap: var(--space-md);
+            padding: var(--space-md);
+            margin-bottom: var(--space-sm);
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            border-radius: var(--radius-md);
+            transition: all 0.3s ease;
+        }
+
+        .timeline-event:hover {
+            background: rgba(255, 255, 255, 0.05);
+        }
+
+        .event-time {
+            font-family: 'Fira Code', monospace;
+            font-size: 12px;
+            color: var(--command-blue);
+            font-weight: 600;
+            min-width: 60px;
+        }
+
+        .event-content {
+            flex: 1;
+        }
+
+        .event-title {
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--response-pearl);
+            margin-bottom: var(--space-xs);
+        }
+
+        .event-description {
+            font-size: 12px;
+            color: var(--response-silver);
+            line-height: 1.4;
+        }
+
+        /* Response Procedures Grid */
+        .procedures-section {
+            margin-bottom: var(--space-3xl);
+        }
+
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: var(--space-2xl);
+            padding-bottom: var(--space-lg);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .section-title {
+            font-size: 32px;
+            font-weight: 800;
+            color: var(--response-pearl);
+        }
+
+        .procedures-controls {
+            display: flex;
+            gap: var(--space-sm);
+            align-items: center;
+        }
+
+        .filter-btn {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: var(--radius-md);
+            padding: var(--space-sm) var(--space-md);
+            color: var(--response-silver);
+            font-size: 12px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .filter-btn:hover,
+        .filter-btn.active {
+            background: var(--critical-alert);
+            color: white;
+            border-color: var(--critical-alert);
+        }
+
+        .procedures-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(450px, 1fr));
+            gap: var(--space-xl);
+        }
+
+        .procedure-card {
+            background: var(--gradient-surface);
+            backdrop-filter: var(--blur-surface);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: var(--radius-xl);
+            padding: var(--space-xl);
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            overflow: hidden;
+            cursor: pointer;
+        }
+
+        .procedure-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            opacity: 0.8;
+            transition: all 0.3s ease;
+        }
+
+        .procedure-card.critical::before {
+            background: var(--gradient-critical);
+        }
+
+        .procedure-card.urgent::before {
+            background: var(--gradient-urgent);
+        }
+
+        .procedure-card.active::before {
+            background: var(--gradient-active);
+        }
+
+        .procedure-card.command::before {
+            background: var(--gradient-command);
+        }
+
+        .procedure-card:hover {
+            transform: translateY(-6px);
+            box-shadow: var(--shadow-strong);
+            border-color: rgba(255, 255, 255, 0.2);
+        }
+
+        .procedure-card:hover::before {
+            height: 6px;
+        }
+
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: var(--space-lg);
+        }
+
+        .procedure-info {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .procedure-id {
+            font-family: 'Fira Code', monospace;
+            font-size: 12px;
+            color: var(--command-blue);
+            font-weight: 700;
+            margin-bottom: var(--space-xs);
+        }
+
+        .procedure-title {
+            font-size: 20px;
+            font-weight: 800;
+            color: var(--response-pearl);
+            margin-bottom: var(--space-sm);
+            line-height: 1.3;
+        }
+
+        .procedure-type {
+            display: inline-flex;
+            align-items: center;
+            gap: var(--space-xs);
+            padding: var(--space-xs) var(--space-sm);
+            border-radius: var(--radius-sm);
+            font-size: 11px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: var(--space-md);
+        }
+
+        .procedure-type.critical {
+            background: rgba(220, 38, 38, 0.15);
+            color: var(--critical-alert);
+            border: 1px solid rgba(220, 38, 38, 0.3);
+        }
+
+        .procedure-type.urgent {
+            background: rgba(234, 88, 12, 0.15);
+            color: var(--urgent-orange);
+            border: 1px solid rgba(234, 88, 12, 0.3);
+        }
+
+        .procedure-type.active {
+            background: rgba(217, 119, 6, 0.15);
+            color: var(--active-amber);
+            border: 1px solid rgba(217, 119, 6, 0.3);
+        }
+
+        .procedure-type.command {
+            background: rgba(37, 99, 235, 0.15);
+            color: var(--command-blue);
+            border: 1px solid rgba(37, 99, 235, 0.3);
+        }
+
+        .procedure-badges {
+            display: flex;
+            flex-direction: column;
+            gap: var(--space-sm);
+            align-items: flex-end;
+        }
+
+        .status-badge {
+            padding: var(--space-xs) var(--space-sm);
+            border-radius: var(--radius-sm);
+            font-size: 11px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            text-align: center;
+            min-width: 80px;
+        }
+
+        .status-badge.activated {
+            background: rgba(239, 68, 68, 0.15);
+            color: var(--activated-red);
+            border: 1px solid rgba(239, 68, 68, 0.3);
+        }
+
+        .status-badge.executing {
+            background: rgba(59, 130, 246, 0.15);
+            color: var(--executing-blue);
+            border: 1px solid rgba(59, 130, 246, 0.3);
+        }
+
+        .status-badge.completed {
+            background: rgba(16, 185, 129, 0.15);
+            color: var(--completed-green);
+            border: 1px solid rgba(16, 185, 129, 0.3);
+        }
+
+        .status-badge.pending {
+            background: rgba(245, 158, 11, 0.15);
+            color: var(--pending-yellow);
+            border: 1px solid rgba(245, 158, 11, 0.3);
+        }
+
+        .team-badge {
+            padding: var(--space-xs) var(--space-sm);
+            border-radius: var(--radius-sm);
+            font-size: 10px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-top: var(--space-xs);
+        }
+
+        .team-badge.crisis {
+            background: rgba(220, 38, 38, 0.15);
+            color: var(--crisis-team);
+            border: 1px solid rgba(220, 38, 38, 0.3);
+        }
+
+        .team-badge.response {
+            background: rgba(234, 88, 12, 0.15);
+            color: var(--response-team);
+            border: 1px solid rgba(234, 88, 12, 0.3);
+        }
+
+        .team-badge.recovery {
+            background: rgba(5, 150, 105, 0.15);
+            color: var(--recovery-team);
+            border: 1px solid rgba(5, 150, 105, 0.3);
+        }
+
+        .team-badge.support {
+            background: rgba(59, 130, 246, 0.15);
+            color: var(--support-team);
+            border: 1px solid rgba(59, 130, 246, 0.3);
+        }
+
+        .procedure-description {
+            font-size: 14px;
+            color: var(--response-silver);
+            line-height: 1.6;
+            margin-bottom: var(--space-lg);
+        }
+
+        .steps-section {
+            margin-bottom: var(--space-lg);
+        }
+
+        .steps-header {
+            font-size: 14px;
+            font-weight: 700;
+            color: var(--response-pearl);
+            margin-bottom: var(--space-md);
+            display: flex;
+            align-items: center;
+            gap: var(--space-sm);
+        }
+
+        .steps-list {
+            display: flex;
+            flex-direction: column;
+            gap: var(--space-sm);
+        }
+
+        .step-item {
+            display: flex;
+            align-items: flex-start;
+            gap: var(--space-sm);
+            padding: var(--space-sm);
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            border-radius: var(--radius-md);
+            transition: all 0.3s ease;
+        }
+
+        .step-item:hover {
+            background: rgba(255, 255, 255, 0.05);
+        }
+
+        .step-number {
+            width: 24px;
+            height: 24px;
+            background: var(--command-blue);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+            font-weight: 700;
+            color: white;
+            flex-shrink: 0;
+        }
+
+        .step-content {
+            flex: 1;
+        }
+
+        .step-title {
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--response-pearl);
+            margin-bottom: var(--space-xs);
+        }
+
+        .step-description {
+            font-size: 12px;
+            color: var(--response-silver);
+            line-height: 1.4;
+        }
+
+        .procedure-metrics {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: var(--space-md);
+            margin-bottom: var(--space-lg);
+            padding: var(--space-md);
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            border-radius: var(--radius-lg);
+        }
+
+        .metric-item {
+            text-align: center;
+        }
+
+        .metric-item-value {
+            font-size: 16px;
+            font-weight: 700;
+            color: var(--response-pearl);
+            font-family: 'Fira Code', monospace;
+            margin-bottom: var(--space-xs);
+        }
+
+        .metric-item-label {
+            font-size: 10px;
+            color: var(--response-silver);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .card-actions {
+            display: flex;
+            gap: var(--space-sm);
+            margin-top: var(--space-lg);
+        }
+
+        .action-btn {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: var(--radius-md);
+            padding: var(--space-sm) var(--space-md);
+            color: var(--response-pearl);
+            font-size: 12px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            flex: 1;
+            text-align: center;
+        }
+
+        .action-btn:hover {
+            background: var(--command-blue);
+            color: white;
+            border-color: var(--command-blue);
+        }
+
+        .action-btn.primary {
+            background: var(--gradient-critical);
+            border-color: var(--critical-alert);
+            color: white;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 1200px) {
+            .crisis-dashboard {
+                grid-template-columns: 1fr;
+            }
+            
+            .procedures-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .main-content {
+                padding: var(--space-md);
+            }
+            
+            .status-metrics {
+                grid-template-columns: 1fr;
+            }
+            
+            .procedure-metrics {
+                grid-template-columns: 1fr;
+            }
+            
+            .header-content {
+                flex-direction: column;
+                gap: var(--space-md);
+                text-align: center;
+            }
+        }
+
+        /* Animations */
+        @keyframes slideInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .slide-in {
+            animation: slideInUp 0.6s ease-out forwards;
+        }
+
+        .slide-in:nth-child(2) { animation-delay: 0.1s; }
+        .slide-in:nth-child(3) { animation-delay: 0.2s; }
+        .slide-in:nth-child(4) { animation-delay: 0.3s; }
+        .slide-in:nth-child(5) { animation-delay: 0.4s; }
+
+        /* Scrollbar Styling */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: var(--critical-alert);
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: var(--urgent-orange);
+        }
+    </style>
+</head>
+<body>
+    <div class="app-container">
+        <!-- Header -->
+        <header class="header">
+            <div class="header-content">
+                <div class="header-brand">
+                    <div class="brand-icon">🚨</div>
+                    <div class="brand-text">
+                        <h1>Response Procedures</h1>
+                        <p>Crisis Response Coordination</p>
+                    </div>
+                </div>
+                <div class="header-actions">
+                    <button class="btn" onclick="viewPlaybook()">
+                        <span>📋</span> Playbook
+                    </button>
+                    <button class="btn urgent" onclick="escalateIncident()">
+                        <span>📢</span> Escalate
+                    </button>
+                    <button class="btn emergency" onclick="activateEmergency()">
+                        <span>🚨</span> Emergency
+                    </button>
+                </div>
+            </div>
+        </header>
+
+        <main class="main-content">
+            <!-- Crisis Status Dashboard -->
+            <section class="crisis-dashboard">
+                <div class="status-overview">
+                    <div class="overview-header">
+                        <div>
+                            <div class="crisis-level">Crisis Level Alpha</div>
+                            <h1 class="status-title">Active Response</h1>
+                            <p class="status-description">
+                                Coordinated crisis response procedures activated. All response teams mobilized 
+                                and executing predetermined protocols for business continuity assurance.
+                            </p>
+                            <div class="activation-time">
+                                <span>⏰</span>
+                                <span>Activated: 14:23 GMT | Duration: 2h 15m</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="status-metrics">
+                        <div class="metric-card">
+                            <div class="metric-value">8</div>
+                            <div class="metric-label">Active Procedures</div>
+                        </div>
+                        <div class="metric-card">
+                            <div class="metric-value">24</div>
+                            <div class="metric-label">Team Members</div>
+                        </div>
+                        <div class="metric-card">
+                            <div class="metric-value">94%</div>
+                            <div class="metric-label">Completion Rate</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="crisis-timeline">
+                    <div class="timeline-header">
+                        <h2 class="timeline-title">Response Timeline</h2>
+                        <p>Real-time activity log</p>
+                    </div>
+                    
+                    <div class="timeline-events">
+                        <div class="timeline-event">
+                            <div class="event-time">16:38</div>
+                            <div class="event-content">
+                                <div class="event-title">Communication Team Activated</div>
+                                <div class="event-description">External communications commenced with all stakeholders</div>
+                            </div>
+                        </div>
+                        
+                        <div class="timeline-event">
+                            <div class="event-time">16:25</div>
+                            <div class="event-content">
+                                <div class="event-title">Recovery Team Deployed</div>
+                                <div class="event-description">IT recovery team activated secondary data center</div>
+                            </div>
+                        </div>
+                        
+                        <div class="timeline-event">
+                            <div class="event-time">15:45</div>
+                            <div class="event-content">
+                                <div class="event-title">Crisis Team Mobilized</div>
+                                <div class="event-description">Emergency Operations Center fully activated</div>
+                            </div>
+                        </div>
+                        
+                        <div class="timeline-event">
+                            <div class="event-time">15:30</div>
+                            <div class="event-content">
+                                <div class="event-title">Initial Assessment Completed</div>
+                                <div class="event-description">Impact analysis and resource requirements determined</div>
+                            </div>
+                        </div>
+                        
+                        <div class="timeline-event">
+                            <div class="event-time">14:23</div>
+                            <div class="event-content">
+                                <div class="event-title">Crisis Response Activated</div>
+                                <div class="event-description">Level Alpha crisis procedures initiated by Crisis Manager</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Response Procedures -->
+            <section class="procedures-section">
+                <div class="section-header">
+                    <h2 class="section-title">Response Procedures</h2>
+                    <div class="procedures-controls">
+                        <button class="filter-btn active" onclick="filterProcedures('all')">All</button>
+                        <button class="filter-btn" onclick="filterProcedures('critical')">Critical</button>
+                        <button class="filter-btn" onclick="filterProcedures('active')">Active</button>
+                        <button class="filter-btn" onclick="filterProcedures('completed')">Completed</button>
+                    </div>
+                </div>
+                
+                <div class="procedures-grid" id="proceduresGrid">
+                    <!-- Procedures will be populated here -->
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <script>
+        // Global variables
+        let responseProcedures = [];
+
+        // Initialize application
+        document.addEventListener('DOMContentLoaded', function() {
+            loadResponseProcedures();
+            renderProcedures();
+            updateTimeline();
+            animateOnLoad();
+        });
+
+        // Sample response procedures data
+        function loadResponseProcedures() {
+            responseProcedures = [
+                {
+                    id: 'RP-001',
+                    title: 'Emergency Operations Center Activation',
+                    type: 'critical',
+                    status: 'completed',
+                    team: 'crisis',
+                    description: 'Immediate activation of the Emergency Operations Center with full crisis management team mobilization.',
+                    steps: [
+                        {
+                            title: 'Notify Crisis Manager',
+                            description: 'Alert designated Crisis Manager via priority communication channels'
+                        },
+                        {
+                            title: 'Activate EOC',
+                            description: 'Open Emergency Operations Center and establish command structure'
+                        },
+                        {
+                            title: 'Mobilize Core Team',
+                            description: 'Assemble crisis management core team within 30 minutes'
+                        },
+                        {
+                            title: 'Establish Communications',
+                            description: 'Set up secure communication channels and status reporting'
+                        }
+                    ],
+                    metrics: {
+                        duration: '45min',
+                        resources: '8 people',
+                        priority: 'P0'
+                    }
+                },
+                {
+                    id: 'RP-002',
+                    title: 'Stakeholder Notification Protocol',
+                    type: 'urgent',
+                    status: 'executing',
+                    team: 'response',
+                    description: 'Systematic notification of all internal and external stakeholders using predetermined communication templates.',
+                    steps: [
+                        {
+                            title: 'Internal Notifications',
+                            description: 'Notify executive team, department heads, and key personnel'
+                        },
+                        {
+                            title: 'Customer Communications',
+                            description: 'Issue customer notifications via multiple channels'
+                        },
+                        {
+                            title: 'Regulatory Reporting',
+                            description: 'Submit required regulatory notifications within timeframes'
+                        },
+                        {
+                            title: 'Media Response',
+                            description: 'Coordinate media response and public communications'
+                        }
+                    ],
+                    metrics: {
+                        duration: '2hrs',
+                        resources: '12 people',
+                        priority: 'P1'
+                    }
+                },
+                {
+                    id: 'RP-003',
+                    title: 'IT System Recovery Initiation',
+                    type: 'critical',
+                    status: 'executing',
+                    team: 'recovery',
+                    description: 'Activate IT disaster recovery procedures including failover to secondary systems and data restoration.',
+                    steps: [
+                        {
+                            title: 'System Assessment',
+                            description: 'Evaluate extent of IT system damage and recovery requirements'
+                        },
+                        {
+                            title: 'Failover Execution',
+                            description: 'Switch to backup systems and alternative processing capabilities'
+                        },
+                        {
+                            title: 'Data Verification',
+                            description: 'Verify data integrity and completeness of recovered systems'
+                        },
+                        {
+                            title: 'User Access Restoration',
+                            description: 'Restore user access and validate system functionality'
+                        }
+                    ],
+                    metrics: {
+                        duration: '4hrs',
+                        resources: '15 people',
+                        priority: 'P0'
+                    }
+                },
+                {
+                    id: 'RP-004',
+                    title: 'Alternative Site Activation',
+                    type: 'urgent',
+                    status: 'activated',
+                    team: 'recovery',
+                    description: 'Mobilization of personnel to alternative work sites with full operational capability setup.',
+                    steps: [
+                        {
+                            title: 'Site Preparation',
+                            description: 'Prepare alternative site infrastructure and equipment'
+                        },
+                        {
+                            title: 'Personnel Deployment',
+                            description: 'Deploy critical personnel to alternative locations'
+                        },
+                        {
+                            title: 'System Configuration',
+                            description: 'Configure systems and establish connectivity'
+                        },
+                        {
+                            title: 'Operations Verification',
+                            description: 'Verify full operational capability at alternative site'
+                        }
+                    ],
+                    metrics: {
+                        duration: '6hrs',
+                        resources: '25 people',
+                        priority: 'P1'
+                    }
+                },
+                {
+                    id: 'RP-005',
+                    title: 'Vendor Emergency Coordination',
+                    type: 'active',
+                    status: 'pending',
+                    team: 'support',
+                    description: 'Coordinate with critical vendors and suppliers to maintain supply chain continuity during crisis.',
+                    steps: [
+                        {
+                            title: 'Vendor Assessment',
+                            description: 'Assess vendor impact and alternative sourcing options'
+                        },
+                        {
+                            title: 'Emergency Agreements',
+                            description: 'Activate emergency supplier agreements and contracts'
+                        },
+                        {
+                            title: 'Logistics Coordination',
+                            description: 'Coordinate alternative logistics and delivery arrangements'
+                        },
+                        {
+                            title: 'Quality Assurance',
+                            description: 'Maintain quality standards with alternative suppliers'
+                        }
+                    ],
+                    metrics: {
+                        duration: '8hrs',
+                        resources: '6 people',
+                        priority: 'P2'
+                    }
+                },
+                {
+                    id: 'RP-006',
+                    title: 'Financial Operations Continuity',
+                    type: 'command',
+                    status: 'activated',
+                    team: 'support',
+                    description: 'Ensure continuity of critical financial operations including payments, settlements, and reporting.',
+                    steps: [
+                        {
+                            title: 'Payment Systems Check',
+                            description: 'Verify payment processing capabilities and alternatives'
+                        },
+                        {
+                            title: 'Cash Flow Management',
+                            description: 'Activate emergency cash flow procedures'
+                        },
+                        {
+                            title: 'Regulatory Reporting',
+                            description: 'Maintain required financial reporting obligations'
+                        },
+                        {
+                            title: 'Audit Trail Preservation',
+                            description: 'Ensure financial audit trails remain intact'
+                        }
+                    ],
+                    metrics: {
+                        duration: '3hrs',
+                        resources: '8 people',
+                        priority: 'P1'
+                    }
+                }
+            ];
+        }
+
+        function renderProcedures(filteredProcedures = null) {
+            const container = document.getElementById('proceduresGrid');
+            container.innerHTML = '';
+            
+            const procedures = filteredProcedures || responseProcedures;
+            
+            procedures.forEach((procedure, index) => {
+                const card = createProcedureCard(procedure);
+                card.style.animationDelay = `${index * 0.1}s`;
+                card.classList.add('slide-in');
+                container.appendChild(card);
+            });
+        }
+
+        function createProcedureCard(procedure) {
+            const card = document.createElement('div');
+            card.className = `procedure-card ${procedure.type}`;
+            
+            const typeIcon = getTypeIcon(procedure.type);
+            const teamIcon = getTeamIcon(procedure.team);
+            
+            card.innerHTML = `
+                <div class="card-header">
+                    <div class="procedure-info">
+                        <div class="procedure-id">${procedure.id}</div>
+                        <h3 class="procedure-title">${procedure.title}</h3>
+                        <div class="procedure-type ${procedure.type}">
+                            ${typeIcon} ${procedure.type.toUpperCase()}
+                        </div>
+                    </div>
+                    <div class="procedure-badges">
+                        <div class="status-badge ${procedure.status}">${procedure.status}</div>
+                        <div class="team-badge ${procedure.team}">${teamIcon} ${procedure.team}</div>
+                    </div>
+                </div>
+                
+                <div class="procedure-description">
+                    ${procedure.description}
+                </div>
+                
+                <div class="steps-section">
+                    <div class="steps-header">
+                        <span>📋</span> Procedure Steps (${procedure.steps.length})
+                    </div>
+                    <div class="steps-list">
+                        ${procedure.steps.slice(0, 3).map((step, index) => `
+                            <div class="step-item">
+                                <div class="step-number">${index + 1}</div>
+                                <div class="step-content">
+                                    <div class="step-title">${step.title}</div>
+                                    <div class="step-description">${step.description}</div>
+                                </div>
+                            </div>
+                        `).join('')}
+                        ${procedure.steps.length > 3 ? `
+                            <div class="step-item">
+                                <div class="step-number">+</div>
+                                <div class="step-content">
+                                    <div class="step-title">${procedure.steps.length - 3} more steps</div>
+                                    <div class="step-description">View full procedure for complete details</div>
+                                </div>
+                            </div>
+                        ` : ''}
+                    </div>
+                </div>
+                
+                <div class="procedure-metrics">
+                    <div class="metric-item">
+                        <div class="metric-item-value">${procedure.metrics.duration}</div>
+                        <div class="metric-item-label">Duration</div>
+                    </div>
+                    <div class="metric-item">
+                        <div class="metric-item-value">${procedure.metrics.resources}</div>
+                        <div class="metric-item-label">Resources</div>
+                    </div>
+                    <div class="metric-item">
+                        <div class="metric-item-value">${procedure.metrics.priority}</div>
+                        <div class="metric-item-label">Priority</div>
+                    </div>
+                </div>
+                
+                <div class="card-actions">
+                    <button class="action-btn" onclick="viewProcedure('${procedure.id}')">View</button>
+                    <button class="action-btn" onclick="updateStatus('${procedure.id}')">Update</button>
+                    <button class="action-btn primary" onclick="executeProcedure('${procedure.id}')">Execute</button>
+                </div>
+            `;
+            
+            return card;
+        }
+
+        function getTypeIcon(type) {
+            const icons = {
+                critical: '🚨',
+                urgent: '⚡',
+                active: '⚙️',
+                command: '🎯'
+            };
+            return icons[type] || '📋';
+        }
+
+        function getTeamIcon(team) {
+            const icons = {
+                crisis: '🚨',
+                response: '⚡',
+                recovery: '🔄',
+                support: '🛠️'
+            };
+            return icons[team] || '👥';
+        }
+
+        function filterProcedures(filter) {
+            // Update active filter button
+            document.querySelectorAll('.filter-btn').forEach(btn => btn.classList.remove('active'));
+            event.target.classList.add('active');
+            
+            let filteredProcedures = responseProcedures;
+            if (filter !== 'all') {
+                if (filter === 'completed' || filter === 'active') {
+                    filteredProcedures = responseProcedures.filter(proc => proc.status === filter);
+                } else {
+                    filteredProcedures = responseProcedures.filter(proc => proc.type === filter);
+                }
+            }
+            
+            renderProcedures(filteredProcedures);
+        }
+
+        function viewPlaybook() {
+            alert('Response playbook interface would be implemented here\n\nThis would show the complete crisis response playbook with all procedures, checklists, and contact information.');
+        }
+
+        function escalateIncident() {
+            if (confirm('Escalate this incident to the next level?\n\nThis will notify senior management and activate additional response resources.')) {
+                alert('Incident escalated successfully!\n\nSenior management has been notified and additional resources are being mobilized.');
+            }
+        }
+
+        function activateEmergency() {
+            if (confirm('ACTIVATE EMERGENCY PROCEDURES?\n\nThis will trigger all emergency response protocols and notify all response teams immediately.')) {
+                alert('🚨 EMERGENCY PROCEDURES ACTIVATED 🚨\n\nAll response teams have been notified and emergency protocols are now in effect.');
+            }
+        }
+
+        function viewProcedure(procedureId) {
+            const procedure = responseProcedures.find(p => p.id === procedureId);
+            if (procedure) {
+                alert(`Procedure: ${procedure.title}\n\nStatus: ${procedure.status}\nTeam: ${procedure.team}\nSteps: ${procedure.steps.length}`);
+            }
+        }
+
+        function updateStatus(procedureId) {
+            const procedure = responseProcedures.find(p => p.id === procedureId);
+            if (procedure) {
+                alert(`Update status for: ${procedure.title}\n\nStatus update interface would be implemented here.`);
+            }
+        }
+
+        function executeProcedure(procedureId) {
+            const procedure = responseProcedures.find(p => p.id === procedureId);
+            if (procedure) {
+                if (confirm(`Execute procedure: ${procedure.title}?\n\nThis will begin execution of all procedure steps.`)) {
+                    alert(`Procedure execution initiated: ${procedure.title}\n\nTeam notifications sent and execution tracking activated.`);
+                }
+            }
+        }
+
+        function updateTimeline() {
+            // Simulate real-time timeline updates
+            setInterval(() => {
+                const now = new Date();
+                const timeString = now.toLocaleTimeString('en-GB', { 
+                    hour: '2-digit', 
+                    minute: '2-digit',
+                    hour12: false 
+                });
+                
+                // Update activation time duration
+                const activationTime = document.querySelector('.activation-time span:last-child');
+                if (activationTime) {
+                    const startTime = new Date();
+                    startTime.setHours(14, 23, 0, 0);
+                    const duration = Math.floor((now - startTime) / (1000 * 60));
+                    const hours = Math.floor(duration / 60);
+                    const minutes = duration % 60;
+                    activationTime.textContent = `Activated: 14:23 GMT | Duration: ${hours}h ${minutes}m`;
+                }
+            }, 60000); // Update every minute
+        }
+
+        function animateOnLoad() {
+            // Trigger animations on scroll
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach((entry) => {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add('slide-in');
+                    }
+                });
+            }, {
+                threshold: 0.1
+            });
+
+            document.querySelectorAll('.procedure-card, .timeline-event').forEach((el) => {
+                observer.observe(el);
+            });
+        }
+    </script>
+</body>
+</html>

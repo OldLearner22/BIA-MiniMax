@@ -1,0 +1,818 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BC Team Structure - Organigram</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #1a1a2e;
+            --primary-light: #16213e;
+            --secondary: #0f3460;
+            --accent: #e94560;
+            --accent-light: #ff6b7a;
+            --success: #00d2d3;
+            --warning: #ff9f43;
+            --text-primary: #ffffff;
+            --text-secondary: #a0a0a0;
+            --text-muted: #6b7280;
+            --surface: #252545;
+            --surface-light: #2d2d54;
+            --border: #404063;
+            --shadow: rgba(0, 0, 0, 0.3);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, sans-serif;
+            background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+            min-height: 100vh;
+            color: var(--text-primary);
+            overflow: hidden;
+        }
+
+        .app-container {
+            display: flex;
+            height: 100vh;
+        }
+
+        .sidebar {
+            width: 320px;
+            background: var(--surface);
+            border-right: 1px solid var(--border);
+            display: flex;
+            flex-direction: column;
+            z-index: 100;
+        }
+
+        .sidebar-header {
+            padding: 1.5rem;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .sidebar-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 0.5rem;
+        }
+
+        .sidebar-subtitle {
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+        }
+
+        .people-pool {
+            flex: 1;
+            padding: 1rem;
+            overflow-y: auto;
+        }
+
+        .pool-section {
+            margin-bottom: 2rem;
+        }
+
+        .pool-title {
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: var(--text-secondary);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            margin-bottom: 1rem;
+        }
+
+        .person-card {
+            background: var(--surface-light);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 1rem;
+            margin-bottom: 0.75rem;
+            cursor: move;
+            transition: all 0.2s ease;
+            position: relative;
+            user-select: none;
+        }
+
+        .person-card:hover {
+            border-color: var(--accent);
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px var(--shadow);
+        }
+
+        .person-card.dragging {
+            opacity: 0.5;
+            transform: rotate(5deg);
+            z-index: 1000;
+        }
+
+        .person-avatar {
+            width: 48px;
+            height: 48px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--accent) 0%, var(--accent-light) 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 1.2rem;
+            margin-bottom: 0.75rem;
+            color: white;
+        }
+
+        .person-name {
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: 0.25rem;
+        }
+
+        .person-title {
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+            margin-bottom: 0.5rem;
+        }
+
+        .person-contact {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            font-family: 'JetBrains Mono', monospace;
+        }
+
+        .main-canvas {
+            flex: 1;
+            position: relative;
+            background: 
+                radial-gradient(circle at 20% 80%, rgba(233, 69, 96, 0.1) 0%, transparent 50%),
+                radial-gradient(circle at 80% 20%, rgba(0, 210, 211, 0.1) 0%, transparent 50%),
+                linear-gradient(135deg, var(--primary-light) 0%, var(--secondary) 100%);
+            overflow: hidden;
+        }
+
+        .canvas-header {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            padding: 1.5rem;
+            background: rgba(26, 26, 46, 0.9);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid var(--border);
+            z-index: 50;
+        }
+
+        .canvas-title {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 0.5rem;
+        }
+
+        .canvas-controls {
+            display: flex;
+            gap: 1rem;
+            align-items: center;
+        }
+
+        .control-btn {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 0.5rem 1rem;
+            color: var(--text-secondary);
+            font-size: 0.85rem;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .control-btn:hover {
+            background: var(--accent);
+            color: white;
+            border-color: var(--accent);
+        }
+
+        .organigram-container {
+            position: absolute;
+            top: 120px;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            padding: 2rem;
+            overflow: auto;
+        }
+
+        .team-node {
+            position: absolute;
+            background: var(--surface);
+            border: 2px solid var(--border);
+            border-radius: 16px;
+            padding: 1.5rem;
+            min-width: 280px;
+            max-width: 350px;
+            cursor: move;
+            transition: all 0.3s ease;
+            backdrop-filter: blur(10px);
+        }
+
+        .team-node:hover {
+            border-color: var(--accent);
+            box-shadow: 0 12px 30px var(--shadow);
+            transform: translateY(-4px);
+        }
+
+        .team-node.drag-over {
+            border-color: var(--success);
+            background: rgba(0, 210, 211, 0.1);
+        }
+
+        .team-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 1rem;
+            padding-bottom: 0.75rem;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .team-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 8px;
+            background: linear-gradient(135deg, var(--accent) 0%, var(--accent-light) 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 1rem;
+            font-size: 1.2rem;
+        }
+
+        .team-info h3 {
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 0.25rem;
+        }
+
+        .team-info p {
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+        }
+
+        .team-roles {
+            space-y: 0.75rem;
+        }
+
+        .role-slot {
+            background: var(--primary-light);
+            border: 2px dashed var(--border);
+            border-radius: 12px;
+            padding: 1rem;
+            margin-bottom: 0.75rem;
+            min-height: 80px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s ease;
+            position: relative;
+        }
+
+        .role-slot.has-assignment {
+            border-style: solid;
+            border-color: var(--success);
+            background: rgba(0, 210, 211, 0.05);
+        }
+
+        .role-slot.drop-target {
+            border-color: var(--warning);
+            background: rgba(255, 159, 67, 0.1);
+            transform: scale(1.02);
+        }
+
+        .role-label {
+            position: absolute;
+            top: -8px;
+            left: 12px;
+            background: var(--surface);
+            padding: 0.25rem 0.5rem;
+            border-radius: 4px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            color: var(--text-secondary);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .assigned-person {
+            display: flex;
+            align-items: center;
+            width: 100%;
+        }
+
+        .assigned-avatar {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--success) 0%, #00f0f1 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            font-size: 0.9rem;
+            margin-right: 0.75rem;
+            color: white;
+        }
+
+        .assigned-info {
+            flex: 1;
+        }
+
+        .assigned-name {
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: 0.1rem;
+        }
+
+        .assigned-role {
+            font-size: 0.8rem;
+            color: var(--success);
+        }
+
+        .remove-btn {
+            background: var(--accent);
+            border: none;
+            border-radius: 50%;
+            width: 24px;
+            height: 24px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            cursor: pointer;
+            opacity: 0.7;
+            transition: all 0.2s ease;
+        }
+
+        .remove-btn:hover {
+            opacity: 1;
+            transform: scale(1.1);
+        }
+
+        .connection-line {
+            position: absolute;
+            border-left: 2px solid var(--border);
+            z-index: -1;
+            opacity: 0.6;
+        }
+
+        .connection-line::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -4px;
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: var(--accent);
+        }
+
+        .empty-state {
+            text-align: center;
+            color: var(--text-muted);
+            font-style: italic;
+            padding: 2rem;
+        }
+
+        .save-indicator {
+            position: fixed;
+            top: 1rem;
+            right: 1rem;
+            background: var(--success);
+            color: white;
+            padding: 0.5rem 1rem;
+            border-radius: 8px;
+            font-size: 0.85rem;
+            font-weight: 500;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+            z-index: 1000;
+        }
+
+        .save-indicator.show {
+            opacity: 1;
+        }
+
+        /* Scrollbar styling */
+        ::-webkit-scrollbar {
+            width: 6px;
+            height: 6px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: var(--surface);
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: var(--border);
+            border-radius: 3px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: var(--text-muted);
+        }
+    </style>
+</head>
+<body>
+    <div class="app-container">
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <h1 class="sidebar-title">People Pool</h1>
+                <p class="sidebar-subtitle">Drag people into BC team roles</p>
+            </div>
+            
+            <div class="people-pool" id="peoplePool">
+                <div class="pool-section">
+                    <h2 class="pool-title">Available Personnel</h2>
+                    
+                    <div class="person-card" draggable="true" data-person-id="1">
+                        <div class="person-avatar">JS</div>
+                        <div class="person-name">James Smith</div>
+                        <div class="person-title">IT Director</div>
+                        <div class="person-contact">james.smith@company.com</div>
+                    </div>
+                    
+                    <div class="person-card" draggable="true" data-person-id="2">
+                        <div class="person-avatar">MJ</div>
+                        <div class="person-name">Maria Johnson</div>
+                        <div class="person-title">Operations Manager</div>
+                        <div class="person-contact">maria.johnson@company.com</div>
+                    </div>
+                    
+                    <div class="person-card" draggable="true" data-person-id="3">
+                        <div class="person-avatar">RW</div>
+                        <div class="person-name">Robert Williams</div>
+                        <div class="person-title">Communications Director</div>
+                        <div class="person-contact">robert.williams@company.com</div>
+                    </div>
+                    
+                    <div class="person-card" draggable="true" data-person-id="4">
+                        <div class="person-avatar">SB</div>
+                        <div class="person-name">Sarah Brown</div>
+                        <div class="person-title">HR Manager</div>
+                        <div class="person-contact">sarah.brown@company.com</div>
+                    </div>
+                    
+                    <div class="person-card" draggable="true" data-person-id="5">
+                        <div class="person-avatar">DM</div>
+                        <div class="person-name">David Miller</div>
+                        <div class="person-title">Security Manager</div>
+                        <div class="person-contact">david.miller@company.com</div>
+                    </div>
+                </div>
+                
+                <div class="pool-section">
+                    <h2 class="pool-title">External Contacts</h2>
+                    
+                    <div class="person-card" draggable="true" data-person-id="6">
+                        <div class="person-avatar">LA</div>
+                        <div class="person-name">Lisa Anderson</div>
+                        <div class="person-title">Emergency Services Liaison</div>
+                        <div class="person-contact">l.anderson@emergency.gov</div>
+                    </div>
+                    
+                    <div class="person-card" draggable="true" data-person-id="7">
+                        <div class="person-avatar">PT</div>
+                        <div class="person-name">Paul Thompson</div>
+                        <div class="person-title">Legal Counsel</div>
+                        <div class="person-contact">paul.thompson@lawfirm.com</div>
+                    </div>
+                </div>
+            </div>
+        </aside>
+
+        <main class="main-canvas">
+            <div class="canvas-header">
+                <h1 class="canvas-title">BC Team Structure</h1>
+                <div class="canvas-controls">
+                    <button class="control-btn" onclick="saveStructure()">💾 Save Structure</button>
+                    <button class="control-btn" onclick="resetPositions()">🔄 Reset Layout</button>
+                    <button class="control-btn" onclick="exportStructure()">📊 Export Chart</button>
+                </div>
+            </div>
+
+            <div class="organigram-container" id="organigramContainer">
+                <!-- Crisis Management Team -->
+                <div class="team-node" id="team-1" style="top: 50px; left: 400px;" data-team-id="crisis-team">
+                    <div class="team-header">
+                        <div class="team-icon">🎯</div>
+                        <div class="team-info">
+                            <h3>Crisis Management Team</h3>
+                            <p>Executive crisis response coordination</p>
+                        </div>
+                    </div>
+                    <div class="team-roles">
+                        <div class="role-slot" data-role="crisis-manager" ondrop="dropPerson(event)" ondragover="allowDrop(event)">
+                            <div class="role-label">Crisis Manager</div>
+                            <div class="empty-state">Drop person here</div>
+                        </div>
+                        <div class="role-slot" data-role="deputy-manager" ondrop="dropPerson(event)" ondragover="allowDrop(event)">
+                            <div class="role-label">Deputy Manager</div>
+                            <div class="empty-state">Drop person here</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- IT Recovery Team -->
+                <div class="team-node" id="team-2" style="top: 300px; left: 100px;" data-team-id="it-recovery">
+                    <div class="team-header">
+                        <div class="team-icon">💻</div>
+                        <div class="team-info">
+                            <h3>IT Recovery Team</h3>
+                            <p>Technology infrastructure recovery</p>
+                        </div>
+                    </div>
+                    <div class="team-roles">
+                        <div class="role-slot" data-role="it-lead" ondrop="dropPerson(event)" ondragover="allowDrop(event)">
+                            <div class="role-label">IT Recovery Lead</div>
+                            <div class="empty-state">Drop person here</div>
+                        </div>
+                        <div class="role-slot" data-role="it-support" ondrop="dropPerson(event)" ondragover="allowDrop(event)">
+                            <div class="role-label">IT Support Specialist</div>
+                            <div class="empty-state">Drop person here</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Communications Team -->
+                <div class="team-node" id="team-3" style="top: 300px; left: 700px;" data-team-id="communications">
+                    <div class="team-header">
+                        <div class="team-icon">📢</div>
+                        <div class="team-info">
+                            <h3>Communications Team</h3>
+                            <p>Crisis communications & stakeholder management</p>
+                        </div>
+                    </div>
+                    <div class="team-roles">
+                        <div class="role-slot" data-role="comms-manager" ondrop="dropPerson(event)" ondragover="allowDrop(event)">
+                            <div class="role-label">Communications Manager</div>
+                            <div class="empty-state">Drop person here</div>
+                        </div>
+                        <div class="role-slot" data-role="external-relations" ondrop="dropPerson(event)" ondragover="allowDrop(event)">
+                            <div class="role-label">External Relations</div>
+                            <div class="empty-state">Drop person here</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Support Team -->
+                <div class="team-node" id="team-4" style="top: 550px; left: 400px;" data-team-id="support">
+                    <div class="team-header">
+                        <div class="team-icon">🔧</div>
+                        <div class="team-info">
+                            <h3>Support Team</h3>
+                            <p>Administrative and logistical support</p>
+                        </div>
+                    </div>
+                    <div class="team-roles">
+                        <div class="role-slot" data-role="hr-lead" ondrop="dropPerson(event)" ondragover="allowDrop(event)">
+                            <div class="role-label">HR Lead</div>
+                            <div class="empty-state">Drop person here</div>
+                        </div>
+                        <div class="role-slot" data-role="security-lead" ondrop="dropPerson(event)" ondragover="allowDrop(event)">
+                            <div class="role-label">Security Lead</div>
+                            <div class="empty-state">Drop person here</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <div class="save-indicator" id="saveIndicator">
+        ✅ Structure saved successfully
+    </div>
+
+    <script>
+        let draggedElement = null;
+        let assignments = {}; // Store role assignments
+
+        // Drag and drop functionality for person cards
+        document.querySelectorAll('.person-card').forEach(card => {
+            card.addEventListener('dragstart', function(e) {
+                draggedElement = this;
+                this.classList.add('dragging');
+                e.dataTransfer.effectAllowed = 'move';
+                e.dataTransfer.setData('text/html', this.outerHTML);
+            });
+
+            card.addEventListener('dragend', function() {
+                this.classList.remove('dragging');
+                draggedElement = null;
+            });
+        });
+
+        // Team node drag functionality
+        document.querySelectorAll('.team-node').forEach(node => {
+            let isDragging = false;
+            let currentX, currentY, initialX, initialY;
+
+            node.addEventListener('mousedown', function(e) {
+                if (e.target.closest('.role-slot')) return; // Don't drag when clicking role slots
+                
+                isDragging = true;
+                initialX = e.clientX - node.offsetLeft;
+                initialY = e.clientY - node.offsetTop;
+                
+                document.addEventListener('mousemove', dragTeamNode);
+                document.addEventListener('mouseup', stopDragTeamNode);
+                e.preventDefault();
+            });
+
+            function dragTeamNode(e) {
+                if (!isDragging) return;
+                
+                currentX = e.clientX - initialX;
+                currentY = e.clientY - initialY;
+                
+                node.style.left = currentX + 'px';
+                node.style.top = currentY + 'px';
+            }
+
+            function stopDragTeamNode() {
+                isDragging = false;
+                document.removeEventListener('mousemove', dragTeamNode);
+                document.removeEventListener('mouseup', stopDragTeamNode);
+            }
+        });
+
+        function allowDrop(ev) {
+            ev.preventDefault();
+            ev.target.closest('.role-slot').classList.add('drop-target');
+        }
+
+        function dropPerson(ev) {
+            ev.preventDefault();
+            const roleSlot = ev.target.closest('.role-slot');
+            roleSlot.classList.remove('drop-target');
+            
+            if (!draggedElement) return;
+            
+            // Get person data
+            const personId = draggedElement.getAttribute('data-person-id');
+            const personName = draggedElement.querySelector('.person-name').textContent;
+            const personTitle = draggedElement.querySelector('.person-title').textContent;
+            const personAvatar = draggedElement.querySelector('.person-avatar').textContent;
+            const roleType = roleSlot.getAttribute('data-role');
+            
+            // Create assigned person element
+            const assignedPerson = document.createElement('div');
+            assignedPerson.className = 'assigned-person';
+            assignedPerson.innerHTML = `
+                <div class="assigned-avatar">${personAvatar}</div>
+                <div class="assigned-info">
+                    <div class="assigned-name">${personName}</div>
+                    <div class="assigned-role">${personTitle}</div>
+                </div>
+                <button class="remove-btn" onclick="removeAssignment(this)">×</button>
+            `;
+            
+            // Clear slot and add assignment
+            roleSlot.innerHTML = '';
+            roleSlot.appendChild(document.createElement('div')).className = 'role-label';
+            roleSlot.querySelector('.role-label').textContent = roleSlot.getAttribute('data-role').replace('-', ' ').toUpperCase();
+            roleSlot.appendChild(assignedPerson);
+            roleSlot.classList.add('has-assignment');
+            
+            // Store assignment
+            const teamId = roleSlot.closest('.team-node').getAttribute('data-team-id');
+            assignments[`${teamId}-${roleType}`] = {
+                personId,
+                personName,
+                personTitle,
+                roleType,
+                teamId
+            };
+            
+            // Remove from people pool temporarily
+            draggedElement.style.opacity = '0.3';
+            draggedElement.style.pointerEvents = 'none';
+            
+            showSaveIndicator();
+        }
+
+        function removeAssignment(button) {
+            const roleSlot = button.closest('.role-slot');
+            const teamId = roleSlot.closest('.team-node').getAttribute('data-team-id');
+            const roleType = roleSlot.getAttribute('data-role');
+            const assignmentKey = `${teamId}-${roleType}`;
+            
+            if (assignments[assignmentKey]) {
+                // Find and restore person in pool
+                const personId = assignments[assignmentKey].personId;
+                const personCard = document.querySelector(`[data-person-id="${personId}"]`);
+                if (personCard) {
+                    personCard.style.opacity = '1';
+                    personCard.style.pointerEvents = 'auto';
+                }
+                
+                delete assignments[assignmentKey];
+            }
+            
+            // Reset slot to empty state
+            roleSlot.innerHTML = '';
+            const roleLabel = document.createElement('div');
+            roleLabel.className = 'role-label';
+            roleLabel.textContent = roleType.replace('-', ' ').toUpperCase();
+            
+            const emptyState = document.createElement('div');
+            emptyState.className = 'empty-state';
+            emptyState.textContent = 'Drop person here';
+            
+            roleSlot.appendChild(roleLabel);
+            roleSlot.appendChild(emptyState);
+            roleSlot.classList.remove('has-assignment');
+            
+            showSaveIndicator();
+        }
+
+        // Prevent drop on wrong targets
+        document.addEventListener('dragover', function(e) {
+            if (!e.target.closest('.role-slot')) {
+                e.dataTransfer.dropEffect = 'none';
+            }
+        });
+
+        document.addEventListener('dragleave', function(e) {
+            const roleSlot = e.target.closest('.role-slot');
+            if (roleSlot) {
+                roleSlot.classList.remove('drop-target');
+            }
+        });
+
+        function saveStructure() {
+            const structureData = {
+                assignments,
+                teamPositions: {}
+            };
+            
+            // Capture team positions
+            document.querySelectorAll('.team-node').forEach(node => {
+                const teamId = node.getAttribute('data-team-id');
+                structureData.teamPositions[teamId] = {
+                    x: parseInt(node.style.left),
+                    y: parseInt(node.style.top)
+                };
+            });
+            
+            console.log('Saving structure:', structureData);
+            
+            // Here you would send to your API
+            // fetch('/api/bc/team-structure', {
+            //     method: 'POST',
+            //     headers: { 'Content-Type': 'application/json' },
+            //     body: JSON.stringify(structureData)
+            // });
+            
+            showSaveIndicator();
+        }
+
+        function resetPositions() {
+            // Reset to default positions
+            document.getElementById('team-1').style = 'top: 50px; left: 400px;';
+            document.getElementById('team-2').style = 'top: 300px; left: 100px;';
+            document.getElementById('team-3').style = 'top: 300px; left: 700px;';
+            document.getElementById('team-4').style = 'top: 550px; left: 400px;';
+        }
+
+        function exportStructure() {
+            const canvas = document.createElement('canvas');
+            const ctx = canvas.getContext('2d');
+            
+            // Simple export - in real implementation, you'd use a library like html2canvas
+            alert('Export functionality would generate PDF/image of the current structure');
+        }
+
+        function showSaveIndicator() {
+            const indicator = document.getElementById('saveIndicator');
+            indicator.classList.add('show');
+            setTimeout(() => {
+                indicator.classList.remove('show');
+            }, 2000);
+        }
+
+        // Auto-save on changes
+        let saveTimeout;
+        function autoSave() {
+            clearTimeout(saveTimeout);
+            saveTimeout = setTimeout(saveStructure, 1000);
+        }
+
+        // Initialize with some sample assignments for demo
+        setTimeout(() => {
+            // Auto-assign some people for demo purposes
+            // This would normally load from your database
+        }, 1000);
+    </script>
+</body>
+</html>

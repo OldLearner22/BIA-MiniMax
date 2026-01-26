@@ -1,0 +1,1480 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Recovery Options - Nexus BCMS</title>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        :root {
+            /* Recovery-Focused Color Palette */
+            --recovery-void: #0B0C12;
+            --recovery-obsidian: #151621;
+            --recovery-charcoal: #1F2128;
+            --recovery-graphite: #2A2D36;
+            --recovery-steel: #454954;
+            --recovery-silver: #787C8A;
+            --recovery-pearl: #F3F4F7;
+            
+            /* Recovery Strategy Colors */
+            --immediate-crimson: #E11D48;
+            --rapid-orange: #EA580C;
+            --standard-blue: #3B82F6;
+            --extended-emerald: #059669;
+            --alternative-violet: #7C3AED;
+            
+            /* Recovery Type Colors */
+            --people-amber: #F59E0B;
+            --technology-cyan: #06B6D4;
+            --facility-green: #10B981;
+            --process-purple: #8B5CF6;
+            --supplier-pink: #EC4899;
+            
+            /* Status Colors */
+            --ready-green: #22C55E;
+            --testing-blue: #3B82F6;
+            --pending-yellow: #EAB308;
+            --failed-red: #EF4444;
+            --unknown-gray: #6B7280;
+            
+            /* Gradients */
+            --gradient-immediate: linear-gradient(135deg, #E11D48 0%, #BE123C 100%);
+            --gradient-rapid: linear-gradient(135deg, #EA580C 0%, #C2410C 100%);
+            --gradient-standard: linear-gradient(135deg, #3B82F6 0%, #2563EB 100%);
+            --gradient-extended: linear-gradient(135deg, #059669 0%, #047857 100%);
+            --gradient-alternative: linear-gradient(135deg, #7C3AED 0%, #6D28D9 100%);
+            --gradient-surface: linear-gradient(145deg, #151621 0%, #1F2128 100%);
+            --gradient-glass: linear-gradient(135deg, rgba(255,255,255,0.04) 0%, rgba(255,255,255,0.02) 100%);
+            
+            /* Effects */
+            --shadow-soft: 0 2px 12px rgba(0,0,0,0.15);
+            --shadow-medium: 0 4px 20px rgba(0,0,0,0.2);
+            --shadow-strong: 0 8px 32px rgba(0,0,0,0.25);
+            --shadow-recovery: 0 0 32px rgba(59, 130, 246, 0.25);
+            --blur-surface: blur(24px);
+            
+            /* Spacing */
+            --space-xs: 0.25rem;
+            --space-sm: 0.5rem;
+            --space-md: 1rem;
+            --space-lg: 1.5rem;
+            --space-xl: 2rem;
+            --space-2xl: 3rem;
+            --space-3xl: 4rem;
+            
+            --radius-sm: 8px;
+            --radius-md: 12px;
+            --radius-lg: 16px;
+            --radius-xl: 20px;
+            --radius-2xl: 28px;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Outfit', system-ui, sans-serif;
+            background: var(--recovery-void);
+            color: var(--recovery-pearl);
+            line-height: 1.6;
+            overflow-x: hidden;
+            background-image: 
+                radial-gradient(circle at 30% 30%, rgba(59, 130, 246, 0.05) 0%, transparent 50%),
+                radial-gradient(circle at 70% 70%, rgba(124, 58, 237, 0.05) 0%, transparent 50%),
+                linear-gradient(180deg, var(--recovery-void) 0%, var(--recovery-obsidian) 100%);
+        }
+
+        .app-container {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Header */
+        .header {
+            background: rgba(21, 22, 33, 0.95);
+            backdrop-filter: var(--blur-surface);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+            padding: var(--space-lg) var(--space-xl);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: var(--gradient-standard);
+            opacity: 0.8;
+        }
+
+        .header-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            max-width: 1800px;
+            margin: 0 auto;
+        }
+
+        .header-brand {
+            display: flex;
+            align-items: center;
+            gap: var(--space-md);
+        }
+
+        .brand-icon {
+            width: 52px;
+            height: 52px;
+            background: var(--gradient-standard);
+            border-radius: var(--radius-xl);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 26px;
+            color: white;
+            font-weight: 700;
+            box-shadow: var(--shadow-recovery);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .brand-icon::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -50%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(45deg, transparent, rgba(255,255,255,0.1), transparent);
+            transform: rotate(45deg);
+            animation: shimmer 3s infinite;
+        }
+
+        @keyframes shimmer {
+            0%, 100% { transform: translateX(-100%) rotate(45deg); }
+            50% { transform: translateX(100%) rotate(45deg); }
+        }
+
+        .brand-text h1 {
+            font-size: 30px;
+            font-weight: 800;
+            background: var(--gradient-standard);
+            background-clip: text;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 2px;
+        }
+
+        .brand-text p {
+            font-size: 13px;
+            color: var(--recovery-silver);
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+        }
+
+        .header-actions {
+            display: flex;
+            gap: var(--space-sm);
+        }
+
+        .btn {
+            background: var(--gradient-surface);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: var(--radius-lg);
+            padding: var(--space-sm) var(--space-lg);
+            color: var(--recovery-pearl);
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            display: flex;
+            align-items: center;
+            gap: var(--space-sm);
+            text-decoration: none;
+            backdrop-filter: var(--blur-surface);
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-medium);
+            border-color: var(--standard-blue);
+        }
+
+        .btn.primary {
+            background: var(--gradient-standard);
+            border-color: var(--standard-blue);
+            color: white;
+            font-weight: 700;
+            box-shadow: var(--shadow-recovery);
+        }
+
+        .btn.rapid {
+            background: var(--gradient-rapid);
+            border-color: var(--rapid-orange);
+            color: white;
+        }
+
+        /* Main Content */
+        .main-content {
+            flex: 1;
+            padding: var(--space-xl);
+            max-width: 1800px;
+            margin: 0 auto;
+            width: 100%;
+        }
+
+        /* Recovery Overview */
+        .recovery-overview {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: var(--space-2xl);
+            margin-bottom: var(--space-3xl);
+        }
+
+        .recovery-hero {
+            background: var(--gradient-surface);
+            backdrop-filter: var(--blur-surface);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: var(--radius-2xl);
+            padding: var(--space-3xl);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .recovery-hero::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: var(--gradient-standard);
+            opacity: 0.8;
+        }
+
+        .recovery-hero::after {
+            content: '';
+            position: absolute;
+            top: -30%;
+            right: -15%;
+            width: 250px;
+            height: 250px;
+            background: radial-gradient(circle, rgba(59, 130, 246, 0.08) 0%, transparent 70%);
+            border-radius: 50%;
+            pointer-events: none;
+        }
+
+        .hero-content {
+            position: relative;
+            z-index: 2;
+        }
+
+        .hero-title {
+            font-size: 48px;
+            font-weight: 900;
+            color: var(--recovery-pearl);
+            margin-bottom: var(--space-lg);
+            line-height: 1.1;
+            letter-spacing: -0.02em;
+        }
+
+        .hero-subtitle {
+            font-size: 18px;
+            color: var(--recovery-silver);
+            margin-bottom: var(--space-2xl);
+            line-height: 1.6;
+        }
+
+        .hero-metrics {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: var(--space-xl);
+        }
+
+        .hero-metric {
+            text-align: center;
+            padding: var(--space-lg);
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            border-radius: var(--radius-xl);
+            transition: all 0.3s ease;
+        }
+
+        .hero-metric:hover {
+            background: rgba(255, 255, 255, 0.05);
+            border-color: rgba(255, 255, 255, 0.1);
+            transform: translateY(-2px);
+        }
+
+        .metric-value {
+            font-size: 32px;
+            font-weight: 800;
+            color: var(--standard-blue);
+            margin-bottom: var(--space-xs);
+            font-family: 'JetBrains Mono', monospace;
+        }
+
+        .metric-label {
+            font-size: 12px;
+            color: var(--recovery-silver);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            font-weight: 600;
+        }
+
+        .recovery-status {
+            display: grid;
+            grid-template-rows: auto 1fr;
+            gap: var(--space-lg);
+        }
+
+        .status-header {
+            background: var(--gradient-surface);
+            backdrop-filter: var(--blur-surface);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: var(--radius-xl);
+            padding: var(--space-xl);
+            text-align: center;
+        }
+
+        .status-title {
+            font-size: 20px;
+            font-weight: 800;
+            color: var(--recovery-pearl);
+            margin-bottom: var(--space-sm);
+        }
+
+        .overall-readiness {
+            font-size: 42px;
+            font-weight: 900;
+            background: var(--gradient-standard);
+            background-clip: text;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            font-family: 'JetBrains Mono', monospace;
+            margin-bottom: var(--space-xs);
+        }
+
+        .readiness-label {
+            font-size: 13px;
+            color: var(--recovery-silver);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .status-breakdown {
+            background: var(--gradient-surface);
+            backdrop-filter: var(--blur-surface);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: var(--radius-xl);
+            padding: var(--space-xl);
+        }
+
+        .breakdown-title {
+            font-size: 16px;
+            font-weight: 700;
+            color: var(--recovery-pearl);
+            margin-bottom: var(--space-lg);
+            text-align: center;
+        }
+
+        .status-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: var(--space-md);
+            margin-bottom: var(--space-sm);
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            border-radius: var(--radius-md);
+            transition: all 0.3s ease;
+        }
+
+        .status-item:hover {
+            background: rgba(255, 255, 255, 0.05);
+        }
+
+        .status-name {
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--recovery-pearl);
+        }
+
+        .status-indicator {
+            padding: var(--space-xs) var(--space-sm);
+            border-radius: var(--radius-sm);
+            font-size: 11px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .status-indicator.ready {
+            background: rgba(34, 197, 94, 0.15);
+            color: var(--ready-green);
+            border: 1px solid rgba(34, 197, 94, 0.3);
+        }
+
+        .status-indicator.testing {
+            background: rgba(59, 130, 246, 0.15);
+            color: var(--testing-blue);
+            border: 1px solid rgba(59, 130, 246, 0.3);
+        }
+
+        .status-indicator.pending {
+            background: rgba(234, 179, 8, 0.15);
+            color: var(--pending-yellow);
+            border: 1px solid rgba(234, 179, 8, 0.3);
+        }
+
+        /* Recovery Options Grid */
+        .options-section {
+            margin-bottom: var(--space-3xl);
+        }
+
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: var(--space-2xl);
+            padding-bottom: var(--space-lg);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .section-title {
+            font-size: 36px;
+            font-weight: 800;
+            color: var(--recovery-pearl);
+        }
+
+        .options-controls {
+            display: flex;
+            gap: var(--space-sm);
+            align-items: center;
+        }
+
+        .filter-btn {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: var(--radius-md);
+            padding: var(--space-sm) var(--space-md);
+            color: var(--recovery-silver);
+            font-size: 12px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .filter-btn:hover,
+        .filter-btn.active {
+            background: var(--standard-blue);
+            color: white;
+            border-color: var(--standard-blue);
+        }
+
+        .options-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(500px, 1fr));
+            gap: var(--space-xl);
+        }
+
+        .recovery-option {
+            background: var(--gradient-surface);
+            backdrop-filter: var(--blur-surface);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: var(--radius-2xl);
+            padding: var(--space-2xl);
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            overflow: hidden;
+            cursor: pointer;
+        }
+
+        .recovery-option::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            opacity: 0.8;
+            transition: all 0.3s ease;
+        }
+
+        .recovery-option.immediate::before {
+            background: var(--gradient-immediate);
+        }
+
+        .recovery-option.rapid::before {
+            background: var(--gradient-rapid);
+        }
+
+        .recovery-option.standard::before {
+            background: var(--gradient-standard);
+        }
+
+        .recovery-option.extended::before {
+            background: var(--gradient-extended);
+        }
+
+        .recovery-option:hover {
+            transform: translateY(-8px);
+            box-shadow: var(--shadow-strong);
+            border-color: rgba(255, 255, 255, 0.2);
+        }
+
+        .recovery-option:hover::before {
+            height: 6px;
+        }
+
+        .option-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: var(--space-xl);
+        }
+
+        .option-info {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .option-id {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 12px;
+            color: var(--standard-blue);
+            font-weight: 700;
+            margin-bottom: var(--space-xs);
+        }
+
+        .option-title {
+            font-size: 24px;
+            font-weight: 800;
+            color: var(--recovery-pearl);
+            margin-bottom: var(--space-sm);
+            line-height: 1.3;
+        }
+
+        .option-process {
+            font-size: 14px;
+            color: var(--recovery-silver);
+            margin-bottom: var(--space-md);
+        }
+
+        .recovery-strategy {
+            display: inline-flex;
+            align-items: center;
+            gap: var(--space-xs);
+            padding: var(--space-xs) var(--space-sm);
+            border-radius: var(--radius-sm);
+            font-size: 11px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: var(--space-md);
+        }
+
+        .recovery-strategy.immediate {
+            background: rgba(225, 29, 72, 0.15);
+            color: var(--immediate-crimson);
+            border: 1px solid rgba(225, 29, 72, 0.3);
+        }
+
+        .recovery-strategy.rapid {
+            background: rgba(234, 88, 12, 0.15);
+            color: var(--rapid-orange);
+            border: 1px solid rgba(234, 88, 12, 0.3);
+        }
+
+        .recovery-strategy.standard {
+            background: rgba(59, 130, 246, 0.15);
+            color: var(--standard-blue);
+            border: 1px solid rgba(59, 130, 246, 0.3);
+        }
+
+        .recovery-strategy.extended {
+            background: rgba(5, 150, 105, 0.15);
+            color: var(--extended-emerald);
+            border: 1px solid rgba(5, 150, 105, 0.3);
+        }
+
+        .option-badges {
+            display: flex;
+            flex-direction: column;
+            gap: var(--space-sm);
+            align-items: flex-end;
+        }
+
+        .rto-badge,
+        .rpo-badge,
+        .cost-badge {
+            padding: var(--space-xs) var(--space-sm);
+            border-radius: var(--radius-sm);
+            font-size: 11px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            text-align: center;
+            min-width: 80px;
+            font-family: 'JetBrains Mono', monospace;
+        }
+
+        .rto-badge {
+            background: rgba(59, 130, 246, 0.15);
+            color: var(--standard-blue);
+            border: 1px solid rgba(59, 130, 246, 0.3);
+        }
+
+        .rpo-badge {
+            background: rgba(124, 58, 237, 0.15);
+            color: var(--alternative-violet);
+            border: 1px solid rgba(124, 58, 237, 0.3);
+        }
+
+        .cost-badge {
+            background: rgba(245, 158, 11, 0.15);
+            color: var(--people-amber);
+            border: 1px solid rgba(245, 158, 11, 0.3);
+        }
+
+        .option-description {
+            font-size: 15px;
+            color: var(--recovery-silver);
+            line-height: 1.6;
+            margin-bottom: var(--space-xl);
+        }
+
+        .resources-section {
+            margin-bottom: var(--space-xl);
+        }
+
+        .resources-header {
+            font-size: 14px;
+            font-weight: 700;
+            color: var(--recovery-pearl);
+            margin-bottom: var(--space-md);
+            display: flex;
+            align-items: center;
+            gap: var(--space-sm);
+        }
+
+        .resource-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+            gap: var(--space-sm);
+        }
+
+        .resource-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: var(--space-xs);
+            padding: var(--space-md);
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            border-radius: var(--radius-lg);
+            transition: all 0.3s ease;
+        }
+
+        .resource-item:hover {
+            background: rgba(255, 255, 255, 0.05);
+            border-color: rgba(255, 255, 255, 0.1);
+        }
+
+        .resource-icon {
+            width: 36px;
+            height: 36px;
+            border-radius: var(--radius-md);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 16px;
+            color: white;
+        }
+
+        .resource-icon.people {
+            background: rgba(245, 158, 11, 0.2);
+            color: var(--people-amber);
+        }
+
+        .resource-icon.technology {
+            background: rgba(6, 182, 212, 0.2);
+            color: var(--technology-cyan);
+        }
+
+        .resource-icon.facility {
+            background: rgba(16, 185, 129, 0.2);
+            color: var(--facility-green);
+        }
+
+        .resource-label {
+            font-size: 11px;
+            color: var(--recovery-silver);
+            text-align: center;
+            font-weight: 600;
+        }
+
+        .resource-value {
+            font-size: 12px;
+            color: var(--recovery-pearl);
+            font-weight: 700;
+            font-family: 'JetBrains Mono', monospace;
+        }
+
+        .option-metrics {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: var(--space-md);
+            margin-bottom: var(--space-xl);
+            padding: var(--space-lg);
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            border-radius: var(--radius-lg);
+        }
+
+        .metric-item {
+            text-align: center;
+        }
+
+        .metric-item-value {
+            font-size: 18px;
+            font-weight: 800;
+            color: var(--recovery-pearl);
+            font-family: 'JetBrains Mono', monospace;
+            margin-bottom: var(--space-xs);
+        }
+
+        .metric-item-label {
+            font-size: 10px;
+            color: var(--recovery-silver);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .option-actions {
+            display: flex;
+            gap: var(--space-sm);
+            margin-top: var(--space-lg);
+        }
+
+        .action-btn {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: var(--radius-md);
+            padding: var(--space-sm) var(--space-md);
+            color: var(--recovery-pearl);
+            font-size: 12px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            flex: 1;
+            text-align: center;
+        }
+
+        .action-btn:hover {
+            background: var(--standard-blue);
+            color: white;
+            border-color: var(--standard-blue);
+        }
+
+        .action-btn.primary {
+            background: var(--gradient-standard);
+            border-color: var(--standard-blue);
+            color: white;
+        }
+
+        /* Recovery Timeline */
+        .timeline-section {
+            margin-bottom: var(--space-2xl);
+        }
+
+        .timeline-container {
+            background: var(--gradient-surface);
+            backdrop-filter: var(--blur-surface);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: var(--radius-xl);
+            padding: var(--space-xl);
+            position: relative;
+        }
+
+        .timeline-header {
+            text-align: center;
+            margin-bottom: var(--space-xl);
+        }
+
+        .timeline-title {
+            font-size: 24px;
+            font-weight: 800;
+            color: var(--recovery-pearl);
+            margin-bottom: var(--space-sm);
+        }
+
+        .timeline-subtitle {
+            font-size: 14px;
+            color: var(--recovery-silver);
+        }
+
+        .timeline {
+            position: relative;
+            padding: var(--space-xl) 0;
+        }
+
+        .timeline::before {
+            content: '';
+            position: absolute;
+            left: 50%;
+            top: 0;
+            bottom: 0;
+            width: 2px;
+            background: linear-gradient(to bottom, var(--immediate-crimson), var(--rapid-orange), var(--standard-blue), var(--extended-emerald));
+            transform: translateX(-50%);
+        }
+
+        .timeline-item {
+            position: relative;
+            margin-bottom: var(--space-xl);
+            display: flex;
+            align-items: center;
+        }
+
+        .timeline-item:nth-child(even) {
+            flex-direction: row-reverse;
+        }
+
+        .timeline-content {
+            flex: 1;
+            max-width: 40%;
+            padding: var(--space-lg);
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            border-radius: var(--radius-lg);
+            margin: 0 var(--space-xl);
+        }
+
+        .timeline-badge {
+            position: absolute;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            border: 3px solid var(--recovery-obsidian);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+            color: white;
+            font-weight: 700;
+        }
+
+        .timeline-badge.immediate {
+            background: var(--immediate-crimson);
+        }
+
+        .timeline-badge.rapid {
+            background: var(--rapid-orange);
+        }
+
+        .timeline-badge.standard {
+            background: var(--standard-blue);
+        }
+
+        .timeline-badge.extended {
+            background: var(--extended-emerald);
+        }
+
+        .timeline-time {
+            font-size: 12px;
+            color: var(--recovery-silver);
+            font-weight: 600;
+            margin-bottom: var(--space-xs);
+        }
+
+        .timeline-event {
+            font-size: 14px;
+            color: var(--recovery-pearl);
+            font-weight: 700;
+            margin-bottom: var(--space-xs);
+        }
+
+        .timeline-description {
+            font-size: 12px;
+            color: var(--recovery-silver);
+            line-height: 1.4;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 1200px) {
+            .recovery-overview {
+                grid-template-columns: 1fr;
+            }
+            
+            .options-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .main-content {
+                padding: var(--space-md);
+            }
+            
+            .hero-metrics {
+                grid-template-columns: 1fr;
+            }
+            
+            .option-metrics {
+                grid-template-columns: 1fr;
+            }
+            
+            .resource-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            
+            .timeline::before {
+                left: 20px;
+            }
+            
+            .timeline-item {
+                flex-direction: row !important;
+            }
+            
+            .timeline-badge {
+                left: 20px;
+            }
+            
+            .timeline-content {
+                max-width: none;
+                margin-left: 60px;
+                margin-right: 0;
+            }
+        }
+
+        /* Animations */
+        @keyframes slideInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .slide-in {
+            animation: slideInUp 0.6s ease-out forwards;
+        }
+
+        .slide-in:nth-child(2) { animation-delay: 0.1s; }
+        .slide-in:nth-child(3) { animation-delay: 0.2s; }
+        .slide-in:nth-child(4) { animation-delay: 0.3s; }
+        .slide-in:nth-child(5) { animation-delay: 0.4s; }
+
+        /* Scrollbar Styling */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: var(--standard-blue);
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: var(--technology-cyan);
+        }
+    </style>
+</head>
+<body>
+    <div class="app-container">
+        <!-- Header -->
+        <header class="header">
+            <div class="header-content">
+                <div class="header-brand">
+                    <div class="brand-icon">🔄</div>
+                    <div class="brand-text">
+                        <h1>Recovery Options</h1>
+                        <p>Strategic Recovery Planning</p>
+                    </div>
+                </div>
+                <div class="header-actions">
+                    <button class="btn" onclick="testRecoveryOption()">
+                        <span>🧪</span> Test
+                    </button>
+                    <button class="btn rapid" onclick="activateEmergency()">
+                        <span>🚨</span> Emergency
+                    </button>
+                    <button class="btn primary" onclick="createRecoveryOption()">
+                        <span>✨</span> New Option
+                    </button>
+                </div>
+            </div>
+        </header>
+
+        <main class="main-content">
+            <!-- Recovery Overview -->
+            <section class="recovery-overview">
+                <div class="recovery-hero">
+                    <div class="hero-content">
+                        <h1 class="hero-title">Recovery Strategies</h1>
+                        <p class="hero-subtitle">
+                            Comprehensive recovery options ensuring business continuity across all critical processes. 
+                            Strategic alternatives designed to meet varying RTO and RPO requirements with optimized resource allocation.
+                        </p>
+                        
+                        <div class="hero-metrics">
+                            <div class="hero-metric">
+                                <div class="metric-value">32</div>
+                                <div class="metric-label">Recovery Options</div>
+                            </div>
+                            <div class="hero-metric">
+                                <div class="metric-value">94%</div>
+                                <div class="metric-label">Readiness Score</div>
+                            </div>
+                            <div class="hero-metric">
+                                <div class="metric-value">2.4h</div>
+                                <div class="metric-label">Avg RTO</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="recovery-status">
+                    <div class="status-header">
+                        <h2 class="status-title">Overall Readiness</h2>
+                        <div class="overall-readiness">94%</div>
+                        <div class="readiness-label">Recovery Capability</div>
+                    </div>
+                    
+                    <div class="status-breakdown">
+                        <h3 class="breakdown-title">Readiness by Category</h3>
+                        
+                        <div class="status-item">
+                            <span class="status-name">People Recovery</span>
+                            <span class="status-indicator ready">Ready</span>
+                        </div>
+                        
+                        <div class="status-item">
+                            <span class="status-name">Technology Recovery</span>
+                            <span class="status-indicator ready">Ready</span>
+                        </div>
+                        
+                        <div class="status-item">
+                            <span class="status-name">Facility Recovery</span>
+                            <span class="status-indicator testing">Testing</span>
+                        </div>
+                        
+                        <div class="status-item">
+                            <span class="status-name">Process Recovery</span>
+                            <span class="status-indicator ready">Ready</span>
+                        </div>
+                        
+                        <div class="status-item">
+                            <span class="status-name">Supplier Recovery</span>
+                            <span class="status-indicator pending">Pending</span>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Recovery Timeline -->
+            <section class="timeline-section">
+                <div class="section-header">
+                    <h2 class="section-title">Recovery Timeline</h2>
+                </div>
+                
+                <div class="timeline-container">
+                    <div class="timeline-header">
+                        <h3 class="timeline-title">Strategic Recovery Phases</h3>
+                        <p class="timeline-subtitle">Coordinated recovery approach across all business functions</p>
+                    </div>
+                    
+                    <div class="timeline">
+                        <div class="timeline-item">
+                            <div class="timeline-badge immediate">0</div>
+                            <div class="timeline-content">
+                                <div class="timeline-time">0 - 1 Hour</div>
+                                <div class="timeline-event">Immediate Response</div>
+                                <div class="timeline-description">Crisis team activation, emergency procedures, staff safety measures</div>
+                            </div>
+                        </div>
+                        
+                        <div class="timeline-item">
+                            <div class="timeline-badge rapid">1</div>
+                            <div class="timeline-content">
+                                <div class="timeline-time">1 - 4 Hours</div>
+                                <div class="timeline-event">Rapid Recovery</div>
+                                <div class="timeline-description">Critical system restoration, alternative site activation, key personnel mobilization</div>
+                            </div>
+                        </div>
+                        
+                        <div class="timeline-item">
+                            <div class="timeline-badge standard">2</div>
+                            <div class="timeline-content">
+                                <div class="timeline-time">4 - 24 Hours</div>
+                                <div class="timeline-event">Standard Recovery</div>
+                                <div class="timeline-description">Full operational capability restoration, supplier coordination, customer communication</div>
+                            </div>
+                        </div>
+                        
+                        <div class="timeline-item">
+                            <div class="timeline-badge extended">3</div>
+                            <div class="timeline-content">
+                                <div class="timeline-time">24+ Hours</div>
+                                <div class="timeline-event">Extended Recovery</div>
+                                <div class="timeline-description">Complete business restoration, lessons learned, continuous improvement</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Recovery Options -->
+            <section class="options-section">
+                <div class="section-header">
+                    <h2 class="section-title">Recovery Options</h2>
+                    <div class="options-controls">
+                        <button class="filter-btn active" onclick="filterOptions('all')">All</button>
+                        <button class="filter-btn" onclick="filterOptions('immediate')">Immediate</button>
+                        <button class="filter-btn" onclick="filterOptions('rapid')">Rapid</button>
+                        <button class="filter-btn" onclick="filterOptions('standard')">Standard</button>
+                    </div>
+                </div>
+                
+                <div class="options-grid" id="optionsGrid">
+                    <!-- Recovery options will be populated here -->
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <script>
+        // Global variables
+        let recoveryOptions = [];
+
+        // Initialize application
+        document.addEventListener('DOMContentLoaded', function() {
+            loadRecoveryOptions();
+            renderRecoveryOptions();
+            animateOnLoad();
+        });
+
+        // Sample recovery options data
+        function loadRecoveryOptions() {
+            recoveryOptions = [
+                {
+                    id: 'RO-001',
+                    title: 'Cloud Infrastructure Failover',
+                    process: 'Payment Processing System',
+                    strategy: 'immediate',
+                    rto: '30min',
+                    rpo: '5min',
+                    cost: 'High',
+                    description: 'Automatic failover to cloud-based payment processing infrastructure with real-time data synchronization.',
+                    readiness: 98,
+                    resources: {
+                        people: 3,
+                        technology: 'Cloud',
+                        facility: 'Remote'
+                    },
+                    metrics: {
+                        availability: '99.9%',
+                        capacity: '100%',
+                        testing: 'Pass'
+                    }
+                },
+                {
+                    id: 'RO-002',
+                    title: 'Alternative Data Center',
+                    process: 'Core Banking System',
+                    strategy: 'rapid',
+                    rto: '2hrs',
+                    rpo: '15min',
+                    cost: 'Medium',
+                    description: 'Switch to secondary data center facility with pre-configured infrastructure and database replication.',
+                    readiness: 95,
+                    resources: {
+                        people: 12,
+                        technology: 'Hybrid',
+                        facility: 'Secondary'
+                    },
+                    metrics: {
+                        availability: '99.5%',
+                        capacity: '85%',
+                        testing: 'Pass'
+                    }
+                },
+                {
+                    id: 'RO-003',
+                    title: 'Remote Workforce Activation',
+                    process: 'Customer Service Operations',
+                    strategy: 'rapid',
+                    rto: '1hr',
+                    rpo: '0min',
+                    cost: 'Low',
+                    description: 'Transition to fully remote customer service operations using cloud-based contact center technology.',
+                    readiness: 92,
+                    resources: {
+                        people: 45,
+                        technology: 'Cloud',
+                        facility: 'Remote'
+                    },
+                    metrics: {
+                        availability: '98.5%',
+                        capacity: '90%',
+                        testing: 'Pass'
+                    }
+                },
+                {
+                    id: 'RO-004',
+                    title: 'Paper-Based Processing',
+                    process: 'Loan Application Processing',
+                    strategy: 'standard',
+                    rto: '8hrs',
+                    rpo: '4hrs',
+                    cost: 'Low',
+                    description: 'Manual paper-based loan processing workflow with overnight batch updates when systems are restored.',
+                    readiness: 78,
+                    resources: {
+                        people: 25,
+                        technology: 'Manual',
+                        facility: 'Primary'
+                    },
+                    metrics: {
+                        availability: '100%',
+                        capacity: '60%',
+                        testing: 'Partial'
+                    }
+                },
+                {
+                    id: 'RO-005',
+                    title: 'Mobile Banking Scaling',
+                    process: 'Digital Banking Services',
+                    strategy: 'immediate',
+                    rto: '15min',
+                    rpo: '0min',
+                    cost: 'Medium',
+                    description: 'Scale up mobile banking infrastructure to handle increased load during branch closures.',
+                    readiness: 96,
+                    resources: {
+                        people: 8,
+                        technology: 'Mobile',
+                        facility: 'Cloud'
+                    },
+                    metrics: {
+                        availability: '99.8%',
+                        capacity: '150%',
+                        testing: 'Pass'
+                    }
+                },
+                {
+                    id: 'RO-006',
+                    title: 'Third-Party Service Provider',
+                    process: 'Document Processing',
+                    strategy: 'extended',
+                    rto: '48hrs',
+                    rpo: '24hrs',
+                    cost: 'Medium',
+                    description: 'Outsource critical document processing to pre-qualified third-party service provider with existing agreements.',
+                    readiness: 85,
+                    resources: {
+                        people: 5,
+                        technology: 'External',
+                        facility: 'External'
+                    },
+                    metrics: {
+                        availability: '99.0%',
+                        capacity: '80%',
+                        testing: 'Scheduled'
+                    }
+                }
+            ];
+        }
+
+        function renderRecoveryOptions(filteredOptions = null) {
+            const container = document.getElementById('optionsGrid');
+            container.innerHTML = '';
+            
+            const options = filteredOptions || recoveryOptions;
+            
+            options.forEach((option, index) => {
+                const card = createOptionCard(option);
+                card.style.animationDelay = `${index * 0.1}s`;
+                card.classList.add('slide-in');
+                container.appendChild(card);
+            });
+        }
+
+        function createOptionCard(option) {
+            const card = document.createElement('div');
+            card.className = `recovery-option ${option.strategy}`;
+            
+            const strategyIcon = getStrategyIcon(option.strategy);
+            
+            card.innerHTML = `
+                <div class="option-header">
+                    <div class="option-info">
+                        <div class="option-id">${option.id}</div>
+                        <h3 class="option-title">${option.title}</h3>
+                        <div class="option-process">${option.process}</div>
+                        <div class="recovery-strategy ${option.strategy}">
+                            ${strategyIcon} ${option.strategy.toUpperCase()}
+                        </div>
+                    </div>
+                    <div class="option-badges">
+                        <div class="rto-badge">RTO: ${option.rto}</div>
+                        <div class="rpo-badge">RPO: ${option.rpo}</div>
+                        <div class="cost-badge">${option.cost}</div>
+                    </div>
+                </div>
+                
+                <div class="option-description">
+                    ${option.description}
+                </div>
+                
+                <div class="resources-section">
+                    <div class="resources-header">
+                        <span>🏗️</span> Resources Required
+                    </div>
+                    <div class="resource-grid">
+                        <div class="resource-item">
+                            <div class="resource-icon people">👥</div>
+                            <div class="resource-label">People</div>
+                            <div class="resource-value">${option.resources.people}</div>
+                        </div>
+                        <div class="resource-item">
+                            <div class="resource-icon technology">💻</div>
+                            <div class="resource-label">Technology</div>
+                            <div class="resource-value">${option.resources.technology}</div>
+                        </div>
+                        <div class="resource-item">
+                            <div class="resource-icon facility">🏢</div>
+                            <div class="resource-label">Facility</div>
+                            <div class="resource-value">${option.resources.facility}</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="option-metrics">
+                    <div class="metric-item">
+                        <div class="metric-item-value">${option.metrics.availability}</div>
+                        <div class="metric-item-label">Availability</div>
+                    </div>
+                    <div class="metric-item">
+                        <div class="metric-item-value">${option.metrics.capacity}</div>
+                        <div class="metric-item-label">Capacity</div>
+                    </div>
+                    <div class="metric-item">
+                        <div class="metric-item-value">${option.readiness}%</div>
+                        <div class="metric-item-label">Readiness</div>
+                    </div>
+                </div>
+                
+                <div class="option-actions">
+                    <button class="action-btn" onclick="viewDetails('${option.id}')">Details</button>
+                    <button class="action-btn" onclick="testOption('${option.id}')">Test</button>
+                    <button class="action-btn primary" onclick="activateOption('${option.id}')">Activate</button>
+                </div>
+            `;
+            
+            return card;
+        }
+
+        function getStrategyIcon(strategy) {
+            const icons = {
+                immediate: '🚨',
+                rapid: '⚡',
+                standard: '🔄',
+                extended: '🌱'
+            };
+            return icons[strategy] || '🔄';
+        }
+
+        function filterOptions(strategy) {
+            // Update active filter button
+            document.querySelectorAll('.filter-btn').forEach(btn => btn.classList.remove('active'));
+            event.target.classList.add('active');
+            
+            let filteredOptions = recoveryOptions;
+            if (strategy !== 'all') {
+                filteredOptions = recoveryOptions.filter(option => option.strategy === strategy);
+            }
+            
+            renderRecoveryOptions(filteredOptions);
+        }
+
+        function createRecoveryOption() {
+            alert('Recovery option creation wizard would be implemented here');
+        }
+
+        function testRecoveryOption() {
+            alert('Recovery option testing interface would be implemented here');
+        }
+
+        function activateEmergency() {
+            if (confirm('Are you sure you want to activate emergency recovery procedures?')) {
+                alert('Emergency recovery procedures activated!\n\nImmediate response team has been notified.');
+            }
+        }
+
+        function viewDetails(optionId) {
+            const option = recoveryOptions.find(o => o.id === optionId);
+            if (option) {
+                alert(`Recovery Option Details:\n\n${option.title}\nRTO: ${option.rto}\nRPO: ${option.rpo}\nReadiness: ${option.readiness}%`);
+            }
+        }
+
+        function testOption(optionId) {
+            const option = recoveryOptions.find(o => o.id === optionId);
+            if (option) {
+                alert(`Testing recovery option: ${option.title}\n\nTest procedure would be initiated here.`);
+            }
+        }
+
+        function activateOption(optionId) {
+            const option = recoveryOptions.find(o => o.id === optionId);
+            if (option) {
+                if (confirm(`Activate recovery option: ${option.title}?\n\nThis will begin the recovery process.`)) {
+                    alert(`Recovery option activated: ${option.title}\n\nRecovery procedures are now in progress.`);
+                }
+            }
+        }
+
+        function animateOnLoad() {
+            // Trigger animations on scroll
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach((entry) => {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add('slide-in');
+                    }
+                });
+            }, {
+                threshold: 0.1
+            });
+
+            document.querySelectorAll('.recovery-option, .timeline-item').forEach((el) => {
+                observer.observe(el);
+            });
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,40 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(cd:*)",
+      "Bash(for f in bcRoles bcContactMethods bcTrainingRecords bcCompetencies)",
+      "Bash(do echo \"=== $f.ts ===\")",
+      "Bash(test:*)",
+      "Bash(done)",
+      "Bash(ls \"c:\\\\Code\\\\BIA - MiniMax\\\\src\\\\components\"\" | grep -E \"Roles)",
+      "Bash(Contact)",
+      "Bash(Training)",
+      "Bash(Competency \")",
+      "Bash(printf 'import { useState, useEffect } from \"\"react\"\";\\\\nimport { useStore } from \"\"../store/useStore\"\";\\\\nimport { Plus, Search, User } from \"\"lucide-react\"\";\\\\n\\\\nexport function ContactDirectory\\(\\) {\\\\n  const { bcPeople, fetchBCPeople } = useStore\\(\\);\\\\n  const [searchTerm, setSearchTerm] = useState\\(\"\"\"\"\\);\\\\n\\\\n  useEffect\\(\\(\\) => { fetchBCPeople\\(\\); }, []\\);\\\\n\\\\n  const filtered = bcPeople.filter\\(p =>\\\\n    p.first_name.toLowerCase\\(\\).includes\\(searchTerm.toLowerCase\\(\\)\\) ||\\\\n    p.last_name.toLowerCase\\(\\).includes\\(searchTerm.toLowerCase\\(\\)\\)\\\\n  \\);\\\\n\\\\n  return \\(\\\\n    <div className=\"\"space-y-6 animate-in fade-in duration-500\"\">\\\\n      <div className=\"\"flex justify-between items-center\"\">\\\\n        <div>\\\\n          <h2 className=\"\"text-3xl font-bold text-slate-100\"\">Contact Directory</h2>\\\\n          <p className=\"\"text-slate-400\"\">BC team contact information</p>\\\\n        </div>\\\\n      </div>\\\\n      <input type=\"\"text\"\" placeholder=\"\"Search...\"\" value={searchTerm} onChange={\\(e\\) => setSearchTerm\\(e.target.value\\)} className=\"\"w-full px-4 py-2 bg-white/5 border border-white/10 rounded-lg text-slate-100\"\" />\\\\n      <div className=\"\"grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6\"\">\\\\n        {filtered.map\\(p => \\(\\\\n          <div key={p.id} className=\"\"glass-panel p-6 border border-white/10\"\">\\\\n            <div className=\"\"flex items-start gap-3 mb-3\"\">\\\\n              <User className=\"\"w-8 h-8 text-blue-400 mt-1\"\" />\\\\n              <div>\\\\n                <h3 className=\"\"font-bold text-slate-100\"\">{p.first_name} {p.last_name}</h3>\\\\n                <p className=\"\"text-sm text-slate-400\"\">{p.job_title}</p>\\\\n              </div>\\\\n            </div>\\\\n            <div className=\"\"space-y-1 text-sm text-slate-300\"\">\\\\n              {p.email && <p>Email: {p.email}</p>}\\\\n              {p.phone && <p>Phone: {p.phone}</p>}\\\\n              {p.department && <p>Dept: {p.department}</p>}\\\\n            </div>\\\\n          </div>\\\\n        \\)\\)}\\\\n      </div>\\\\n    </div>\\\\n  \\);\\\\n}\\\\n\\\\nexport default ContactDirectory;\\\\n')",
+      "Bash(printf:*)",
+      "Bash(ls -la \"c:\\\\Code\\\\BIA - MiniMax\\\\src\\\\components\"\"{Roles,Contact,Training,Competency}*.tsx)",
+      "Bash(npx prisma db push:*)",
+      "Bash(wmic process where name=\"node.exe\" delete)",
+      "Bash(npx ts-node:*)",
+      "Bash(curl:*)",
+      "Bash(psql:*)",
+      "Bash(ps:*)",
+      "Bash(kill:*)",
+      "Read(//c/Code/BIA - MiniMax/**)",
+      "Bash(npm run server:*)",
+      "Bash(npm run lint:*)",
+      "Bash(npm test:*)",
+      "Read(//c/Code/BIA/**)",
+      "Bash(tsx verify_seed.ts:*)",
+      "Bash(npx tsx:*)",
+      "Bash(lsof:*)",
+      "Bash(netstat:*)",
+      "Bash(fuser:*)",
+      "Bash(timeout:*)",
+      "Bash(true curl -s http://localhost:3002/api/strategy/approvals)",
+      "Bash(npm run:*)",
+      "Bash(git add:*)",
+      "Bash(git commit:*)"
+    ]
+  }
+}

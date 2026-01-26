@@ -1,0 +1,1474 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BC Strategy Framework - Nexus BCMS</title>
+    <link href="https://fonts.googleapis.com/css2?family=Clash+Display:wght@400;500;600;700&family=Supreme:wght@400;500;600&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        :root {
+            /* Strategic Color Palette */
+            --strategy-midnight: #0C0D14;
+            --strategy-obsidian: #161825;
+            --strategy-charcoal: #212237;
+            --strategy-graphite: #2E3047;
+            --strategy-steel: #4A4D66;
+            --strategy-silver: #7A7D96;
+            --strategy-pearl: #F4F6FA;
+            
+            /* Strategic Framework Colors */
+            --strategic-gold: #FFD700;
+            --operational-emerald: #00C896;
+            --tactical-azure: #0099FF;
+            --executive-crimson: #DC143C;
+            --governance-violet: #8A2BE2;
+            
+            /* Priority Colors */
+            --priority-critical: #FF0040;
+            --priority-high: #FF6B35;
+            --priority-medium: #4ECDC4;
+            --priority-low: #45B7D1;
+            
+            /* Gradients */
+            --gradient-strategic: linear-gradient(135deg, #FFD700 0%, #FFA500 100%);
+            --gradient-operational: linear-gradient(135deg, #00C896 0%, #00B377 100%);
+            --gradient-tactical: linear-gradient(135deg, #0099FF 0%, #0066CC 100%);
+            --gradient-executive: linear-gradient(135deg, #DC143C 0%, #B22222 100%);
+            --gradient-surface: linear-gradient(145deg, #161825 0%, #212237 100%);
+            --gradient-glass: linear-gradient(135deg, rgba(255, 255, 255, 0.05) 0%, rgba(255, 255, 255, 0.02) 100%);
+            
+            /* Effects */
+            --shadow-soft: 0 2px 12px rgba(0, 0, 0, 0.15);
+            --shadow-medium: 0 4px 20px rgba(0, 0, 0, 0.2);
+            --shadow-strong: 0 8px 32px rgba(0, 0, 0, 0.25);
+            --shadow-strategic: 0 0 30px rgba(255, 215, 0, 0.3);
+            --blur-surface: blur(20px);
+            
+            /* Spacing */
+            --space-xs: 0.25rem;
+            --space-sm: 0.5rem;
+            --space-md: 1rem;
+            --space-lg: 1.5rem;
+            --space-xl: 2rem;
+            --space-2xl: 3rem;
+            --space-3xl: 4rem;
+            
+            --radius-sm: 8px;
+            --radius-md: 12px;
+            --radius-lg: 16px;
+            --radius-xl: 20px;
+            --radius-2xl: 28px;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Supreme', system-ui, sans-serif;
+            background: var(--strategy-midnight);
+            color: var(--strategy-pearl);
+            line-height: 1.6;
+            overflow-x: hidden;
+            background-image: 
+                radial-gradient(circle at 25% 25%, rgba(255, 215, 0, 0.04) 0%, transparent 50%),
+                radial-gradient(circle at 75% 75%, rgba(0, 200, 150, 0.04) 0%, transparent 50%),
+                linear-gradient(180deg, var(--strategy-midnight) 0%, var(--strategy-obsidian) 100%);
+        }
+
+        .app-container {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Header */
+        .header {
+            background: rgba(22, 24, 37, 0.95);
+            backdrop-filter: var(--blur-surface);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+            padding: var(--space-lg) var(--space-xl);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: var(--gradient-strategic);
+            opacity: 0.8;
+        }
+
+        .header-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            max-width: 1600px;
+            margin: 0 auto;
+        }
+
+        .header-brand {
+            display: flex;
+            align-items: center;
+            gap: var(--space-md);
+        }
+
+        .brand-icon {
+            width: 48px;
+            height: 48px;
+            background: var(--gradient-strategic);
+            border-radius: var(--radius-xl);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            color: var(--strategy-midnight);
+            font-weight: 700;
+            box-shadow: var(--shadow-strategic);
+        }
+
+        .brand-text h1 {
+            font-family: 'Clash Display', sans-serif;
+            font-size: 28px;
+            font-weight: 700;
+            background: var(--gradient-strategic);
+            background-clip: text;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 2px;
+        }
+
+        .brand-text p {
+            font-size: 13px;
+            color: var(--strategy-silver);
+            font-weight: 500;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+        }
+
+        .header-actions {
+            display: flex;
+            gap: var(--space-sm);
+        }
+
+        .btn {
+            background: var(--gradient-surface);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: var(--radius-lg);
+            padding: var(--space-sm) var(--space-lg);
+            color: var(--strategy-pearl);
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            display: flex;
+            align-items: center;
+            gap: var(--space-sm);
+            text-decoration: none;
+            backdrop-filter: var(--blur-surface);
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-medium);
+            border-color: var(--strategic-gold);
+        }
+
+        .btn.primary {
+            background: var(--gradient-strategic);
+            border-color: var(--strategic-gold);
+            color: var(--strategy-midnight);
+            font-weight: 700;
+            box-shadow: var(--shadow-strategic);
+        }
+
+        .btn.operational {
+            background: var(--gradient-operational);
+            border-color: var(--operational-emerald);
+            color: white;
+        }
+
+        /* Main Content */
+        .main-content {
+            flex: 1;
+            padding: var(--space-xl);
+            max-width: 1600px;
+            margin: 0 auto;
+            width: 100%;
+        }
+
+        /* Strategy Overview */
+        .strategy-overview {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: var(--space-2xl);
+            margin-bottom: var(--space-3xl);
+        }
+
+        .strategy-hero {
+            background: var(--gradient-surface);
+            backdrop-filter: var(--blur-surface);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: var(--radius-2xl);
+            padding: var(--space-3xl);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .strategy-hero::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: var(--gradient-strategic);
+            opacity: 0.8;
+        }
+
+        .strategy-hero::after {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -20%;
+            width: 300px;
+            height: 300px;
+            background: radial-gradient(circle, rgba(255, 215, 0, 0.1) 0%, transparent 70%);
+            border-radius: 50%;
+            pointer-events: none;
+        }
+
+        .hero-content {
+            position: relative;
+            z-index: 2;
+        }
+
+        .hero-title {
+            font-family: 'Clash Display', sans-serif;
+            font-size: 42px;
+            font-weight: 700;
+            color: var(--strategy-pearl);
+            margin-bottom: var(--space-lg);
+            line-height: 1.2;
+        }
+
+        .hero-subtitle {
+            font-size: 18px;
+            color: var(--strategy-silver);
+            margin-bottom: var(--space-2xl);
+            line-height: 1.6;
+        }
+
+        .hero-metrics {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: var(--space-xl);
+        }
+
+        .hero-metric {
+            text-align: center;
+        }
+
+        .metric-value {
+            font-family: 'Clash Display', sans-serif;
+            font-size: 28px;
+            font-weight: 700;
+            color: var(--strategic-gold);
+            margin-bottom: var(--space-xs);
+        }
+
+        .metric-label {
+            font-size: 12px;
+            color: var(--strategy-silver);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            font-weight: 600;
+        }
+
+        .strategy-pillars {
+            display: grid;
+            grid-template-rows: repeat(4, 1fr);
+            gap: var(--space-lg);
+        }
+
+        .pillar-card {
+            background: var(--gradient-surface);
+            backdrop-filter: var(--blur-surface);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: var(--radius-xl);
+            padding: var(--space-lg);
+            transition: all 0.3s ease;
+            position: relative;
+            cursor: pointer;
+        }
+
+        .pillar-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            bottom: 0;
+            width: 4px;
+            border-radius: var(--radius-xl) 0 0 var(--radius-xl);
+            transition: all 0.3s ease;
+        }
+
+        .pillar-card.strategic::before {
+            background: var(--gradient-strategic);
+        }
+
+        .pillar-card.operational::before {
+            background: var(--gradient-operational);
+        }
+
+        .pillar-card.tactical::before {
+            background: var(--gradient-tactical);
+        }
+
+        .pillar-card.governance::before {
+            background: linear-gradient(135deg, #8A2BE2 0%, #9932CC 100%);
+        }
+
+        .pillar-card:hover {
+            transform: translateX(8px);
+            box-shadow: var(--shadow-strong);
+            border-color: rgba(255, 255, 255, 0.2);
+        }
+
+        .pillar-card:hover::before {
+            width: 8px;
+        }
+
+        .pillar-header {
+            display: flex;
+            align-items: center;
+            gap: var(--space-md);
+            margin-bottom: var(--space-sm);
+        }
+
+        .pillar-icon {
+            width: 36px;
+            height: 36px;
+            border-radius: var(--radius-md);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+            color: white;
+        }
+
+        .pillar-card.strategic .pillar-icon {
+            background: var(--gradient-strategic);
+            color: var(--strategy-midnight);
+        }
+
+        .pillar-card.operational .pillar-icon {
+            background: var(--gradient-operational);
+        }
+
+        .pillar-card.tactical .pillar-icon {
+            background: var(--gradient-tactical);
+        }
+
+        .pillar-card.governance .pillar-icon {
+            background: linear-gradient(135deg, #8A2BE2 0%, #9932CC 100%);
+        }
+
+        .pillar-title {
+            font-size: 16px;
+            font-weight: 700;
+            color: var(--strategy-pearl);
+        }
+
+        .pillar-description {
+            font-size: 13px;
+            color: var(--strategy-silver);
+            line-height: 1.5;
+        }
+
+        /* Strategy Framework Grid */
+        .framework-section {
+            margin-bottom: var(--space-3xl);
+        }
+
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: var(--space-2xl);
+            padding-bottom: var(--space-lg);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .section-title {
+            font-family: 'Clash Display', sans-serif;
+            font-size: 32px;
+            font-weight: 700;
+            color: var(--strategy-pearl);
+        }
+
+        .framework-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+            gap: var(--space-xl);
+        }
+
+        .framework-card {
+            background: var(--gradient-surface);
+            backdrop-filter: var(--blur-surface);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: var(--radius-2xl);
+            padding: var(--space-2xl);
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .framework-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            opacity: 0.8;
+            transition: all 0.3s ease;
+        }
+
+        .framework-card.prevention::before {
+            background: var(--gradient-operational);
+        }
+
+        .framework-card.response::before {
+            background: var(--gradient-executive);
+        }
+
+        .framework-card.recovery::before {
+            background: var(--gradient-tactical);
+        }
+
+        .framework-card.learning::before {
+            background: linear-gradient(135deg, #8A2BE2 0%, #9932CC 100%);
+        }
+
+        .framework-card:hover {
+            transform: translateY(-8px);
+            box-shadow: var(--shadow-strong);
+            border-color: rgba(255, 255, 255, 0.2);
+        }
+
+        .framework-card:hover::before {
+            height: 6px;
+        }
+
+        .card-header {
+            display: flex;
+            align-items: flex-start;
+            gap: var(--space-lg);
+            margin-bottom: var(--space-xl);
+        }
+
+        .card-icon {
+            width: 64px;
+            height: 64px;
+            border-radius: var(--radius-xl);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 28px;
+            color: white;
+            flex-shrink: 0;
+            position: relative;
+        }
+
+        .framework-card.prevention .card-icon {
+            background: var(--gradient-operational);
+        }
+
+        .framework-card.response .card-icon {
+            background: var(--gradient-executive);
+        }
+
+        .framework-card.recovery .card-icon {
+            background: var(--gradient-tactical);
+        }
+
+        .framework-card.learning .card-icon {
+            background: linear-gradient(135deg, #8A2BE2 0%, #9932CC 100%);
+        }
+
+        .card-content {
+            flex: 1;
+        }
+
+        .card-title {
+            font-family: 'Clash Display', sans-serif;
+            font-size: 24px;
+            font-weight: 700;
+            color: var(--strategy-pearl);
+            margin-bottom: var(--space-sm);
+        }
+
+        .card-subtitle {
+            font-size: 14px;
+            color: var(--strategy-silver);
+            margin-bottom: var(--space-lg);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            font-weight: 600;
+        }
+
+        .strategy-objectives {
+            list-style: none;
+            margin-bottom: var(--space-xl);
+        }
+
+        .strategy-objectives li {
+            display: flex;
+            align-items: flex-start;
+            gap: var(--space-sm);
+            margin-bottom: var(--space-md);
+            font-size: 14px;
+            line-height: 1.6;
+        }
+
+        .strategy-objectives li::before {
+            content: '→';
+            color: var(--strategic-gold);
+            font-weight: 700;
+            margin-top: 2px;
+            flex-shrink: 0;
+        }
+
+        .card-actions {
+            display: flex;
+            gap: var(--space-sm);
+            margin-top: var(--space-lg);
+        }
+
+        .action-btn {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: var(--radius-md);
+            padding: var(--space-sm) var(--space-md);
+            color: var(--strategy-pearl);
+            font-size: 12px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            flex: 1;
+            text-align: center;
+        }
+
+        .action-btn:hover {
+            background: var(--strategic-gold);
+            color: var(--strategy-midnight);
+            border-color: var(--strategic-gold);
+        }
+
+        /* Maturity Assessment */
+        .maturity-section {
+            margin-bottom: var(--space-3xl);
+        }
+
+        .maturity-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: var(--space-xl);
+        }
+
+        .maturity-radar {
+            background: var(--gradient-surface);
+            backdrop-filter: var(--blur-surface);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: var(--radius-xl);
+            padding: var(--space-xl);
+            position: relative;
+        }
+
+        .radar-header {
+            text-align: center;
+            margin-bottom: var(--space-xl);
+        }
+
+        .radar-title {
+            font-family: 'Clash Display', sans-serif;
+            font-size: 20px;
+            font-weight: 700;
+            color: var(--strategy-pearl);
+            margin-bottom: var(--space-sm);
+        }
+
+        .radar-subtitle {
+            font-size: 13px;
+            color: var(--strategy-silver);
+        }
+
+        .chart-container {
+            position: relative;
+            height: 300px;
+            width: 100%;
+        }
+
+        .maturity-levels {
+            background: var(--gradient-surface);
+            backdrop-filter: var(--blur-surface);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: var(--radius-xl);
+            padding: var(--space-xl);
+        }
+
+        .levels-header {
+            margin-bottom: var(--space-xl);
+        }
+
+        .levels-title {
+            font-family: 'Clash Display', sans-serif;
+            font-size: 20px;
+            font-weight: 700;
+            color: var(--strategy-pearl);
+            margin-bottom: var(--space-sm);
+        }
+
+        .maturity-level {
+            display: flex;
+            align-items: center;
+            gap: var(--space-md);
+            padding: var(--space-lg);
+            margin-bottom: var(--space-md);
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            border-radius: var(--radius-lg);
+            transition: all 0.3s ease;
+        }
+
+        .maturity-level:hover {
+            background: rgba(255, 255, 255, 0.05);
+            border-color: rgba(255, 255, 255, 0.1);
+        }
+
+        .level-indicator {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            flex-shrink: 0;
+        }
+
+        .level-indicator.level-1 { background: var(--priority-critical); }
+        .level-indicator.level-2 { background: var(--priority-high); }
+        .level-indicator.level-3 { background: var(--priority-medium); }
+        .level-indicator.level-4 { background: var(--priority-low); }
+        .level-indicator.level-5 { background: var(--strategic-gold); }
+
+        .level-content {
+            flex: 1;
+        }
+
+        .level-name {
+            font-size: 14px;
+            font-weight: 700;
+            color: var(--strategy-pearl);
+            margin-bottom: var(--space-xs);
+        }
+
+        .level-description {
+            font-size: 12px;
+            color: var(--strategy-silver);
+            line-height: 1.4;
+        }
+
+        /* Strategy Modal */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(12, 13, 20, 0.9);
+            backdrop-filter: blur(12px);
+            z-index: 1000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease;
+        }
+
+        .modal-overlay.show {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .modal {
+            background: var(--strategy-obsidian);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            border-radius: var(--radius-2xl);
+            padding: var(--space-2xl);
+            max-width: 1000px;
+            width: 90%;
+            max-height: 90vh;
+            overflow-y: auto;
+            transform: scale(0.95) translateY(20px);
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        .modal-overlay.show .modal {
+            transform: scale(1) translateY(0);
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: var(--space-xl);
+            padding-bottom: var(--space-lg);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .modal-title {
+            font-family: 'Clash Display', sans-serif;
+            font-size: 28px;
+            font-weight: 700;
+            color: var(--strategy-pearl);
+        }
+
+        .modal-close {
+            width: 44px;
+            height: 44px;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: var(--radius-lg);
+            color: var(--strategy-silver);
+            font-size: 20px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal-close:hover {
+            background: var(--executive-crimson);
+            color: white;
+            border-color: var(--executive-crimson);
+        }
+
+        /* Responsive Design */
+        @media (max-width: 1200px) {
+            .strategy-overview {
+                grid-template-columns: 1fr;
+            }
+            
+            .maturity-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .main-content {
+                padding: var(--space-md);
+            }
+            
+            .framework-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .hero-metrics {
+                grid-template-columns: 1fr;
+                gap: var(--space-lg);
+            }
+            
+            .hero-title {
+                font-size: 32px;
+            }
+            
+            .header-content {
+                flex-direction: column;
+                gap: var(--space-md);
+                text-align: center;
+            }
+        }
+
+        /* Animations */
+        @keyframes slideInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .slide-in {
+            animation: slideInUp 0.6s ease-out forwards;
+        }
+
+        .slide-in:nth-child(2) { animation-delay: 0.1s; }
+        .slide-in:nth-child(3) { animation-delay: 0.2s; }
+        .slide-in:nth-child(4) { animation-delay: 0.3s; }
+
+        /* Scrollbar Styling */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: var(--strategic-gold);
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: #FFA500;
+        }
+    </style>
+</head>
+<body>
+    <div class="app-container">
+        <!-- Header -->
+        <header class="header">
+            <div class="header-content">
+                <div class="header-brand">
+                    <div class="brand-icon">🎯</div>
+                    <div class="brand-text">
+                        <h1>Strategy Framework</h1>
+                        <p>Business Continuity Strategy</p>
+                    </div>
+                </div>
+                <div class="header-actions">
+                    <button class="btn" onclick="exportStrategy()">
+                        <span>📊</span> Export
+                    </button>
+                    <button class="btn operational" onclick="assessMaturity()">
+                        <span>📈</span> Assess
+                    </button>
+                    <button class="btn primary" onclick="createStrategy()">
+                        <span>✨</span> New Strategy
+                    </button>
+                </div>
+            </div>
+        </header>
+
+        <main class="main-content">
+            <!-- Strategy Overview -->
+            <section class="strategy-overview">
+                <div class="strategy-hero">
+                    <div class="hero-content">
+                        <h1 class="hero-title">Strategic Resilience Framework</h1>
+                        <p class="hero-subtitle">
+                            Comprehensive business continuity strategy designed to ensure organizational resilience through 
+                            prevention, response, recovery, and continuous improvement across all operational levels.
+                        </p>
+                        
+                        <div class="hero-metrics">
+                            <div class="hero-metric">
+                                <div class="metric-value">4</div>
+                                <div class="metric-label">Strategic Pillars</div>
+                            </div>
+                            <div class="hero-metric">
+                                <div class="metric-value">12</div>
+                                <div class="metric-label">Key Objectives</div>
+                            </div>
+                            <div class="hero-metric">
+                                <div class="metric-value">87%</div>
+                                <div class="metric-label">Maturity Score</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="strategy-pillars">
+                    <div class="pillar-card strategic slide-in" onclick="openPillarDetail('strategic')">
+                        <div class="pillar-header">
+                            <div class="pillar-icon">🎯</div>
+                            <div class="pillar-title">Strategic Leadership</div>
+                        </div>
+                        <div class="pillar-description">
+                            Executive commitment and strategic direction for organizational resilience
+                        </div>
+                    </div>
+                    
+                    <div class="pillar-card operational slide-in" onclick="openPillarDetail('operational')">
+                        <div class="pillar-header">
+                            <div class="pillar-icon">⚙️</div>
+                            <div class="pillar-title">Operational Excellence</div>
+                        </div>
+                        <div class="pillar-description">
+                            Robust processes and capabilities for continuous business operations
+                        </div>
+                    </div>
+                    
+                    <div class="pillar-card tactical slide-in" onclick="openPillarDetail('tactical')">
+                        <div class="pillar-header">
+                            <div class="pillar-icon">🛠️</div>
+                            <div class="pillar-title">Tactical Response</div>
+                        </div>
+                        <div class="pillar-description">
+                            Agile response capabilities and crisis management procedures
+                        </div>
+                    </div>
+                    
+                    <div class="pillar-card governance slide-in" onclick="openPillarDetail('governance')">
+                        <div class="pillar-header">
+                            <div class="pillar-icon">🏛️</div>
+                            <div class="pillar-title">Governance & Oversight</div>
+                        </div>
+                        <div class="pillar-description">
+                            Comprehensive governance framework and continuous oversight
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Strategy Framework -->
+            <section class="framework-section">
+                <div class="section-header">
+                    <h2 class="section-title">Framework Components</h2>
+                    <div class="framework-controls">
+                        <button class="btn" onclick="toggleFrameworkView()">
+                            <span>🔄</span> Toggle View
+                        </button>
+                    </div>
+                </div>
+                
+                <div class="framework-grid">
+                    <!-- Prevention Strategy -->
+                    <div class="framework-card prevention">
+                        <div class="card-header">
+                            <div class="card-icon">🛡️</div>
+                            <div class="card-content">
+                                <h3 class="card-title">Prevention</h3>
+                                <p class="card-subtitle">Proactive Risk Management</p>
+                            </div>
+                        </div>
+                        
+                        <ul class="strategy-objectives">
+                            <li>Implement comprehensive risk assessment and management</li>
+                            <li>Establish robust business impact analysis processes</li>
+                            <li>Deploy proactive monitoring and early warning systems</li>
+                            <li>Maintain continuous threat intelligence and scenario planning</li>
+                        </ul>
+                        
+                        <div class="card-actions">
+                            <button class="action-btn" onclick="editStrategy('prevention')">Edit</button>
+                            <button class="action-btn" onclick="viewDetails('prevention')">Details</button>
+                        </div>
+                    </div>
+
+                    <!-- Response Strategy -->
+                    <div class="framework-card response">
+                        <div class="card-header">
+                            <div class="card-icon">🚨</div>
+                            <div class="card-content">
+                                <h3 class="card-title">Response</h3>
+                                <p class="card-subtitle">Crisis Management</p>
+                            </div>
+                        </div>
+                        
+                        <ul class="strategy-objectives">
+                            <li>Activate emergency response teams and procedures</li>
+                            <li>Execute crisis communication and stakeholder management</li>
+                            <li>Implement immediate containment and stabilization measures</li>
+                            <li>Coordinate with external agencies and support services</li>
+                        </ul>
+                        
+                        <div class="card-actions">
+                            <button class="action-btn" onclick="editStrategy('response')">Edit</button>
+                            <button class="action-btn" onclick="viewDetails('response')">Details</button>
+                        </div>
+                    </div>
+
+                    <!-- Recovery Strategy -->
+                    <div class="framework-card recovery">
+                        <div class="card-header">
+                            <div class="card-icon">🔄</div>
+                            <div class="card-content">
+                                <h3 class="card-title">Recovery</h3>
+                                <p class="card-subtitle">Business Restoration</p>
+                            </div>
+                        </div>
+                        
+                        <ul class="strategy-objectives">
+                            <li>Execute recovery strategies for critical business functions</li>
+                            <li>Restore IT systems and data integrity</li>
+                            <li>Resume operations at alternate facilities if required</li>
+                            <li>Manage supply chain recovery and vendor relationships</li>
+                        </ul>
+                        
+                        <div class="card-actions">
+                            <button class="action-btn" onclick="editStrategy('recovery')">Edit</button>
+                            <button class="action-btn" onclick="viewDetails('recovery')">Details</button>
+                        </div>
+                    </div>
+
+                    <!-- Learning Strategy -->
+                    <div class="framework-card learning">
+                        <div class="card-header">
+                            <div class="card-icon">📚</div>
+                            <div class="card-content">
+                                <h3 class="card-title">Learning</h3>
+                                <p class="card-subtitle">Continuous Improvement</p>
+                            </div>
+                        </div>
+                        
+                        <ul class="strategy-objectives">
+                            <li>Conduct comprehensive post-incident reviews and analysis</li>
+                            <li>Update strategies and procedures based on lessons learned</li>
+                            <li>Enhance training programs and competency development</li>
+                            <li>Benchmark against industry best practices and standards</li>
+                        </ul>
+                        
+                        <div class="card-actions">
+                            <button class="action-btn" onclick="editStrategy('learning')">Edit</button>
+                            <button class="action-btn" onclick="viewDetails('learning')">Details</button>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Maturity Assessment -->
+            <section class="maturity-section">
+                <div class="section-header">
+                    <h2 class="section-title">Strategy Maturity Assessment</h2>
+                    <div class="maturity-controls">
+                        <button class="btn primary" onclick="runMaturityAssessment()">
+                            <span>📊</span> Run Assessment
+                        </button>
+                    </div>
+                </div>
+                
+                <div class="maturity-grid">
+                    <div class="maturity-radar">
+                        <div class="radar-header">
+                            <h3 class="radar-title">Maturity Radar</h3>
+                            <p class="radar-subtitle">Current state across key capability areas</p>
+                        </div>
+                        <div class="chart-container">
+                            <canvas id="maturityRadar"></canvas>
+                        </div>
+                    </div>
+                    
+                    <div class="maturity-levels">
+                        <div class="levels-header">
+                            <h3 class="levels-title">Maturity Levels</h3>
+                        </div>
+                        
+                        <div class="maturity-level">
+                            <div class="level-indicator level-1"></div>
+                            <div class="level-content">
+                                <div class="level-name">Level 1 - Initial</div>
+                                <div class="level-description">Ad-hoc processes with minimal documentation</div>
+                            </div>
+                        </div>
+                        
+                        <div class="maturity-level">
+                            <div class="level-indicator level-2"></div>
+                            <div class="level-content">
+                                <div class="level-name">Level 2 - Managed</div>
+                                <div class="level-description">Basic processes established and documented</div>
+                            </div>
+                        </div>
+                        
+                        <div class="maturity-level">
+                            <div class="level-indicator level-3"></div>
+                            <div class="level-content">
+                                <div class="level-name">Level 3 - Defined</div>
+                                <div class="level-description">Standardized processes across the organization</div>
+                            </div>
+                        </div>
+                        
+                        <div class="maturity-level">
+                            <div class="level-indicator level-4"></div>
+                            <div class="level-content">
+                                <div class="level-name">Level 4 - Quantitatively Managed</div>
+                                <div class="level-description">Processes measured and controlled using metrics</div>
+                            </div>
+                        </div>
+                        
+                        <div class="maturity-level">
+                            <div class="level-indicator level-5"></div>
+                            <div class="level-content">
+                                <div class="level-name">Level 5 - Optimizing</div>
+                                <div class="level-description">Focus on continuous process improvement</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <!-- Strategy Detail Modal -->
+    <div class="modal-overlay" id="strategyModal">
+        <div class="modal">
+            <div class="modal-header">
+                <h2 class="modal-title" id="modalTitle">Strategy Details</h2>
+                <button class="modal-close" onclick="closeModal()">✕</button>
+            </div>
+            
+            <div id="modalContent">
+                <!-- Strategy content will be populated here -->
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Global variables
+        let maturityRadarChart = null;
+        let currentStrategy = null;
+
+        // Initialize application
+        document.addEventListener('DOMContentLoaded', function() {
+            initializeMaturityRadar();
+            animateOnScroll();
+        });
+
+        // Initialize maturity radar chart
+        function initializeMaturityRadar() {
+            const ctx = document.getElementById('maturityRadar');
+            if (!ctx) return;
+            
+            maturityRadarChart = new Chart(ctx, {
+                type: 'radar',
+                data: {
+                    labels: [
+                        'Risk Management',
+                        'Crisis Response',
+                        'Recovery Planning', 
+                        'Communication',
+                        'Training & Awareness',
+                        'Testing & Exercises',
+                        'Governance',
+                        'Continuous Improvement'
+                    ],
+                    datasets: [{
+                        label: 'Current Maturity',
+                        data: [4.2, 3.8, 4.5, 3.5, 3.9, 4.1, 4.0, 3.7],
+                        borderColor: '#FFD700',
+                        backgroundColor: 'rgba(255, 215, 0, 0.2)',
+                        borderWidth: 3,
+                        pointBackgroundColor: '#FFD700',
+                        pointBorderColor: '#FFA500',
+                        pointRadius: 6,
+                        pointHoverRadius: 8
+                    }, {
+                        label: 'Target Maturity',
+                        data: [5, 4.5, 5, 4.8, 4.5, 4.8, 5, 4.2],
+                        borderColor: '#00C896',
+                        backgroundColor: 'rgba(0, 200, 150, 0.1)',
+                        borderWidth: 2,
+                        borderDash: [5, 5],
+                        pointBackgroundColor: '#00C896',
+                        pointBorderColor: '#00B377',
+                        pointRadius: 4,
+                        pointHoverRadius: 6
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            position: 'bottom',
+                            labels: {
+                                color: '#F4F6FA',
+                                font: {
+                                    family: 'Supreme',
+                                    size: 12,
+                                    weight: '600'
+                                },
+                                usePointStyle: true,
+                                padding: 20
+                            }
+                        }
+                    },
+                    scales: {
+                        r: {
+                            min: 0,
+                            max: 5,
+                            beginAtZero: true,
+                            ticks: {
+                                stepSize: 1,
+                                color: '#7A7D96',
+                                font: {
+                                    family: 'Supreme',
+                                    size: 10
+                                }
+                            },
+                            grid: {
+                                color: 'rgba(255, 255, 255, 0.1)'
+                            },
+                            angleLines: {
+                                color: 'rgba(255, 255, 255, 0.1)'
+                            },
+                            pointLabels: {
+                                color: '#F4F6FA',
+                                font: {
+                                    family: 'Supreme',
+                                    size: 11,
+                                    weight: '600'
+                                }
+                            }
+                        }
+                    },
+                    animation: {
+                        duration: 1500,
+                        easing: 'easeOutQuart'
+                    }
+                }
+            });
+        }
+
+        // Strategy functions
+        function openPillarDetail(pillar) {
+            const pillarData = {
+                strategic: {
+                    title: 'Strategic Leadership Pillar',
+                    content: `
+                        <div style="margin-bottom: 2rem;">
+                            <h3 style="color: var(--strategic-gold); margin-bottom: 1rem;">Executive Commitment</h3>
+                            <p style="margin-bottom: 1rem;">Senior leadership demonstrates visible commitment to business continuity through resource allocation, policy setting, and strategic oversight.</p>
+                            
+                            <h4 style="color: var(--strategy-pearl); margin-bottom: 0.5rem;">Key Components:</h4>
+                            <ul style="color: var(--strategy-silver); margin-left: 1.5rem;">
+                                <li>Board-level governance and oversight</li>
+                                <li>Strategic risk appetite and tolerance setting</li>
+                                <li>Resource allocation for resilience capabilities</li>
+                                <li>Integration with enterprise risk management</li>
+                            </ul>
+                        </div>
+                        
+                        <div style="background: rgba(255, 215, 0, 0.1); border: 1px solid rgba(255, 215, 0, 0.2); border-radius: 12px; padding: 1.5rem;">
+                            <h4 style="color: var(--strategic-gold); margin-bottom: 1rem;">Current Initiatives</h4>
+                            <div style="display: grid; gap: 0.5rem;">
+                                <div style="display: flex; justify-content: space-between;">
+                                    <span>Board BC Charter</span>
+                                    <span style="color: var(--operational-emerald);">Complete</span>
+                                </div>
+                                <div style="display: flex; justify-content: space-between;">
+                                    <span>Risk Appetite Framework</span>
+                                    <span style="color: var(--tactical-azure);">In Progress</span>
+                                </div>
+                                <div style="display: flex; justify-content: space-between;">
+                                    <span>Budget Approval Process</span>
+                                    <span style="color: var(--priority-high);">Pending</span>
+                                </div>
+                            </div>
+                        </div>
+                    `
+                },
+                operational: {
+                    title: 'Operational Excellence Pillar',
+                    content: `
+                        <div style="margin-bottom: 2rem;">
+                            <h3 style="color: var(--operational-emerald); margin-bottom: 1rem;">Process Excellence</h3>
+                            <p style="margin-bottom: 1rem;">Robust operational processes ensure continuous business operations through standardized procedures and capabilities.</p>
+                            
+                            <h4 style="color: var(--strategy-pearl); margin-bottom: 0.5rem;">Core Areas:</h4>
+                            <ul style="color: var(--strategy-silver); margin-left: 1.5rem;">
+                                <li>Business impact analysis and criticality assessment</li>
+                                <li>Recovery time and point objectives definition</li>
+                                <li>Alternate site and technology solutions</li>
+                                <li>Supplier and vendor resilience management</li>
+                            </ul>
+                        </div>
+                        
+                        <div style="background: rgba(0, 200, 150, 0.1); border: 1px solid rgba(0, 200, 150, 0.2); border-radius: 12px; padding: 1.5rem;">
+                            <h4 style="color: var(--operational-emerald); margin-bottom: 1rem;">Performance Metrics</h4>
+                            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+                                <div>
+                                    <div style="font-size: 24px; font-weight: 700; color: var(--operational-emerald);">99.7%</div>
+                                    <div style="font-size: 12px; color: var(--strategy-silver);">Process Availability</div>
+                                </div>
+                                <div>
+                                    <div style="font-size: 24px; font-weight: 700; color: var(--operational-emerald);">4.2h</div>
+                                    <div style="font-size: 12px; color: var(--strategy-silver);">Average RTO</div>
+                                </div>
+                            </div>
+                        </div>
+                    `
+                },
+                tactical: {
+                    title: 'Tactical Response Pillar',
+                    content: `
+                        <div style="margin-bottom: 2rem;">
+                            <h3 style="color: var(--tactical-azure); margin-bottom: 1rem;">Crisis Response</h3>
+                            <p style="margin-bottom: 1rem;">Agile response capabilities enable rapid crisis management and coordinated emergency response.</p>
+                            
+                            <h4 style="color: var(--strategy-pearl); margin-bottom: 0.5rem;">Response Capabilities:</h4>
+                            <ul style="color: var(--strategy-silver); margin-left: 1.5rem;">
+                                <li>24/7 incident response team activation</li>
+                                <li>Crisis communication and media management</li>
+                                <li>Emergency coordination center operations</li>
+                                <li>Stakeholder notification and updates</li>
+                            </ul>
+                        </div>
+                        
+                        <div style="background: rgba(0, 153, 255, 0.1); border: 1px solid rgba(0, 153, 255, 0.2); border-radius: 12px; padding: 1.5rem;">
+                            <h4 style="color: var(--tactical-azure); margin-bottom: 1rem;">Response Teams</h4>
+                            <div style="display: grid; gap: 0.75rem;">
+                                <div style="display: flex; align-items: center; gap: 1rem;">
+                                    <div style="width: 8px; height: 8px; background: var(--operational-emerald); border-radius: 50%;"></div>
+                                    <span>Crisis Management Team - Active</span>
+                                </div>
+                                <div style="display: flex; align-items: center; gap: 1rem;">
+                                    <div style="width: 8px; height: 8px; background: var(--operational-emerald); border-radius: 50%;"></div>
+                                    <span>IT Recovery Team - Standby</span>
+                                </div>
+                                <div style="display: flex; align-items: center; gap: 1rem;">
+                                    <div style="width: 8px; height: 8px; background: var(--operational-emerald); border-radius: 50%;"></div>
+                                    <span>Communications Team - Active</span>
+                                </div>
+                            </div>
+                        </div>
+                    `
+                },
+                governance: {
+                    title: 'Governance & Oversight Pillar',
+                    content: `
+                        <div style="margin-bottom: 2rem;">
+                            <h3 style="color: var(--governance-violet); margin-bottom: 1rem;">Governance Framework</h3>
+                            <p style="margin-bottom: 1rem;">Comprehensive governance ensures effective oversight, compliance, and continuous improvement of BC capabilities.</p>
+                            
+                            <h4 style="color: var(--strategy-pearl); margin-bottom: 0.5rem;">Governance Structure:</h4>
+                            <ul style="color: var(--strategy-silver); margin-left: 1.5rem;">
+                                <li>BC Steering Committee oversight</li>
+                                <li>Regular management reviews and reporting</li>
+                                <li>Compliance monitoring and audit programs</li>
+                                <li>Performance measurement and improvement</li>
+                            </ul>
+                        </div>
+                        
+                        <div style="background: rgba(138, 43, 226, 0.1); border: 1px solid rgba(138, 43, 226, 0.2); border-radius: 12px; padding: 1.5rem;">
+                            <h4 style="color: var(--governance-violet); margin-bottom: 1rem;">Compliance Status</h4>
+                            <div style="display: grid; gap: 0.5rem;">
+                                <div style="display: flex; justify-content: space-between;">
+                                    <span>ISO 22301</span>
+                                    <span style="color: var(--operational-emerald);">Certified</span>
+                                </div>
+                                <div style="display: flex; justify-content: space-between;">
+                                    <span>Regulatory Requirements</span>
+                                    <span style="color: var(--operational-emerald);">Compliant</span>
+                                </div>
+                                <div style="display: flex; justify-content: space-between;">
+                                    <span>Internal Audit</span>
+                                    <span style="color: var(--tactical-azure);">Scheduled</span>
+                                </div>
+                            </div>
+                        </div>
+                    `
+                }
+            };
+
+            const data = pillarData[pillar];
+            if (data) {
+                document.getElementById('modalTitle').textContent = data.title;
+                document.getElementById('modalContent').innerHTML = data.content;
+                document.getElementById('strategyModal').classList.add('show');
+            }
+        }
+
+        function createStrategy() {
+            // Open strategy creation wizard
+            alert('Strategy creation wizard would be implemented here');
+        }
+
+        function editStrategy(type) {
+            alert(`Edit ${type} strategy functionality would be implemented here`);
+        }
+
+        function viewDetails(type) {
+            alert(`View ${type} strategy details functionality would be implemented here`);
+        }
+
+        function exportStrategy() {
+            alert('Strategy export functionality would be implemented here');
+        }
+
+        function assessMaturity() {
+            alert('Maturity assessment functionality would be implemented here');
+        }
+
+        function runMaturityAssessment() {
+            // Simulate running a new assessment
+            const newData = [
+                4.3 + Math.random() * 0.4,
+                3.9 + Math.random() * 0.4,
+                4.6 + Math.random() * 0.3,
+                3.6 + Math.random() * 0.5,
+                4.0 + Math.random() * 0.3,
+                4.2 + Math.random() * 0.4,
+                4.1 + Math.random() * 0.3,
+                3.8 + Math.random() * 0.4
+            ];
+
+            if (maturityRadarChart) {
+                maturityRadarChart.data.datasets[0].data = newData;
+                maturityRadarChart.update('active');
+            }
+
+            // Update hero metric
+            const avgScore = newData.reduce((a, b) => a + b, 0) / newData.length;
+            document.querySelector('.hero-metric .metric-value').textContent = Math.round(avgScore * 20) + '%';
+        }
+
+        function closeModal() {
+            document.getElementById('strategyModal').classList.remove('show');
+        }
+
+        function toggleFrameworkView() {
+            // Toggle between different framework views
+            alert('Framework view toggle functionality would be implemented here');
+        }
+
+        // Animation on scroll
+        function animateOnScroll() {
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach((entry) => {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add('slide-in');
+                    }
+                });
+            }, {
+                threshold: 0.1
+            });
+
+            document.querySelectorAll('.framework-card, .maturity-level').forEach((el) => {
+                observer.observe(el);
+            });
+        }
+
+        // Close modal on outside click
+        document.getElementById('strategyModal').addEventListener('click', function(e) {
+            if (e.target === this) {
+                closeModal();
+            }
+        });
+
+        // Keyboard shortcuts
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') {
+                closeModal();
+            }
+        });
+    </script>
+</body>
+</html>

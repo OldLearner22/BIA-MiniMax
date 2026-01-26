@@ -1,0 +1,16 @@
+C:\Code\BIA - MiniMax\backend\src\Nexus.BCMS.Domain\bin\Debug\net10.0\Nexus.BCMS.Domain.deps.json
+C:\Code\BIA - MiniMax\backend\src\Nexus.BCMS.Domain\bin\Debug\net10.0\Nexus.BCMS.Domain.dll
+C:\Code\BIA - MiniMax\backend\src\Nexus.BCMS.Domain\bin\Debug\net10.0\Nexus.BCMS.Domain.pdb
+C:\Code\BIA - MiniMax\backend\src\Nexus.BCMS.Domain\bin\Debug\net10.0\Nexus.BCMS.Shared.dll
+C:\Code\BIA - MiniMax\backend\src\Nexus.BCMS.Domain\bin\Debug\net10.0\Nexus.BCMS.Shared.pdb
+C:\Code\BIA - MiniMax\backend\src\Nexus.BCMS.Domain\obj\Debug\net10.0\Nexus.BCMS.Domain.csproj.AssemblyReference.cache
+C:\Code\BIA - MiniMax\backend\src\Nexus.BCMS.Domain\obj\Debug\net10.0\Nexus.BCMS.Domain.GeneratedMSBuildEditorConfig.editorconfig
+C:\Code\BIA - MiniMax\backend\src\Nexus.BCMS.Domain\obj\Debug\net10.0\Nexus.BCMS.Domain.AssemblyInfoInputs.cache
+C:\Code\BIA - MiniMax\backend\src\Nexus.BCMS.Domain\obj\Debug\net10.0\Nexus.BCMS.Domain.AssemblyInfo.cs
+C:\Code\BIA - MiniMax\backend\src\Nexus.BCMS.Domain\obj\Debug\net10.0\Nexus.BCMS.Domain.csproj.CoreCompileInputs.cache
+C:\Code\BIA - MiniMax\backend\src\Nexus.BCMS.Domain\obj\Debug\net10.0\Nexus.BCMS.Domain.sourcelink.json
+C:\Code\BIA - MiniMax\backend\src\Nexus.BCMS.Domain\obj\Debug\net10.0\Nexus.BC.ECD86467.Up2Date
+C:\Code\BIA - MiniMax\backend\src\Nexus.BCMS.Domain\obj\Debug\net10.0\Nexus.BCMS.Domain.dll
+C:\Code\BIA - MiniMax\backend\src\Nexus.BCMS.Domain\obj\Debug\net10.0\refint\Nexus.BCMS.Domain.dll
+C:\Code\BIA - MiniMax\backend\src\Nexus.BCMS.Domain\obj\Debug\net10.0\Nexus.BCMS.Domain.pdb
+C:\Code\BIA - MiniMax\backend\src\Nexus.BCMS.Domain\obj\Debug\net10.0\ref\Nexus.BCMS.Domain.dll

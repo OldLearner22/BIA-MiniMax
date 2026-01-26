@@ -1,0 +1,68 @@
+
+// ============================================================================
+// COMPLIANCE MATRIX MODELS
+// ============================================================================
+
+model ComplianceFramework {
+  id          String                  @id @default(uuid())
+  code        String                  @unique // e.g., "iso22301", "dora", "nis2"
+  name        String                  // e.g., "ISO 22301:2019"
+  description String?
+  version     String?                 // Framework version
+  isActive    Boolean                 @default(true)
+  createdAt   DateTime                @default(now())
+  updatedAt   DateTime                @updatedAt
+  
+  requirements ComplianceRequirement[]
+}
+
+model ComplianceRequirement {
+  id                String              @id @default(uuid())
+  frameworkId       String
+  clause            String              // e.g., "Clause 4", "Article 15"
+  title             String
+  description       String              @db.Text
+  requiredDocument  String              // What document is required
+  priority          RequirementPriority @default(MEDIUM)
+  status            ComplianceStatus    @default(NOT_ASSESSED)
+  
+  // Linked document
+  documentId        String?
+  
+  // Review information
+  lastReviewed      DateTime?
+  reviewedBy        String?
+  reviewNotes       String?             @db.Text
+  nextReviewDate    DateTime?
+  
+  // Evidence and notes
+  evidenceNotes     String?             @db.Text
+  implementationNotes String?           @db.Text
+  
+  createdAt         DateTime            @default(now())
+  updatedAt         DateTime            @updatedAt
+  organizationId    String              @default("00000000-0000-0000-0000-000000000001")
+  
+  framework         ComplianceFramework @relation(fields: [frameworkId], references: [id], onDelete: Cascade)
+  document          Document?           @relation(fields: [documentId], references: [id])
+  
+  @@index([frameworkId])
+  @@index([status])
+  @@index([documentId])
+  @@index([nextReviewDate])
+}
+
+enum RequirementPriority {
+  CRITICAL
+  HIGH
+  MEDIUM
+  LOW
+}
+
+enum ComplianceStatus {
+  NOT_ASSESSED
+  NON_COMPLIANT
+  PARTIAL
+  COMPLIANT
+  NOT_APPLICABLE
+}

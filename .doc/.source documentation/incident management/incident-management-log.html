@@ -1,0 +1,1317 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Incident Command Center - Nexus BCMS</title>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;700;900&family=Roboto+Mono:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        :root {
+            /* Command Center Color Palette */
+            --command-void: #0A0C10;
+            --command-obsidian: #141720;
+            --command-charcoal: #1E212B;
+            --command-graphite: #2A2F3A;
+            --command-steel: #404854;
+            --command-silver: #8A9099;
+            --command-pearl: #F8F9FB;
+            
+            /* Incident Severity Colors */
+            --critical-red: #FF3B30;
+            --high-orange: #FF9500;
+            --medium-yellow: #FFCC02;
+            --low-green: #34C759;
+            --info-blue: #007AFF;
+            --resolved-gray: #8E8E93;
+            
+            /* Status Colors */
+            --declared-crimson: #DC143C;
+            --active-orange: #FF8C00;
+            --monitoring-blue: #1E90FF;
+            --contained-green: #32CD32;
+            --closed-gray: #708090;
+            
+            /* Team Colors */
+            --crisis-commander: #FF0040;
+            --operations-orange: #FF6600;
+            --communications-blue: #0066FF;
+            --technical-purple: #9900FF;
+            --external-teal: #00CCAA;
+            
+            /* Gradients */
+            --gradient-critical: linear-gradient(135deg, #FF3B30 0%, #DC143C 100%);
+            --gradient-command: linear-gradient(135deg, #FF0040 0%, #CC0033 100%);
+            --gradient-operations: linear-gradient(135deg, #FF6600 0%, #E55A00 100%);
+            --gradient-surface: linear-gradient(145deg, #141720 0%, #1E212B 100%);
+            --gradient-status: linear-gradient(90deg, #FF3B30, #FF9500, #FFCC02, #34C759);
+            
+            /* Effects */
+            --shadow-soft: 0 2px 12px rgba(0,0,0,0.2);
+            --shadow-medium: 0 4px 24px rgba(0,0,0,0.3);
+            --shadow-strong: 0 8px 32px rgba(0,0,0,0.4);
+            --shadow-critical: 0 0 32px rgba(255, 59, 48, 0.4);
+            --blur-surface: blur(20px);
+            
+            /* Spacing */
+            --space-xs: 0.25rem;
+            --space-sm: 0.5rem;
+            --space-md: 1rem;
+            --space-lg: 1.5rem;
+            --space-xl: 2rem;
+            --space-2xl: 3rem;
+            --space-3xl: 4rem;
+            
+            --radius-sm: 4px;
+            --radius-md: 8px;
+            --radius-lg: 12px;
+            --radius-xl: 16px;
+            --radius-2xl: 20px;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Roboto Mono', monospace;
+            background: var(--command-void);
+            color: var(--command-pearl);
+            line-height: 1.5;
+            overflow-x: hidden;
+            background-image: 
+                radial-gradient(circle at 20% 20%, rgba(255, 59, 48, 0.08) 0%, transparent 50%),
+                radial-gradient(circle at 80% 80%, rgba(0, 122, 255, 0.08) 0%, transparent 50%),
+                linear-gradient(180deg, var(--command-void) 0%, var(--command-obsidian) 100%);
+        }
+
+        .app-container {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Command Header */
+        .command-header {
+            background: rgba(20, 23, 32, 0.95);
+            backdrop-filter: var(--blur-surface);
+            border-bottom: 2px solid rgba(255, 59, 48, 0.3);
+            padding: var(--space-lg) var(--space-xl);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .command-header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: var(--gradient-status);
+            animation: status-pulse 3s infinite;
+        }
+
+        @keyframes status-pulse {
+            0%, 100% { opacity: 0.8; }
+            50% { opacity: 1; }
+        }
+
+        .header-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            max-width: 2000px;
+            margin: 0 auto;
+        }
+
+        .command-brand {
+            display: flex;
+            align-items: center;
+            gap: var(--space-lg);
+        }
+
+        .brand-icon {
+            width: 56px;
+            height: 56px;
+            background: var(--gradient-critical);
+            border-radius: var(--radius-xl);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 28px;
+            color: white;
+            font-weight: 700;
+            box-shadow: var(--shadow-critical);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .brand-icon::after {
+            content: '';
+            position: absolute;
+            inset: -2px;
+            background: conic-gradient(from 0deg, var(--critical-red), var(--high-orange), var(--info-blue), var(--critical-red));
+            border-radius: var(--radius-xl);
+            z-index: -1;
+            animation: rotate-alert 4s linear infinite;
+        }
+
+        @keyframes rotate-alert {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+
+        .incident-status {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+        }
+
+        .incident-id {
+            font-family: 'Orbitron', monospace;
+            font-size: 14px;
+            color: var(--critical-red);
+            font-weight: 700;
+            letter-spacing: 2px;
+            margin-bottom: var(--space-xs);
+        }
+
+        .incident-title {
+            font-family: 'Orbitron', monospace;
+            font-size: 24px;
+            font-weight: 900;
+            color: var(--command-pearl);
+            margin-bottom: var(--space-xs);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .incident-meta {
+            font-size: 12px;
+            color: var(--command-silver);
+            display: flex;
+            gap: var(--space-lg);
+        }
+
+        .header-metrics {
+            display: flex;
+            gap: var(--space-xl);
+        }
+
+        .metric-display {
+            text-align: center;
+            padding: var(--space-sm) var(--space-lg);
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: var(--radius-lg);
+            backdrop-filter: var(--blur-surface);
+        }
+
+        .metric-value {
+            font-family: 'Orbitron', monospace;
+            font-size: 20px;
+            font-weight: 700;
+            color: var(--critical-red);
+            margin-bottom: var(--space-xs);
+        }
+
+        .metric-label {
+            font-size: 10px;
+            color: var(--command-silver);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .header-actions {
+            display: flex;
+            gap: var(--space-sm);
+        }
+
+        .command-btn {
+            background: var(--gradient-surface);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: var(--radius-lg);
+            padding: var(--space-sm) var(--space-lg);
+            color: var(--command-pearl);
+            font-size: 12px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            display: flex;
+            align-items: center;
+            gap: var(--space-sm);
+            text-decoration: none;
+            backdrop-filter: var(--blur-surface);
+            font-family: 'Orbitron', monospace;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .command-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-medium);
+            border-color: var(--critical-red);
+        }
+
+        .command-btn.primary {
+            background: var(--gradient-critical);
+            border-color: var(--critical-red);
+            color: white;
+            font-weight: 700;
+            box-shadow: var(--shadow-critical);
+        }
+
+        /* Main Command Center Layout */
+        .command-center {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            grid-template-rows: auto 1fr;
+            gap: var(--space-lg);
+            padding: var(--space-xl);
+            max-width: 2000px;
+            margin: 0 auto;
+            width: 100%;
+            min-height: calc(100vh - 120px);
+        }
+
+        /* Timeline Section */
+        .incident-timeline {
+            background: var(--gradient-surface);
+            backdrop-filter: var(--blur-surface);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: var(--radius-xl);
+            padding: var(--space-xl);
+            position: relative;
+            grid-row: span 2;
+        }
+
+        .timeline-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: var(--space-xl);
+            padding-bottom: var(--space-lg);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .timeline-title {
+            font-family: 'Orbitron', monospace;
+            font-size: 20px;
+            font-weight: 700;
+            color: var(--command-pearl);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .timeline-controls {
+            display: flex;
+            gap: var(--space-sm);
+        }
+
+        .filter-btn {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: var(--radius-md);
+            padding: var(--space-xs) var(--space-sm);
+            color: var(--command-silver);
+            font-size: 10px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            font-family: 'Orbitron', monospace;
+        }
+
+        .filter-btn:hover,
+        .filter-btn.active {
+            background: var(--critical-red);
+            color: white;
+            border-color: var(--critical-red);
+        }
+
+        .timeline-container {
+            height: calc(100vh - 300px);
+            overflow-y: auto;
+            position: relative;
+        }
+
+        .timeline-track {
+            position: relative;
+            padding-left: var(--space-xl);
+        }
+
+        .timeline-track::before {
+            content: '';
+            position: absolute;
+            left: 12px;
+            top: 0;
+            bottom: 0;
+            width: 2px;
+            background: linear-gradient(to bottom, var(--critical-red), var(--high-orange), var(--info-blue));
+        }
+
+        .timeline-entry {
+            position: relative;
+            margin-bottom: var(--space-lg);
+            padding: var(--space-lg);
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            border-radius: var(--radius-lg);
+            transition: all 0.3s ease;
+        }
+
+        .timeline-entry:hover {
+            background: rgba(255, 255, 255, 0.08);
+            border-color: rgba(255, 255, 255, 0.15);
+        }
+
+        .timeline-marker {
+            position: absolute;
+            left: -30px;
+            top: var(--space-lg);
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            border: 3px solid var(--command-obsidian);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 10px;
+            color: white;
+            font-weight: 700;
+        }
+
+        .timeline-marker.critical { background: var(--critical-red); }
+        .timeline-marker.high { background: var(--high-orange); }
+        .timeline-marker.medium { background: var(--medium-yellow); }
+        .timeline-marker.info { background: var(--info-blue); }
+        .timeline-marker.decision { background: var(--technical-purple); }
+        .timeline-marker.communication { background: var(--communications-blue); }
+
+        .entry-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: var(--space-md);
+        }
+
+        .entry-time {
+            font-family: 'Orbitron', monospace;
+            font-size: 12px;
+            color: var(--critical-red);
+            font-weight: 700;
+            margin-bottom: var(--space-xs);
+        }
+
+        .entry-type {
+            display: inline-flex;
+            align-items: center;
+            gap: var(--space-xs);
+            padding: var(--space-xs) var(--space-sm);
+            border-radius: var(--radius-sm);
+            font-size: 9px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .entry-type.update {
+            background: rgba(0, 122, 255, 0.2);
+            color: var(--info-blue);
+            border: 1px solid rgba(0, 122, 255, 0.3);
+        }
+
+        .entry-type.decision {
+            background: rgba(153, 0, 255, 0.2);
+            color: var(--technical-purple);
+            border: 1px solid rgba(153, 0, 255, 0.3);
+        }
+
+        .entry-type.communication {
+            background: rgba(0, 102, 255, 0.2);
+            color: var(--communications-blue);
+            border: 1px solid rgba(0, 102, 255, 0.3);
+        }
+
+        .entry-type.action {
+            background: rgba(255, 102, 0, 0.2);
+            color: var(--operations-orange);
+            border: 1px solid rgba(255, 102, 0, 0.3);
+        }
+
+        .entry-title {
+            font-size: 14px;
+            font-weight: 700;
+            color: var(--command-pearl);
+            margin-bottom: var(--space-sm);
+        }
+
+        .entry-content {
+            font-size: 12px;
+            color: var(--command-silver);
+            line-height: 1.5;
+            margin-bottom: var(--space-sm);
+        }
+
+        .entry-meta {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding-top: var(--space-sm);
+            border-top: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .entry-author {
+            font-size: 10px;
+            color: var(--command-silver);
+            font-weight: 600;
+        }
+
+        .entry-actions {
+            display: flex;
+            gap: var(--space-xs);
+        }
+
+        .entry-action {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: var(--radius-sm);
+            padding: var(--space-xs) var(--space-sm);
+            color: var(--command-silver);
+            font-size: 9px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .entry-action:hover {
+            background: var(--critical-red);
+            color: white;
+            border-color: var(--critical-red);
+        }
+
+        /* Crisis Team Panel */
+        .crisis-team-panel {
+            background: var(--gradient-surface);
+            backdrop-filter: var(--blur-surface);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: var(--radius-xl);
+            padding: var(--space-xl);
+        }
+
+        .panel-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: var(--space-lg);
+            padding-bottom: var(--space-md);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .panel-title {
+            font-family: 'Orbitron', monospace;
+            font-size: 16px;
+            font-weight: 700;
+            color: var(--command-pearl);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .team-grid {
+            display: grid;
+            gap: var(--space-md);
+        }
+
+        .team-member {
+            display: flex;
+            align-items: center;
+            gap: var(--space-md);
+            padding: var(--space-md);
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            border-radius: var(--radius-lg);
+            transition: all 0.3s ease;
+        }
+
+        .team-member:hover {
+            background: rgba(255, 255, 255, 0.08);
+            border-color: rgba(255, 255, 255, 0.15);
+        }
+
+        .member-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: var(--gradient-critical);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 700;
+            font-size: 14px;
+            position: relative;
+        }
+
+        .status-indicator {
+            position: absolute;
+            bottom: -2px;
+            right: -2px;
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            border: 2px solid var(--command-obsidian);
+        }
+
+        .status-indicator.online { background: var(--low-green); }
+        .status-indicator.busy { background: var(--high-orange); }
+        .status-indicator.away { background: var(--medium-yellow); }
+        .status-indicator.offline { background: var(--resolved-gray); }
+
+        .member-info {
+            flex: 1;
+        }
+
+        .member-name {
+            font-size: 12px;
+            font-weight: 700;
+            color: var(--command-pearl);
+            margin-bottom: var(--space-xs);
+        }
+
+        .member-role {
+            font-size: 10px;
+            color: var(--command-silver);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .member-actions {
+            display: flex;
+            gap: var(--space-xs);
+        }
+
+        .contact-btn {
+            width: 28px;
+            height: 28px;
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: var(--radius-md);
+            color: var(--command-silver);
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+        }
+
+        .contact-btn:hover {
+            background: var(--critical-red);
+            color: white;
+            border-color: var(--critical-red);
+        }
+
+        /* Communications Panel */
+        .communications-panel {
+            background: var(--gradient-surface);
+            backdrop-filter: var(--blur-surface);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: var(--radius-xl);
+            padding: var(--space-xl);
+        }
+
+        .communication-stats {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: var(--space-md);
+            margin-bottom: var(--space-lg);
+        }
+
+        .stat-card {
+            text-align: center;
+            padding: var(--space-md);
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            border-radius: var(--radius-lg);
+        }
+
+        .stat-value {
+            font-family: 'Orbitron', monospace;
+            font-size: 18px;
+            font-weight: 700;
+            color: var(--critical-red);
+            margin-bottom: var(--space-xs);
+        }
+
+        .stat-label {
+            font-size: 10px;
+            color: var(--command-silver);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .recent-communications {
+            max-height: 300px;
+            overflow-y: auto;
+        }
+
+        .comm-entry {
+            display: flex;
+            gap: var(--space-md);
+            padding: var(--space-md);
+            margin-bottom: var(--space-sm);
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            border-radius: var(--radius-md);
+        }
+
+        .comm-icon {
+            width: 32px;
+            height: 32px;
+            border-radius: var(--radius-md);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 14px;
+            color: white;
+            flex-shrink: 0;
+        }
+
+        .comm-icon.email { background: var(--communications-blue); }
+        .comm-icon.sms { background: var(--operations-orange); }
+        .comm-icon.call { background: var(--critical-red); }
+        .comm-icon.alert { background: var(--technical-purple); }
+
+        .comm-details {
+            flex: 1;
+        }
+
+        .comm-title {
+            font-size: 12px;
+            font-weight: 600;
+            color: var(--command-pearl);
+            margin-bottom: var(--space-xs);
+        }
+
+        .comm-meta {
+            font-size: 10px;
+            color: var(--command-silver);
+            margin-bottom: var(--space-xs);
+        }
+
+        .comm-status {
+            font-size: 9px;
+            padding: var(--space-xs) var(--space-sm);
+            border-radius: var(--radius-sm);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            font-weight: 600;
+        }
+
+        .comm-status.sent {
+            background: rgba(52, 199, 89, 0.2);
+            color: var(--low-green);
+        }
+
+        .comm-status.pending {
+            background: rgba(255, 204, 2, 0.2);
+            color: var(--medium-yellow);
+        }
+
+        .comm-status.failed {
+            background: rgba(255, 59, 48, 0.2);
+            color: var(--critical-red);
+        }
+
+        /* Responsive Design */
+        @media (max-width: 1400px) {
+            .command-center {
+                grid-template-columns: 1fr;
+                grid-template-rows: auto;
+            }
+            
+            .incident-timeline {
+                grid-row: span 1;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .header-content {
+                flex-direction: column;
+                gap: var(--space-md);
+                text-align: center;
+            }
+            
+            .header-metrics {
+                gap: var(--space-md);
+            }
+            
+            .command-center {
+                padding: var(--space-md);
+                gap: var(--space-md);
+            }
+            
+            .communication-stats {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 3px;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: var(--critical-red);
+            border-radius: 3px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: var(--high-orange);
+        }
+
+        /* Animations */
+        @keyframes slideInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .slide-in {
+            animation: slideInUp 0.4s ease-out forwards;
+        }
+
+        .slide-in:nth-child(2) { animation-delay: 0.1s; }
+        .slide-in:nth-child(3) { animation-delay: 0.2s; }
+        .slide-in:nth-child(4) { animation-delay: 0.3s; }
+
+        @keyframes pulse-glow {
+            0%, 100% { 
+                box-shadow: 0 0 8px rgba(255, 59, 48, 0.3);
+            }
+            50% { 
+                box-shadow: 0 0 16px rgba(255, 59, 48, 0.6);
+            }
+        }
+
+        .critical-pulse {
+            animation: pulse-glow 2s infinite;
+        }
+    </style>
+</head>
+<body>
+    <div class="app-container">
+        <!-- Command Header -->
+        <header class="command-header">
+            <div class="header-content">
+                <div class="command-brand">
+                    <div class="brand-icon">⚡</div>
+                    <div class="incident-status">
+                        <div class="incident-id">INC-2024-001</div>
+                        <div class="incident-title">Cyber Security Breach - Active</div>
+                        <div class="incident-meta">
+                            <span>🕐 Declared: 14:23 GMT</span>
+                            <span>⏱️ Duration: 02:47:12</span>
+                            <span>🎯 Commander: Sarah Chen</span>
+                            <span>📊 Severity: Critical</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="header-metrics">
+                    <div class="metric-display">
+                        <div class="metric-value">47</div>
+                        <div class="metric-label">Log Entries</div>
+                    </div>
+                    <div class="metric-display">
+                        <div class="metric-value">8</div>
+                        <div class="metric-label">Active Team</div>
+                    </div>
+                    <div class="metric-display">
+                        <div class="metric-value">23</div>
+                        <div class="metric-label">Decisions</div>
+                    </div>
+                    <div class="metric-display">
+                        <div class="metric-value">156</div>
+                        <div class="metric-label">Communications</div>
+                    </div>
+                </div>
+                <div class="header-actions">
+                    <button class="command-btn" onclick="addLogEntry()">
+                        <span>📝</span> Add Entry
+                    </button>
+                    <button class="command-btn" onclick="sendCommunication()">
+                        <span>📢</span> Communicate
+                    </button>
+                    <button class="command-btn primary" onclick="logDecision()">
+                        <span>⚖️</span> Log Decision
+                    </button>
+                </div>
+            </div>
+        </header>
+
+        <!-- Command Center Layout -->
+        <main class="command-center">
+            <!-- Incident Timeline -->
+            <section class="incident-timeline">
+                <div class="timeline-header">
+                    <h2 class="timeline-title">Incident Log Timeline</h2>
+                    <div class="timeline-controls">
+                        <button class="filter-btn active" onclick="filterTimeline('all')">All</button>
+                        <button class="filter-btn" onclick="filterTimeline('critical')">Critical</button>
+                        <button class="filter-btn" onclick="filterTimeline('decisions')">Decisions</button>
+                        <button class="filter-btn" onclick="filterTimeline('comms')">Comms</button>
+                    </div>
+                </div>
+                
+                <div class="timeline-container">
+                    <div class="timeline-track" id="timelineTrack">
+                        <!-- Timeline entries will be populated here -->
+                    </div>
+                </div>
+            </section>
+
+            <!-- Crisis Team Panel -->
+            <section class="crisis-team-panel">
+                <div class="panel-header">
+                    <h3 class="panel-title">Crisis Team</h3>
+                    <button class="command-btn" onclick="updateTeamStatus()">
+                        <span>👥</span> Update
+                    </button>
+                </div>
+                
+                <div class="team-grid" id="teamGrid">
+                    <!-- Team members will be populated here -->
+                </div>
+            </section>
+
+            <!-- Communications Panel -->
+            <section class="communications-panel">
+                <div class="panel-header">
+                    <h3 class="panel-title">Communications</h3>
+                    <button class="command-btn" onclick="newCommunication()">
+                        <span>📨</span> Send
+                    </button>
+                </div>
+                
+                <div class="communication-stats">
+                    <div class="stat-card">
+                        <div class="stat-value">156</div>
+                        <div class="stat-label">Total Sent</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-value">23</div>
+                        <div class="stat-label">Pending</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-value">3</div>
+                        <div class="stat-label">Failed</div>
+                    </div>
+                </div>
+                
+                <div class="recent-communications" id="communicationsLog">
+                    <!-- Communications will be populated here -->
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <script>
+        // Global variables
+        let incidentData = {
+            id: 'INC-2024-001',
+            title: 'Cyber Security Breach - Active',
+            severity: 'Critical',
+            status: 'Active',
+            commander: 'Sarah Chen',
+            startTime: new Date('2024-01-21T14:23:00Z'),
+            logEntries: [],
+            teamMembers: [],
+            communications: []
+        };
+
+        // Initialize application
+        document.addEventListener('DOMContentLoaded', function() {
+            loadIncidentData();
+            renderTimeline();
+            renderTeam();
+            renderCommunications();
+            startRealTimeUpdates();
+        });
+
+        // Sample incident data
+        function loadIncidentData() {
+            // Sample timeline entries
+            incidentData.logEntries = [
+                {
+                    id: 'LOG-001',
+                    timestamp: new Date('2024-01-21T17:10:00Z'),
+                    type: 'critical',
+                    category: 'update',
+                    title: 'Containment Successful - Systems Isolated',
+                    content: 'Successfully isolated affected systems. Malware spread contained to Development environment. Production systems confirmed clean.',
+                    author: 'Mike Rodriguez - Security Lead',
+                    actions: ['View Details', 'Update Status'],
+                    relatedDecisions: ['DEC-007'],
+                    impact: 'Major progress in containment'
+                },
+                {
+                    id: 'LOG-002',
+                    timestamp: new Date('2024-01-21T16:45:00Z'),
+                    type: 'decision',
+                    category: 'decision',
+                    title: 'Decision: Activate Backup Data Center',
+                    content: 'Approved activation of backup data center to ensure business continuity. Estimated switchover time: 45 minutes. Customer impact minimized.',
+                    author: 'Sarah Chen - Incident Commander',
+                    decisionId: 'DEC-007',
+                    alternatives: ['Maintain current systems', 'Partial shutdown'],
+                    rationale: 'Risk of further compromise outweighs switchover impact'
+                },
+                {
+                    id: 'LOG-003',
+                    timestamp: new Date('2024-01-21T16:30:00Z'),
+                    type: 'communication',
+                    category: 'communication',
+                    title: 'Customer Notification Sent - Service Impact Alert',
+                    content: 'Proactive notification sent to all customers regarding potential service disruption. Call center briefed with FAQ. Social media monitoring activated.',
+                    author: 'Emma Thompson - Communications',
+                    recipients: '2,847 customers',
+                    channels: ['Email', 'SMS', 'Portal', 'Social Media']
+                },
+                {
+                    id: 'LOG-004',
+                    timestamp: new Date('2024-01-21T16:15:00Z'),
+                    type: 'high',
+                    category: 'action',
+                    title: 'External Security Firm Engaged',
+                    content: 'CyberDefense Inc. contacted and en-route to facility. ETA: 30 minutes. Forensic analysis to begin immediately upon arrival.',
+                    author: 'David Kim - IT Manager',
+                    vendor: 'CyberDefense Inc.',
+                    eta: '16:45 GMT'
+                },
+                {
+                    id: 'LOG-005',
+                    timestamp: new Date('2024-01-21T15:50:00Z'),
+                    type: 'medium',
+                    category: 'update',
+                    title: 'Scope Assessment Complete',
+                    content: 'Initial assessment shows breach limited to internal development servers. No customer data compromised. Payment systems isolated and secure.',
+                    author: 'Alex Johnson - Security Analyst',
+                    affectedSystems: ['DEV-WEB-01', 'DEV-API-02', 'DEV-DB-03'],
+                    secureUnions: ['PROD-*', 'PAYMENT-*', 'CUSTOMER-*']
+                },
+                {
+                    id: 'LOG-006',
+                    timestamp: new Date('2024-01-21T14:23:00Z'),
+                    type: 'critical',
+                    category: 'update',
+                    title: 'INCIDENT DECLARED - Suspicious Network Activity',
+                    content: 'Critical security incident declared following detection of unusual network traffic and unauthorized access attempts. All response teams activated.',
+                    author: 'Security Operations Center',
+                    trigger: 'Automated threat detection system',
+                    initialResponse: 'Crisis team activation, network monitoring enhanced'
+                }
+            ];
+
+            // Sample team members
+            incidentData.teamMembers = [
+                {
+                    id: 'TEAM-001',
+                    name: 'Sarah Chen',
+                    role: 'Incident Commander',
+                    status: 'online',
+                    avatar: 'SC',
+                    lastActive: '2 min ago',
+                    contacts: ['📞', '📧', '💬']
+                },
+                {
+                    id: 'TEAM-002',
+                    name: 'Mike Rodriguez',
+                    role: 'Security Lead',
+                    status: 'busy',
+                    avatar: 'MR',
+                    lastActive: 'Active now',
+                    contacts: ['📞', '📧']
+                },
+                {
+                    id: 'TEAM-003',
+                    name: 'Emma Thompson',
+                    role: 'Communications',
+                    status: 'online',
+                    avatar: 'ET',
+                    lastActive: '5 min ago',
+                    contacts: ['📞', '💬']
+                },
+                {
+                    id: 'TEAM-004',
+                    name: 'David Kim',
+                    role: 'IT Operations',
+                    status: 'online',
+                    avatar: 'DK',
+                    lastActive: '1 min ago',
+                    contacts: ['📞', '📧', '💬']
+                },
+                {
+                    id: 'TEAM-005',
+                    name: 'Alex Johnson',
+                    role: 'Security Analyst',
+                    status: 'away',
+                    avatar: 'AJ',
+                    lastActive: '15 min ago',
+                    contacts: ['📧', '💬']
+                }
+            ];
+
+            // Sample communications
+            incidentData.communications = [
+                {
+                    id: 'COMM-001',
+                    type: 'email',
+                    title: 'Executive Brief - Incident Status Update',
+                    recipient: 'Executive Team',
+                    timestamp: '17:05',
+                    status: 'sent'
+                },
+                {
+                    id: 'COMM-002',
+                    type: 'sms',
+                    title: 'Customer Alert - Service Impact Notification',
+                    recipient: '2,847 customers',
+                    timestamp: '16:30',
+                    status: 'sent'
+                },
+                {
+                    id: 'COMM-003',
+                    type: 'call',
+                    title: 'Emergency Contact - CyberDefense Inc.',
+                    recipient: 'External Vendor',
+                    timestamp: '16:15',
+                    status: 'sent'
+                },
+                {
+                    id: 'COMM-004',
+                    type: 'alert',
+                    title: 'Internal Alert - All Staff Notification',
+                    recipient: 'All Employees',
+                    timestamp: '15:45',
+                    status: 'pending'
+                },
+                {
+                    id: 'COMM-005',
+                    type: 'email',
+                    title: 'Regulatory Notification - Data Protection Authority',
+                    recipient: 'Regulatory Body',
+                    timestamp: '15:30',
+                    status: 'failed'
+                }
+            ];
+        }
+
+        function renderTimeline() {
+            const container = document.getElementById('timelineTrack');
+            container.innerHTML = '';
+
+            incidentData.logEntries.forEach((entry, index) => {
+                const entryElement = createTimelineEntry(entry);
+                entryElement.style.animationDelay = `${index * 0.1}s`;
+                entryElement.classList.add('slide-in');
+                container.appendChild(entryElement);
+            });
+        }
+
+        function createTimelineEntry(entry) {
+            const entryDiv = document.createElement('div');
+            entryDiv.className = 'timeline-entry';
+
+            const time = entry.timestamp.toLocaleTimeString('en-GB', { 
+                hour: '2-digit', 
+                minute: '2-digit' 
+            });
+
+            entryDiv.innerHTML = `
+                <div class="timeline-marker ${entry.type}"></div>
+                <div class="entry-header">
+                    <div>
+                        <div class="entry-time">${time}</div>
+                        <div class="entry-type ${entry.category}">
+                            ${getCategoryIcon(entry.category)} ${entry.category.toUpperCase()}
+                        </div>
+                    </div>
+                </div>
+                <div class="entry-title">${entry.title}</div>
+                <div class="entry-content">${entry.content}</div>
+                <div class="entry-meta">
+                    <div class="entry-author">👤 ${entry.author}</div>
+                    <div class="entry-actions">
+                        ${entry.actions ? entry.actions.map(action => `
+                            <button class="entry-action">${action}</button>
+                        `).join('') : ''}
+                    </div>
+                </div>
+            `;
+
+            return entryDiv;
+        }
+
+        function renderTeam() {
+            const container = document.getElementById('teamGrid');
+            container.innerHTML = '';
+
+            incidentData.teamMembers.forEach((member, index) => {
+                const memberElement = createTeamMember(member);
+                memberElement.style.animationDelay = `${index * 0.1}s`;
+                memberElement.classList.add('slide-in');
+                container.appendChild(memberElement);
+            });
+        }
+
+        function createTeamMember(member) {
+            const memberDiv = document.createElement('div');
+            memberDiv.className = 'team-member';
+
+            memberDiv.innerHTML = `
+                <div class="member-avatar">
+                    ${member.avatar}
+                    <div class="status-indicator ${member.status}"></div>
+                </div>
+                <div class="member-info">
+                    <div class="member-name">${member.name}</div>
+                    <div class="member-role">${member.role}</div>
+                </div>
+                <div class="member-actions">
+                    ${member.contacts.map(contact => `
+                        <button class="contact-btn" onclick="contactMember('${member.id}', '${contact}')">
+                            ${contact}
+                        </button>
+                    `).join('')}
+                </div>
+            `;
+
+            return memberDiv;
+        }
+
+        function renderCommunications() {
+            const container = document.getElementById('communicationsLog');
+            container.innerHTML = '';
+
+            incidentData.communications.forEach((comm, index) => {
+                const commElement = createCommEntry(comm);
+                commElement.style.animationDelay = `${index * 0.1}s`;
+                commElement.classList.add('slide-in');
+                container.appendChild(commElement);
+            });
+        }
+
+        function createCommEntry(comm) {
+            const commDiv = document.createElement('div');
+            commDiv.className = 'comm-entry';
+
+            commDiv.innerHTML = `
+                <div class="comm-icon ${comm.type}">
+                    ${getCommIcon(comm.type)}
+                </div>
+                <div class="comm-details">
+                    <div class="comm-title">${comm.title}</div>
+                    <div class="comm-meta">To: ${comm.recipient} • ${comm.timestamp}</div>
+                    <div class="comm-status ${comm.status}">${comm.status}</div>
+                </div>
+            `;
+
+            return commDiv;
+        }
+
+        function getCategoryIcon(category) {
+            const icons = {
+                update: '📊',
+                decision: '⚖️',
+                communication: '📢',
+                action: '⚡'
+            };
+            return icons[category] || '📝';
+        }
+
+        function getCommIcon(type) {
+            const icons = {
+                email: '📧',
+                sms: '📱',
+                call: '📞',
+                alert: '🚨'
+            };
+            return icons[type] || '📨';
+        }
+
+        function filterTimeline(filter) {
+            // Update active filter button
+            document.querySelectorAll('.filter-btn').forEach(btn => btn.classList.remove('active'));
+            event.target.classList.add('active');
+
+            // Filter logic would be implemented here
+            console.log(`Filtering timeline by: ${filter}`);
+        }
+
+        function addLogEntry() {
+            alert('Add Log Entry modal would be implemented here\n\nThis would open a form for creating new timeline entries with structured data capture.');
+        }
+
+        function logDecision() {
+            alert('Log Decision modal would be implemented here\n\nThis would capture formal decisions with rationale, alternatives considered, and approval workflow.');
+        }
+
+        function sendCommunication() {
+            alert('Send Communication modal would be implemented here\n\nThis would provide templates for different stakeholder groups and track delivery status.');
+        }
+
+        function contactMember(memberId, contactType) {
+            const member = incidentData.teamMembers.find(m => m.id === memberId);
+            alert(`Contact ${member.name} via ${contactType}\n\nThis would initiate the appropriate communication channel.`);
+        }
+
+        function newCommunication() {
+            alert('New Communication wizard would be implemented here\n\nThis would provide templates and recipient selection for incident communications.');
+        }
+
+        function updateTeamStatus() {
+            alert('Team Status update would be implemented here\n\nThis would allow updating team member availability and roles.');
+        }
+
+        function startRealTimeUpdates() {
+            // Simulate real-time updates
+            setInterval(() => {
+                updateIncidentDuration();
+                // In real implementation, this would poll for new data
+            }, 1000);
+        }
+
+        function updateIncidentDuration() {
+            const now = new Date();
+            const duration = now - incidentData.startTime;
+            const hours = Math.floor(duration / (1000 * 60 * 60));
+            const minutes = Math.floor((duration % (1000 * 60 * 60)) / (1000 * 60));
+            const seconds = Math.floor((duration % (1000 * 60)) / 1000);
+            
+            const durationText = `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+            
+            // Update duration display
+            const durationElement = document.querySelector('.incident-meta span:nth-child(2)');
+            if (durationElement) {
+                durationElement.textContent = `⏱️ Duration: ${durationText}`;
+            }
+        }
+    </script>
+</body>
+</html>

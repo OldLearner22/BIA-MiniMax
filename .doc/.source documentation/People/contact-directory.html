@@ -1,0 +1,1355 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BC Contact Directory - Nexus BCMS</title>
+    <link href="https://fonts.googleapis.com/css2?family=Geist:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            /* Core Color Palette */
+            --nexus-midnight: #0B0C10;
+            --nexus-graphite: #1F2937;
+            --nexus-slate: #374151;
+            --nexus-steel: #6B7280;
+            --nexus-silver: #9CA3AF;
+            --nexus-pearl: #F9FAFB;
+            
+            /* Accent Colors */
+            --nexus-electric: #10B981;
+            --nexus-cyber: #06D6A0;
+            --nexus-neon: #FFD23F;
+            --nexus-coral: #FF6B6B;
+            --nexus-violet: #8B5CF6;
+            --nexus-azure: #3B82F6;
+            
+            /* Status Colors */
+            --status-available: #10B981;
+            --status-busy: #F59E0B;
+            --status-away: #EF4444;
+            --status-offline: #6B7280;
+            
+            /* Criticality Colors */
+            --critical-red: #DC2626;
+            --high-amber: #F59E0B;
+            --medium-blue: #3B82F6;
+            --low-emerald: #10B981;
+            
+            /* Gradients */
+            --gradient-primary: linear-gradient(135deg, var(--nexus-electric) 0%, var(--nexus-cyber) 100%);
+            --gradient-card: linear-gradient(145deg, #1F2937 0%, #374151 100%);
+            --gradient-critical: linear-gradient(135deg, #DC2626 0%, #EF4444 100%);
+            --gradient-high: linear-gradient(135deg, #F59E0B 0%, #FCD34D 100%);
+            --gradient-medium: linear-gradient(135deg, #3B82F6 0%, #60A5FA 100%);
+            --gradient-low: linear-gradient(135deg, #10B981 0%, #34D399 100%);
+            
+            /* Shadows */
+            --shadow-soft: 0 1px 3px rgba(0, 0, 0, 0.12), 0 1px 2px rgba(0, 0, 0, 0.24);
+            --shadow-medium: 0 4px 6px rgba(0, 0, 0, 0.1), 0 2px 4px rgba(0, 0, 0, 0.06);
+            --shadow-strong: 0 10px 15px rgba(0, 0, 0, 0.1), 0 4px 6px rgba(0, 0, 0, 0.05);
+            --shadow-glow: 0 0 20px rgba(16, 185, 129, 0.3);
+            
+            /* Spacing */
+            --space-xs: 0.25rem;
+            --space-sm: 0.5rem;
+            --space-md: 1rem;
+            --space-lg: 1.5rem;
+            --space-xl: 2rem;
+            --space-2xl: 3rem;
+            
+            /* Border Radius */
+            --radius-sm: 0.375rem;
+            --radius-md: 0.5rem;
+            --radius-lg: 0.75rem;
+            --radius-xl: 1rem;
+            --radius-2xl: 1.5rem;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Geist', system-ui, -apple-system, sans-serif;
+            background: var(--nexus-midnight);
+            color: var(--nexus-pearl);
+            line-height: 1.6;
+            overflow-x: hidden;
+            background-image: 
+                radial-gradient(circle at 25% 25%, rgba(16, 185, 129, 0.03) 0%, transparent 50%),
+                radial-gradient(circle at 75% 75%, rgba(139, 92, 246, 0.03) 0%, transparent 50%);
+        }
+
+        .app-container {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Header */
+        .header {
+            background: rgba(31, 41, 55, 0.95);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            padding: var(--space-lg) var(--space-xl);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .header-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .header-title {
+            display: flex;
+            align-items: center;
+            gap: var(--space-md);
+        }
+
+        .header-icon {
+            width: 40px;
+            height: 40px;
+            background: var(--gradient-primary);
+            border-radius: var(--radius-lg);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+            color: white;
+            font-weight: 700;
+        }
+
+        .header-text h1 {
+            font-size: 24px;
+            font-weight: 800;
+            color: var(--nexus-pearl);
+            margin-bottom: 2px;
+        }
+
+        .header-text p {
+            font-size: 14px;
+            color: var(--nexus-silver);
+            font-weight: 500;
+        }
+
+        .header-actions {
+            display: flex;
+            gap: var(--space-sm);
+        }
+
+        .btn {
+            background: var(--gradient-card);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: var(--radius-lg);
+            padding: var(--space-sm) var(--space-lg);
+            color: var(--nexus-pearl);
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            display: flex;
+            align-items: center;
+            gap: var(--space-sm);
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-strong);
+            border-color: var(--nexus-electric);
+        }
+
+        .btn.primary {
+            background: var(--gradient-primary);
+            border-color: var(--nexus-electric);
+            color: white;
+        }
+
+        /* Main Content */
+        .main-content {
+            flex: 1;
+            padding: var(--space-xl);
+            max-width: 1400px;
+            margin: 0 auto;
+            width: 100%;
+        }
+
+        /* Search and Filters */
+        .controls-section {
+            display: grid;
+            grid-template-columns: 1fr auto;
+            gap: var(--space-lg);
+            margin-bottom: var(--space-2xl);
+            align-items: end;
+        }
+
+        .search-container {
+            position: relative;
+        }
+
+        .search-input {
+            width: 100%;
+            background: var(--gradient-card);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: var(--radius-xl);
+            padding: var(--space-md) var(--space-lg) var(--space-md) 3rem;
+            color: var(--nexus-pearl);
+            font-size: 16px;
+            font-weight: 500;
+            transition: all 0.3s ease;
+        }
+
+        .search-input:focus {
+            outline: none;
+            border-color: var(--nexus-electric);
+            box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.1);
+        }
+
+        .search-icon {
+            position: absolute;
+            left: var(--space-lg);
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--nexus-silver);
+            font-size: 18px;
+        }
+
+        .filters-container {
+            display: flex;
+            gap: var(--space-sm);
+            align-items: center;
+        }
+
+        .filter-select {
+            background: var(--gradient-card);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: var(--radius-lg);
+            padding: var(--space-sm) var(--space-lg);
+            color: var(--nexus-pearl);
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            min-width: 140px;
+        }
+
+        .filter-select:focus {
+            outline: none;
+            border-color: var(--nexus-electric);
+        }
+
+        /* Stats Overview */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: var(--space-lg);
+            margin-bottom: var(--space-2xl);
+        }
+
+        .stat-card {
+            background: var(--gradient-card);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: var(--radius-xl);
+            padding: var(--space-lg);
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .stat-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: var(--gradient-primary);
+        }
+
+        .stat-card:hover {
+            transform: translateY(-4px);
+            box-shadow: var(--shadow-strong);
+            border-color: var(--nexus-electric);
+        }
+
+        .stat-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: var(--space-md);
+        }
+
+        .stat-icon {
+            width: 48px;
+            height: 48px;
+            background: rgba(16, 185, 129, 0.1);
+            border: 1px solid rgba(16, 185, 129, 0.3);
+            border-radius: var(--radius-lg);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+            color: var(--nexus-electric);
+        }
+
+        .stat-value {
+            font-size: 28px;
+            font-weight: 800;
+            color: var(--nexus-pearl);
+            font-family: 'JetBrains Mono', monospace;
+        }
+
+        .stat-label {
+            font-size: 14px;
+            color: var(--nexus-silver);
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .stat-trend {
+            font-size: 12px;
+            color: var(--nexus-electric);
+            font-weight: 600;
+            margin-top: var(--space-xs);
+        }
+
+        /* Contact Cards Grid */
+        .contacts-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(400px, 1fr));
+            gap: var(--space-lg);
+            margin-bottom: var(--space-2xl);
+        }
+
+        .contact-card {
+            background: var(--gradient-card);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: var(--radius-xl);
+            padding: var(--space-lg);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .contact-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 2px;
+            opacity: 0.8;
+            transition: all 0.3s ease;
+        }
+
+        .contact-card.critical::before {
+            background: var(--gradient-critical);
+        }
+
+        .contact-card.high::before {
+            background: var(--gradient-high);
+        }
+
+        .contact-card.medium::before {
+            background: var(--gradient-medium);
+        }
+
+        .contact-card.low::before {
+            background: var(--gradient-low);
+        }
+
+        .contact-card:hover {
+            transform: translateY(-6px);
+            box-shadow: var(--shadow-strong);
+            border-color: var(--nexus-electric);
+        }
+
+        .contact-header {
+            display: flex;
+            gap: var(--space-md);
+            margin-bottom: var(--space-lg);
+        }
+
+        .contact-avatar {
+            width: 64px;
+            height: 64px;
+            border-radius: var(--radius-xl);
+            background: var(--gradient-primary);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            font-weight: 700;
+            color: white;
+            flex-shrink: 0;
+            position: relative;
+        }
+
+        .status-indicator {
+            position: absolute;
+            bottom: 4px;
+            right: 4px;
+            width: 16px;
+            height: 16px;
+            border-radius: 50%;
+            border: 2px solid var(--nexus-graphite);
+        }
+
+        .status-indicator.available { background: var(--status-available); }
+        .status-indicator.busy { background: var(--status-busy); }
+        .status-indicator.away { background: var(--status-away); }
+        .status-indicator.offline { background: var(--status-offline); }
+
+        .contact-info {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .contact-name {
+            font-size: 20px;
+            font-weight: 700;
+            color: var(--nexus-pearl);
+            margin-bottom: var(--space-xs);
+        }
+
+        .contact-title {
+            font-size: 14px;
+            color: var(--nexus-silver);
+            font-weight: 500;
+            margin-bottom: var(--space-xs);
+        }
+
+        .contact-department {
+            font-size: 12px;
+            color: var(--nexus-electric);
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .contact-roles {
+            margin-bottom: var(--space-lg);
+        }
+
+        .roles-title {
+            font-size: 12px;
+            color: var(--nexus-silver);
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: var(--space-sm);
+        }
+
+        .role-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: var(--space-xs);
+        }
+
+        .role-tag {
+            padding: 4px 8px;
+            border-radius: var(--radius-sm);
+            font-size: 11px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.3px;
+            border: 1px solid;
+        }
+
+        .role-tag.critical {
+            background: rgba(220, 38, 38, 0.1);
+            border-color: rgba(220, 38, 38, 0.3);
+            color: #FCA5A5;
+        }
+
+        .role-tag.high {
+            background: rgba(245, 158, 11, 0.1);
+            border-color: rgba(245, 158, 11, 0.3);
+            color: #FCD34D;
+        }
+
+        .role-tag.medium {
+            background: rgba(59, 130, 246, 0.1);
+            border-color: rgba(59, 130, 246, 0.3);
+            color: #93C5FD;
+        }
+
+        .role-tag.low {
+            background: rgba(16, 185, 129, 0.1);
+            border-color: rgba(16, 185, 129, 0.3);
+            color: #6EE7B7;
+        }
+
+        .contact-methods {
+            margin-bottom: var(--space-lg);
+        }
+
+        .methods-title {
+            font-size: 12px;
+            color: var(--nexus-silver);
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: var(--space-sm);
+        }
+
+        .method-item {
+            display: flex;
+            align-items: center;
+            gap: var(--space-sm);
+            margin-bottom: var(--space-xs);
+            padding: var(--space-xs) var(--space-sm);
+            border-radius: var(--radius-md);
+            transition: all 0.2s ease;
+        }
+
+        .method-item:hover {
+            background: rgba(255, 255, 255, 0.05);
+        }
+
+        .method-icon {
+            width: 20px;
+            height: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+            color: var(--nexus-electric);
+        }
+
+        .method-value {
+            font-size: 13px;
+            color: var(--nexus-pearl);
+            font-weight: 500;
+            font-family: 'JetBrains Mono', monospace;
+        }
+
+        .method-priority {
+            margin-left: auto;
+            font-size: 10px;
+            color: var(--nexus-silver);
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+
+        .contact-actions {
+            display: flex;
+            gap: var(--space-sm);
+        }
+
+        .action-btn {
+            flex: 1;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: var(--radius-md);
+            padding: var(--space-sm);
+            color: var(--nexus-pearl);
+            font-size: 12px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: var(--space-xs);
+        }
+
+        .action-btn:hover {
+            background: var(--nexus-electric);
+            color: white;
+            transform: translateY(-1px);
+        }
+
+        /* Emergency Contacts */
+        .emergency-section {
+            margin-top: var(--space-2xl);
+            padding-top: var(--space-2xl);
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .emergency-header {
+            display: flex;
+            align-items: center;
+            gap: var(--space-md);
+            margin-bottom: var(--space-lg);
+        }
+
+        .emergency-icon {
+            width: 48px;
+            height: 48px;
+            background: var(--gradient-critical);
+            border-radius: var(--radius-lg);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+            color: white;
+        }
+
+        .emergency-title {
+            font-size: 24px;
+            font-weight: 800;
+            color: var(--nexus-pearl);
+        }
+
+        .emergency-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+            gap: var(--space-lg);
+        }
+
+        .emergency-card {
+            background: linear-gradient(145deg, rgba(220, 38, 38, 0.1) 0%, rgba(239, 68, 68, 0.05) 100%);
+            border: 1px solid rgba(220, 38, 38, 0.3);
+            border-radius: var(--radius-xl);
+            padding: var(--space-lg);
+            transition: all 0.3s ease;
+        }
+
+        .emergency-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 8px 25px rgba(220, 38, 38, 0.2);
+            border-color: var(--critical-red);
+        }
+
+        /* Modal */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(11, 12, 16, 0.8);
+            backdrop-filter: blur(8px);
+            z-index: 1000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease;
+        }
+
+        .modal-overlay.show {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .modal {
+            background: var(--nexus-graphite);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: var(--radius-2xl);
+            padding: var(--space-2xl);
+            max-width: 600px;
+            width: 90%;
+            max-height: 80vh;
+            overflow-y: auto;
+            transform: scale(0.95) translateY(20px);
+            transition: all 0.3s ease;
+        }
+
+        .modal-overlay.show .modal {
+            transform: scale(1) translateY(0);
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: var(--space-xl);
+        }
+
+        .modal-title {
+            font-size: 24px;
+            font-weight: 800;
+            color: var(--nexus-pearl);
+        }
+
+        .modal-close {
+            width: 40px;
+            height: 40px;
+            background: rgba(255, 255, 255, 0.1);
+            border: none;
+            border-radius: var(--radius-lg);
+            color: var(--nexus-silver);
+            font-size: 20px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .modal-close:hover {
+            background: var(--nexus-coral);
+            color: white;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .main-content {
+                padding: var(--space-md);
+            }
+
+            .controls-section {
+                grid-template-columns: 1fr;
+                gap: var(--space-md);
+            }
+
+            .contacts-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .stats-grid {
+                grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            }
+
+            .header-content {
+                flex-direction: column;
+                gap: var(--space-md);
+                text-align: center;
+            }
+        }
+
+        /* Loading Animation */
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+
+        .loading {
+            animation: pulse 2s infinite;
+        }
+
+        /* Scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: var(--nexus-electric);
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: var(--nexus-cyber);
+        }
+    </style>
+</head>
+<body>
+    <div class="app-container">
+        <!-- Header -->
+        <header class="header">
+            <div class="header-content">
+                <div class="header-title">
+                    <div class="header-icon">📇</div>
+                    <div class="header-text">
+                        <h1>Contact Directory</h1>
+                        <p>Business Continuity Team Communications</p>
+                    </div>
+                </div>
+                <div class="header-actions">
+                    <button class="btn" onclick="exportContacts()">
+                        <span>📤</span> Export
+                    </button>
+                    <button class="btn" onclick="importContacts()">
+                        <span>📥</span> Import
+                    </button>
+                    <button class="btn primary" onclick="addContact()">
+                        <span>➕</span> Add Contact
+                    </button>
+                </div>
+            </div>
+        </header>
+
+        <main class="main-content">
+            <!-- Search and Filters -->
+            <section class="controls-section">
+                <div class="search-container">
+                    <div class="search-icon">🔍</div>
+                    <input 
+                        type="text" 
+                        class="search-input" 
+                        placeholder="Search contacts, roles, departments..."
+                        id="searchInput"
+                        oninput="filterContacts()"
+                    >
+                </div>
+                <div class="filters-container">
+                    <select class="filter-select" id="departmentFilter" onchange="filterContacts()">
+                        <option value="">All Departments</option>
+                        <option value="IT">IT</option>
+                        <option value="Finance">Finance</option>
+                        <option value="HR">Human Resources</option>
+                        <option value="Security">Security</option>
+                        <option value="Operations">Operations</option>
+                    </select>
+                    <select class="filter-select" id="statusFilter" onchange="filterContacts()">
+                        <option value="">All Status</option>
+                        <option value="available">Available</option>
+                        <option value="busy">Busy</option>
+                        <option value="away">Away</option>
+                        <option value="offline">Offline</option>
+                    </select>
+                    <select class="filter-select" id="roleFilter" onchange="filterContacts()">
+                        <option value="">All Roles</option>
+                        <option value="critical">Critical Roles</option>
+                        <option value="high">High Priority</option>
+                        <option value="medium">Medium Priority</option>
+                        <option value="low">Low Priority</option>
+                    </select>
+                </div>
+            </section>
+
+            <!-- Stats Overview -->
+            <section class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-header">
+                        <div class="stat-icon">👥</div>
+                        <div class="stat-value" id="totalContacts">47</div>
+                    </div>
+                    <div class="stat-label">Total Contacts</div>
+                    <div class="stat-trend">+3 this month</div>
+                </div>
+                
+                <div class="stat-card">
+                    <div class="stat-header">
+                        <div class="stat-icon">🟢</div>
+                        <div class="stat-value" id="availableContacts">32</div>
+                    </div>
+                    <div class="stat-label">Available Now</div>
+                    <div class="stat-trend">68% online</div>
+                </div>
+                
+                <div class="stat-card">
+                    <div class="stat-header">
+                        <div class="stat-icon">🔴</div>
+                        <div class="stat-value" id="criticalRoles">12</div>
+                    </div>
+                    <div class="stat-label">Critical Roles</div>
+                    <div class="stat-trend">100% covered</div>
+                </div>
+                
+                <div class="stat-card">
+                    <div class="stat-header">
+                        <div class="stat-icon">📞</div>
+                        <div class="stat-value" id="emergencyContacts">8</div>
+                    </div>
+                    <div class="stat-label">24/7 Emergency</div>
+                    <div class="stat-trend">Always ready</div>
+                </div>
+            </section>
+
+            <!-- Contact Cards -->
+            <section class="contacts-grid" id="contactsGrid">
+                <!-- Contacts will be dynamically loaded here -->
+            </section>
+
+            <!-- Emergency Contacts Section -->
+            <section class="emergency-section">
+                <div class="emergency-header">
+                    <div class="emergency-icon">🚨</div>
+                    <div class="emergency-title">Emergency Contacts</div>
+                </div>
+                <div class="emergency-grid" id="emergencyGrid">
+                    <!-- Emergency contacts will be loaded here -->
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <!-- Contact Details Modal -->
+    <div class="modal-overlay" id="contactModal">
+        <div class="modal">
+            <div class="modal-header">
+                <h2 class="modal-title">Contact Details</h2>
+                <button class="modal-close" onclick="closeModal()">✕</button>
+            </div>
+            <div id="modalContent">
+                <!-- Modal content will be populated dynamically -->
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Sample contact data
+        const contactsData = [
+            {
+                id: '1',
+                firstName: 'Sarah',
+                lastName: 'Chen',
+                jobTitle: 'Crisis Manager',
+                department: 'Operations',
+                email: 'sarah.chen@company.com',
+                phone: '+44 20 7946 0958',
+                mobile: '+44 7911 123456',
+                status: 'available',
+                roles: [
+                    { name: 'Crisis Team Lead', criticality: 'critical' },
+                    { name: 'Decision Authority', criticality: 'critical' }
+                ],
+                contactMethods: [
+                    { type: 'mobile', value: '+44 7911 123456', priority: 'primary', available24_7: true },
+                    { type: 'email', value: 'sarah.chen@company.com', priority: 'secondary', available24_7: false },
+                    { type: 'teams', value: 'sarah.chen', priority: 'tertiary', available24_7: false }
+                ],
+                lastContact: '2024-01-15',
+                emergencyContact: true
+            },
+            {
+                id: '2',
+                firstName: 'James',
+                lastName: 'Rodriguez',
+                jobTitle: 'IT Director',
+                department: 'IT',
+                email: 'james.rodriguez@company.com',
+                phone: '+44 20 7946 0959',
+                mobile: '+44 7911 654321',
+                status: 'busy',
+                roles: [
+                    { name: 'IT Recovery Lead', criticality: 'critical' },
+                    { name: 'System Administrator', criticality: 'high' }
+                ],
+                contactMethods: [
+                    { type: 'mobile', value: '+44 7911 654321', priority: 'primary', available24_7: true },
+                    { type: 'email', value: 'james.rodriguez@company.com', priority: 'secondary', available24_7: false },
+                    { type: 'slack', value: '@jrodriguez', priority: 'secondary', available24_7: false }
+                ],
+                lastContact: '2024-01-18',
+                emergencyContact: true
+            },
+            {
+                id: '3',
+                firstName: 'Emily',
+                lastName: 'Thompson',
+                jobTitle: 'Communications Manager',
+                department: 'Marketing',
+                email: 'emily.thompson@company.com',
+                phone: '+44 20 7946 0960',
+                mobile: '+44 7911 789012',
+                status: 'available',
+                roles: [
+                    { name: 'External Communications', criticality: 'high' },
+                    { name: 'Media Relations', criticality: 'medium' }
+                ],
+                contactMethods: [
+                    { type: 'mobile', value: '+44 7911 789012', priority: 'primary', available24_7: false },
+                    { type: 'email', value: 'emily.thompson@company.com', priority: 'primary', available24_7: false },
+                    { type: 'teams', value: 'emily.thompson', priority: 'secondary', available24_7: false }
+                ],
+                lastContact: '2024-01-20',
+                emergencyContact: false
+            },
+            {
+                id: '4',
+                firstName: 'Michael',
+                lastName: 'Park',
+                jobTitle: 'Security Manager',
+                department: 'Security',
+                email: 'michael.park@company.com',
+                phone: '+44 20 7946 0961',
+                mobile: '+44 7911 345678',
+                status: 'available',
+                roles: [
+                    { name: 'Physical Security Lead', criticality: 'critical' },
+                    { name: 'Access Control', criticality: 'high' }
+                ],
+                contactMethods: [
+                    { type: 'mobile', value: '+44 7911 345678', priority: 'primary', available24_7: true },
+                    { type: 'radio', value: 'Channel 3', priority: 'primary', available24_7: true },
+                    { type: 'email', value: 'michael.park@company.com', priority: 'tertiary', available24_7: false }
+                ],
+                lastContact: '2024-01-19',
+                emergencyContact: true
+            },
+            {
+                id: '5',
+                firstName: 'Lisa',
+                lastName: 'Anderson',
+                jobTitle: 'HR Business Partner',
+                department: 'HR',
+                email: 'lisa.anderson@company.com',
+                phone: '+44 20 7946 0962',
+                mobile: '+44 7911 456789',
+                status: 'away',
+                roles: [
+                    { name: 'People Welfare Lead', criticality: 'medium' },
+                    { name: 'Employee Communications', criticality: 'medium' }
+                ],
+                contactMethods: [
+                    { type: 'mobile', value: '+44 7911 456789', priority: 'primary', available24_7: false },
+                    { type: 'email', value: 'lisa.anderson@company.com', priority: 'primary', available24_7: false },
+                    { type: 'teams', value: 'lisa.anderson', priority: 'secondary', available24_7: false }
+                ],
+                lastContact: '2024-01-17',
+                emergencyContact: false
+            },
+            {
+                id: '6',
+                firstName: 'David',
+                lastName: 'Kumar',
+                jobTitle: 'Finance Director',
+                department: 'Finance',
+                email: 'david.kumar@company.com',
+                phone: '+44 20 7946 0963',
+                mobile: '+44 7911 567890',
+                status: 'offline',
+                roles: [
+                    { name: 'Financial Authority', criticality: 'critical' },
+                    { name: 'Budget Approver', criticality: 'high' }
+                ],
+                contactMethods: [
+                    { type: 'mobile', value: '+44 7911 567890', priority: 'primary', available24_7: false },
+                    { type: 'email', value: 'david.kumar@company.com', priority: 'primary', available24_7: false },
+                    { type: 'phone', value: '+44 20 7946 0963', priority: 'secondary', available24_7: false }
+                ],
+                lastContact: '2024-01-16',
+                emergencyContact: false
+            }
+        ];
+
+        let filteredContacts = [...contactsData];
+
+        // Initialize the application
+        document.addEventListener('DOMContentLoaded', function() {
+            renderContacts();
+            renderEmergencyContacts();
+            updateStats();
+        });
+
+        function renderContacts() {
+            const grid = document.getElementById('contactsGrid');
+            grid.innerHTML = '';
+
+            filteredContacts.forEach(contact => {
+                const contactCard = createContactCard(contact);
+                grid.appendChild(contactCard);
+            });
+        }
+
+        function createContactCard(contact) {
+            const card = document.createElement('div');
+            const highestCriticality = getHighestCriticality(contact.roles);
+            card.className = `contact-card ${highestCriticality}`;
+
+            const initials = `${contact.firstName[0]}${contact.lastName[0]}`;
+            
+            card.innerHTML = `
+                <div class="contact-header">
+                    <div class="contact-avatar">
+                        ${initials}
+                        <div class="status-indicator ${contact.status}"></div>
+                    </div>
+                    <div class="contact-info">
+                        <div class="contact-name">${contact.firstName} ${contact.lastName}</div>
+                        <div class="contact-title">${contact.jobTitle}</div>
+                        <div class="contact-department">${contact.department}</div>
+                    </div>
+                </div>
+
+                <div class="contact-roles">
+                    <div class="roles-title">BC Roles</div>
+                    <div class="role-tags">
+                        ${contact.roles.map(role => 
+                            `<div class="role-tag ${role.criticality}">${role.name}</div>`
+                        ).join('')}
+                    </div>
+                </div>
+
+                <div class="contact-methods">
+                    <div class="methods-title">Contact Methods</div>
+                    ${contact.contactMethods.slice(0, 3).map(method => `
+                        <div class="method-item">
+                            <div class="method-icon">${getMethodIcon(method.type)}</div>
+                            <div class="method-value">${method.value}</div>
+                            <div class="method-priority">${method.priority}</div>
+                        </div>
+                    `).join('')}
+                </div>
+
+                <div class="contact-actions">
+                    <button class="action-btn" onclick="callContact('${contact.id}')">
+                        <span>📞</span> Call
+                    </button>
+                    <button class="action-btn" onclick="messageContact('${contact.id}')">
+                        <span>💬</span> Message
+                    </button>
+                    <button class="action-btn" onclick="viewContact('${contact.id}')">
+                        <span>👁️</span> Details
+                    </button>
+                </div>
+            `;
+
+            return card;
+        }
+
+        function renderEmergencyContacts() {
+            const grid = document.getElementById('emergencyGrid');
+            const emergencyContacts = contactsData.filter(contact => contact.emergencyContact);
+
+            grid.innerHTML = '';
+            emergencyContacts.forEach(contact => {
+                const emergencyCard = createEmergencyCard(contact);
+                grid.appendChild(emergencyCard);
+            });
+        }
+
+        function createEmergencyCard(contact) {
+            const card = document.createElement('div');
+            card.className = 'emergency-card';
+
+            const primary24_7 = contact.contactMethods.find(method => method.available24_7);
+            
+            card.innerHTML = `
+                <div class="contact-header">
+                    <div class="contact-avatar">
+                        ${contact.firstName[0]}${contact.lastName[0]}
+                        <div class="status-indicator ${contact.status}"></div>
+                    </div>
+                    <div class="contact-info">
+                        <div class="contact-name">${contact.firstName} ${contact.lastName}</div>
+                        <div class="contact-title">${contact.jobTitle}</div>
+                        <div class="contact-department">${contact.department}</div>
+                    </div>
+                </div>
+
+                <div class="contact-methods">
+                    <div class="methods-title">24/7 Emergency Contact</div>
+                    ${primary24_7 ? `
+                        <div class="method-item">
+                            <div class="method-icon">${getMethodIcon(primary24_7.type)}</div>
+                            <div class="method-value">${primary24_7.value}</div>
+                            <div class="method-priority">24/7</div>
+                        </div>
+                    ` : '<div style="color: var(--nexus-coral);">No 24/7 contact available</div>'}
+                </div>
+
+                <div class="contact-actions">
+                    <button class="action-btn" onclick="emergencyCall('${contact.id}')" style="background: var(--gradient-critical); color: white;">
+                        <span>🚨</span> Emergency Call
+                    </button>
+                </div>
+            `;
+
+            return card;
+        }
+
+        function getHighestCriticality(roles) {
+            const priorities = { critical: 4, high: 3, medium: 2, low: 1 };
+            return roles.reduce((highest, role) => {
+                return priorities[role.criticality] > priorities[highest] ? role.criticality : highest;
+            }, 'low');
+        }
+
+        function getMethodIcon(type) {
+            const icons = {
+                mobile: '📱',
+                email: '✉️',
+                phone: '☎️',
+                teams: '💼',
+                slack: '💬',
+                radio: '📻',
+                satellite: '🛰️'
+            };
+            return icons[type] || '📞';
+        }
+
+        function filterContacts() {
+            const search = document.getElementById('searchInput').value.toLowerCase();
+            const department = document.getElementById('departmentFilter').value;
+            const status = document.getElementById('statusFilter').value;
+            const role = document.getElementById('roleFilter').value;
+
+            filteredContacts = contactsData.filter(contact => {
+                const matchesSearch = !search || 
+                    contact.firstName.toLowerCase().includes(search) ||
+                    contact.lastName.toLowerCase().includes(search) ||
+                    contact.jobTitle.toLowerCase().includes(search) ||
+                    contact.department.toLowerCase().includes(search) ||
+                    contact.roles.some(r => r.name.toLowerCase().includes(search));
+
+                const matchesDepartment = !department || contact.department === department;
+                const matchesStatus = !status || contact.status === status;
+                const matchesRole = !role || contact.roles.some(r => r.criticality === role);
+
+                return matchesSearch && matchesDepartment && matchesStatus && matchesRole;
+            });
+
+            renderContacts();
+            updateStats();
+        }
+
+        function updateStats() {
+            document.getElementById('totalContacts').textContent = contactsData.length;
+            document.getElementById('availableContacts').textContent = 
+                contactsData.filter(c => c.status === 'available').length;
+            document.getElementById('criticalRoles').textContent = 
+                contactsData.filter(c => c.roles.some(r => r.criticality === 'critical')).length;
+            document.getElementById('emergencyContacts').textContent = 
+                contactsData.filter(c => c.emergencyContact).length;
+        }
+
+        function viewContact(contactId) {
+            const contact = contactsData.find(c => c.id === contactId);
+            if (!contact) return;
+
+            const modal = document.getElementById('contactModal');
+            const modalContent = document.getElementById('modalContent');
+
+            modalContent.innerHTML = `
+                <div class="contact-header" style="margin-bottom: var(--space-xl);">
+                    <div class="contact-avatar" style="width: 80px; height: 80px; font-size: 32px;">
+                        ${contact.firstName[0]}${contact.lastName[0]}
+                        <div class="status-indicator ${contact.status}"></div>
+                    </div>
+                    <div class="contact-info">
+                        <div class="contact-name" style="font-size: 24px;">${contact.firstName} ${contact.lastName}</div>
+                        <div class="contact-title" style="font-size: 16px;">${contact.jobTitle}</div>
+                        <div class="contact-department">${contact.department}</div>
+                    </div>
+                </div>
+
+                <div style="display: grid; gap: var(--space-lg);">
+                    <div>
+                        <h3 style="margin-bottom: var(--space-sm); color: var(--nexus-electric);">Contact Methods</h3>
+                        ${contact.contactMethods.map(method => `
+                            <div class="method-item">
+                                <div class="method-icon">${getMethodIcon(method.type)}</div>
+                                <div class="method-value">${method.value}</div>
+                                <div class="method-priority">${method.priority}</div>
+                                ${method.available24_7 ? '<span style="color: var(--nexus-electric); font-size: 10px;">24/7</span>' : ''}
+                            </div>
+                        `).join('')}
+                    </div>
+
+                    <div>
+                        <h3 style="margin-bottom: var(--space-sm); color: var(--nexus-electric);">BC Roles</h3>
+                        <div class="role-tags">
+                            ${contact.roles.map(role => 
+                                `<div class="role-tag ${role.criticality}" style="margin: 2px;">${role.name}</div>`
+                            ).join('')}
+                        </div>
+                    </div>
+
+                    <div>
+                        <h3 style="margin-bottom: var(--space-sm); color: var(--nexus-electric);">Last Contact</h3>
+                        <p style="color: var(--nexus-silver);">${formatDate(contact.lastContact)}</p>
+                    </div>
+                </div>
+
+                <div style="margin-top: var(--space-xl); display: flex; gap: var(--space-sm);">
+                    <button class="btn primary" onclick="callContact('${contact.id}')">
+                        <span>📞</span> Call Now
+                    </button>
+                    <button class="btn" onclick="messageContact('${contact.id}')">
+                        <span>💬</span> Send Message
+                    </button>
+                    <button class="btn" onclick="editContact('${contact.id}')">
+                        <span>✏️</span> Edit Contact
+                    </button>
+                </div>
+            `;
+
+            modal.classList.add('show');
+        }
+
+        function closeModal() {
+            document.getElementById('contactModal').classList.remove('show');
+        }
+
+        function callContact(contactId) {
+            const contact = contactsData.find(c => c.id === contactId);
+            const primaryPhone = contact.contactMethods.find(m => m.type === 'mobile' || m.type === 'phone');
+            if (primaryPhone) {
+                // In a real app, this would initiate a call
+                alert(`Calling ${contact.firstName} ${contact.lastName} at ${primaryPhone.value}`);
+            }
+        }
+
+        function messageContact(contactId) {
+            const contact = contactsData.find(c => c.id === contactId);
+            alert(`Opening message to ${contact.firstName} ${contact.lastName}`);
+        }
+
+        function emergencyCall(contactId) {
+            const contact = contactsData.find(c => c.id === contactId);
+            const emergency24_7 = contact.contactMethods.find(m => m.available24_7);
+            if (emergency24_7) {
+                alert(`🚨 EMERGENCY CALL to ${contact.firstName} ${contact.lastName} at ${emergency24_7.value}`);
+            }
+        }
+
+        function addContact() {
+            alert('Add Contact functionality would open a form to create a new contact');
+        }
+
+        function editContact(contactId) {
+            alert(`Edit Contact functionality for ID: ${contactId}`);
+        }
+
+        function exportContacts() {
+            const dataStr = JSON.stringify(contactsData, null, 2);
+            const dataBlob = new Blob([dataStr], { type: 'application/json' });
+            const url = URL.createObjectURL(dataBlob);
+            const link = document.createElement('a');
+            link.href = url;
+            link.download = `bc-contacts-${new Date().toISOString().split('T')[0]}.json`;
+            link.click();
+        }
+
+        function importContacts() {
+            const input = document.createElement('input');
+            input.type = 'file';
+            input.accept = '.json,.csv';
+            input.onchange = function(e) {
+                const file = e.target.files[0];
+                if (file) {
+                    const reader = new FileReader();
+                    reader.onload = function(e) {
+                        try {
+                            const imported = JSON.parse(e.target.result);
+                            // In a real app, you would validate and merge the data
+                            alert(`Successfully imported ${imported.length} contacts`);
+                        } catch (error) {
+                            alert('Error importing contacts: Invalid file format');
+                        }
+                    };
+                    reader.readAsText(file);
+                }
+            };
+            input.click();
+        }
+
+        function formatDate(dateStr) {
+            const date = new Date(dateStr);
+            return date.toLocaleDateString('en-GB', { 
+                year: 'numeric', 
+                month: 'long', 
+                day: 'numeric' 
+            });
+        }
+
+        // Close modal when clicking outside
+        document.getElementById('contactModal').addEventListener('click', function(e) {
+            if (e.target === this) {
+                closeModal();
+            }
+        });
+
+        // Keyboard shortcuts
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') {
+                closeModal();
+            }
+        });
+    </script>
+</body>
+</html>
