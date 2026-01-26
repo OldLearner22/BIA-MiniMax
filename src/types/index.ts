@@ -168,7 +168,7 @@ export interface FollowUpAction {
   id: string;
   description: string;
   owner: string;
-  dueDate: string;
+  dueDate: string | null;
   status: "open" | "in-progress" | "completed" | "overdue";
   completedDate?: string;
 }
@@ -178,7 +178,7 @@ export interface ExerciseRecord {
   title: string;
   type: ExerciseType;
   status: ExerciseStatus;
-  scheduledDate: string; // ISO date string
+  scheduledDate: string | null; // ISO date string or null
   completedDate?: string; // ISO date string
   description: string;
   scope: ExerciseScope; // Updated from string to structured object
@@ -673,7 +673,16 @@ export interface OrganigramData {
 export interface BCContactMethod {
   id: string;
   person_id: string;
-  contact_type: 'email' | 'phone' | 'mobile' | 'satellite_phone' | 'radio' | 'pager' | 'teams' | 'slack' | 'whatsapp';
+  contact_type:
+    | "email"
+    | "phone"
+    | "mobile"
+    | "satellite_phone"
+    | "radio"
+    | "pager"
+    | "teams"
+    | "slack"
+    | "whatsapp";
   contact_value: string;
   priority_order: number;
   is_primary: boolean;
@@ -695,7 +704,7 @@ export interface BCTrainingRecord {
   certificate_number?: string;
   certificate_url?: string;
   score?: number;
-  status: 'completed' | 'in_progress' | 'expired' | 'failed';
+  status: "completed" | "in_progress" | "expired" | "failed";
   renewal_required: boolean;
   renewal_reminder_days: number;
   created_at: Date;
@@ -707,7 +716,13 @@ export interface BCCompetency {
   id: string;
   name: string;
   description?: string;
-  competency_category: 'technical' | 'leadership' | 'communication' | 'crisis_management' | 'regulatory' | 'business_specific';
+  competency_category:
+    | "technical"
+    | "leadership"
+    | "communication"
+    | "crisis_management"
+    | "regulatory"
+    | "business_specific";
   required_for_roles: string[];
   assessment_criteria?: string;
   proficiency_levels?: Record<string, any>;
@@ -723,7 +738,12 @@ export interface BCPersonCompetency {
   proficiency_level: number;
   assessment_date: Date;
   assessor_id?: string;
-  assessment_method: 'self_assessment' | 'manager_assessment' | 'peer_review' | 'formal_test' | 'observation';
+  assessment_method:
+    | "self_assessment"
+    | "manager_assessment"
+    | "peer_review"
+    | "formal_test"
+    | "observation";
   evidence?: string;
   next_assessment_date?: Date;
   created_at: Date;
@@ -737,7 +757,11 @@ export interface BCSuccessionPlan {
   primary_role_assignment_id: string;
   backup_person_id: string;
   succession_order: number;
-  readiness_level: 'ready_now' | 'ready_in_6_months' | 'ready_in_1_year' | 'development_needed';
+  readiness_level:
+    | "ready_now"
+    | "ready_in_6_months"
+    | "ready_in_1_year"
+    | "development_needed";
   development_plan?: string;
   last_updated_date: Date;
   created_at: Date;
@@ -862,8 +886,8 @@ export interface StrategyInitiative {
 // BC STRATEGY - RECOVERY OPTIONS, COST-BENEFIT ANALYSIS & APPROVALS
 // ============================================================================
 
-export type RecoveryTier = 'immediate' | 'rapid' | 'standard' | 'extended';
-export type RecoveryStrategyType = 'prevention' | 'response' | 'recovery';
+export type RecoveryTier = "immediate" | "rapid" | "standard" | "extended";
+export type RecoveryStrategyType = "prevention" | "response" | "recovery";
 
 export interface RecoveryOption {
   id: string;
@@ -878,18 +902,18 @@ export interface RecoveryOption {
   rpoUnit: string;
   recoveryCapacity: number;
   peopleRequired: number;
-  technologyType: 'cloud' | 'on-premise' | 'hybrid' | 'manual' | 'external';
-  facilityType: 'primary' | 'secondary' | 'remote' | 'external' | 'none';
+  technologyType: "cloud" | "on-premise" | "hybrid" | "manual" | "external";
+  facilityType: "primary" | "secondary" | "remote" | "external" | "none";
   implementationCost: number;
   operationalCost: number;
   readinessScore: number;
   lastTestedDate?: string;
-  testingStatus: 'pass' | 'fail' | 'pending' | 'not-tested';
+  testingStatus: "pass" | "fail" | "pending" | "not-tested";
   testingNotes?: string;
   dependsOn?: string[];
   activationTriggers?: string[];
   activationProcedure?: string;
-  status: 'draft' | 'approved' | 'active' | 'retired';
+  status: "draft" | "approved" | "active" | "retired";
   createdAt: string;
   updatedAt: string;
   createdBy: string;
@@ -968,7 +992,7 @@ export interface CostBenefitAnalysis {
   intangibleBenefits: string[];
   recommendation: string;
   recommendationNotes: string;
-  status: 'draft' | 'submitted' | 'approved' | 'rejected';
+  status: "draft" | "submitted" | "approved" | "rejected";
   createdAt: string;
   updatedAt: string;
   createdBy: string;
@@ -982,10 +1006,10 @@ export interface ApprovalStep {
   description?: string;
   requiredRole?: string;
   approvers: string[];
-  status: 'pending' | 'in-review' | 'approved' | 'rejected' | 'skipped';
+  status: "pending" | "in-review" | "approved" | "rejected" | "skipped";
   assignedTo?: string;
   comments?: string;
-  decision?: 'approve' | 'reject' | 'request-changes';
+  decision?: "approve" | "reject" | "request-changes";
   decidedBy?: string;
   decidedAt?: string;
 }
@@ -1000,16 +1024,16 @@ export interface ApprovalAuditEntry {
 
 export interface StrategyApproval {
   id: string;
-  strategyType: 'recovery-option' | 'cost-benefit' | 'comprehensive-plan';
+  strategyType: "recovery-option" | "cost-benefit" | "comprehensive-plan";
   strategyId: string;
   strategyTitle: string;
-  status: 'not-started' | 'in-progress' | 'approved' | 'rejected' | 'cancelled';
+  status: "not-started" | "in-progress" | "approved" | "rejected" | "cancelled";
   currentStep: number;
   submittedBy: string;
   submittedAt: string;
   submissionNotes?: string;
   steps: ApprovalStep[];
-  finalDecision?: 'approved' | 'rejected' | 'deferred';
+  finalDecision?: "approved" | "rejected" | "deferred";
   finalDecisionDate?: string;
   finalDecisionBy?: string;
   finalDecisionNotes?: string;
@@ -1019,3 +1043,146 @@ export interface StrategyApproval {
   updatedAt: string;
   organizationId?: string;
 }
+
+// ============================================================================
+// BC STRATEGY - DIMENSION TARGETS & GAP ANALYSIS
+// ============================================================================
+
+export interface DimensionTarget {
+  id: string;
+  organizationId: string;
+  dimension: string;
+  targetLevel: number; // 1-5
+  businessContext: string;
+  successCriteria: string;
+  timeline: string;
+  owner: string;
+  weight: number; // 0-1 (default 0.2 for 5 dimensions)
+  createdAt: string;
+  updatedAt: string;
+  createdBy: string;
+}
+
+export interface DimensionGap {
+  id: string;
+  organizationId: string;
+  dimension: string;
+  currentLevel: number;
+  targetLevel: number;
+  currentScore: number; // 0-100
+  gapPercentage: number;
+  status: "on-track" | "at-risk" | "complete";
+  lastUpdated: string;
+}
+
+export interface DimensionSetting {
+  targetLevel: number;
+  businessContext: string;
+  timeline: string;
+  owner: string;
+  successCriteria: string;
+  weight: number;
+}
+
+// Default dimension targets for first-time setup
+export const DEFAULT_DIMENSION_TARGETS: Record<
+  string,
+  Partial<DimensionSetting>
+> = {
+  "Coverage Maturity": {
+    targetLevel: 5,
+    businessContext:
+      "Ensure comprehensive documentation of all business processes for regulatory compliance and operational excellence",
+    timeline: "Q4 2026",
+    owner: "BC Coordinator",
+    successCriteria:
+      "100% of critical processes have impact assessments, recovery objectives, and documented strategies",
+    weight: 0.2,
+  },
+  "Capability Maturity": {
+    targetLevel: 5,
+    businessContext:
+      "Implement high-availability recovery strategies to minimize downtime and ensure business resilience",
+    timeline: "Q4 2026",
+    owner: "IT Director",
+    successCriteria:
+      "80%+ of critical processes have immediate or rapid recovery capabilities",
+    weight: 0.2,
+  },
+  "Readiness Maturity": {
+    targetLevel: 5,
+    businessContext:
+      "Validate all recovery strategies through regular testing to ensure operational readiness",
+    timeline: "Q4 2026",
+    owner: "BC Manager",
+    successCriteria:
+      "95%+ of recovery options tested and validated with passing results",
+    weight: 0.2,
+  },
+  "Compliance Maturity": {
+    targetLevel: 5,
+    businessContext:
+      "Meet all RTO targets to satisfy regulatory requirements and customer SLAs",
+    timeline: "Q4 2026",
+    owner: "Compliance Officer",
+    successCriteria:
+      "100% of processes meet defined RTO targets with documented evidence",
+    weight: 0.2,
+  },
+  "Risk Management": {
+    targetLevel: 5,
+    businessContext:
+      "Proactively identify and mitigate risks to minimize business disruption",
+    timeline: "Q4 2026",
+    owner: "Risk Manager",
+    successCriteria:
+      "85%+ of identified risks have treatment plans with completed or in-progress status",
+    weight: 0.2,
+  },
+};
+
+// Industry preset weights for different sectors
+export const INDUSTRY_PRESETS: Record<string, Record<string, number>> = {
+  financial: {
+    "Compliance Maturity": 0.25,
+    "Risk Management": 0.25,
+    "Coverage Maturity": 0.2,
+    "Readiness Maturity": 0.15,
+    "Capability Maturity": 0.15,
+  },
+  healthcare: {
+    "Compliance Maturity": 0.25,
+    "Readiness Maturity": 0.25,
+    "Coverage Maturity": 0.2,
+    "Risk Management": 0.2,
+    "Capability Maturity": 0.1,
+  },
+  ecommerce: {
+    "Readiness Maturity": 0.3,
+    "Capability Maturity": 0.25,
+    "Coverage Maturity": 0.2,
+    "Risk Management": 0.15,
+    "Compliance Maturity": 0.1,
+  },
+  manufacturing: {
+    "Capability Maturity": 0.25,
+    "Readiness Maturity": 0.25,
+    "Risk Management": 0.2,
+    "Coverage Maturity": 0.15,
+    "Compliance Maturity": 0.15,
+  },
+  government: {
+    "Compliance Maturity": 0.3,
+    "Coverage Maturity": 0.25,
+    "Risk Management": 0.2,
+    "Readiness Maturity": 0.15,
+    "Capability Maturity": 0.1,
+  },
+  default: {
+    "Coverage Maturity": 0.2,
+    "Capability Maturity": 0.2,
+    "Readiness Maturity": 0.2,
+    "Compliance Maturity": 0.2,
+    "Risk Management": 0.2,
+  },
+};
