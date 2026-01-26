@@ -1,0 +1,81 @@
+/* Resource Map React Flow Styles */
+
+/* Criticality Colors */
+.criticality-high-icon {
+  color: #ef4444;
+}
+
+.criticality-medium-icon {
+  color: #f97316;
+}
+
+.criticality-low-icon {
+  color: #22c55e;
+}
+
+.criticality-high-text {
+  color: #ef4444;
+}
+
+.criticality-medium-text {
+  color: #f97316;
+}
+
+.criticality-low-text {
+  color: #22c55e;
+}
+
+/* Resource Type Colors */
+.resource-personnel-node {
+  background-color: rgba(34, 197, 94, 0.1);
+  border-color: rgba(34, 197, 94, 0.3);
+}
+
+.resource-personnel-icon {
+  color: #22c55e;
+}
+
+.resource-systems-node {
+  background-color: rgba(59, 130, 246, 0.1);
+  border-color: rgba(59, 130, 246, 0.3);
+}
+
+.resource-systems-icon {
+  color: #3b82f6;
+}
+
+.resource-equipment-node {
+  background-color: rgba(249, 115, 22, 0.1);
+  border-color: rgba(249, 115, 22, 0.3);
+}
+
+.resource-equipment-icon {
+  color: #f97316;
+}
+
+.resource-facilities-node {
+  background-color: rgba(168, 85, 247, 0.1);
+  border-color: rgba(168, 85, 247, 0.3);
+}
+
+.resource-facilities-icon {
+  color: #a855f7;
+}
+
+.resource-vendors-node {
+  background-color: rgba(239, 68, 68, 0.1);
+  border-color: rgba(239, 68, 68, 0.3);
+}
+
+.resource-vendors-icon {
+  color: #ef4444;
+}
+
+.resource-data-node {
+  background-color: rgba(6, 182, 212, 0.1);
+  border-color: rgba(6, 182, 212, 0.3);
+}
+
+.resource-data-icon {
+  color: #06b6d4;
+}

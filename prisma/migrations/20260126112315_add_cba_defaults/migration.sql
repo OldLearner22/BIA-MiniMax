@@ -1,0 +1,78 @@
+-- AlterTable
+ALTER TABLE "BusinessResource" ADD COLUMN     "organizationId" TEXT NOT NULL DEFAULT '00000000-0000-0000-0000-000000000001';
+
+-- AlterTable
+ALTER TABLE "CostBenefitAnalysis" ALTER COLUMN "description" SET DEFAULT '',
+ALTER COLUMN "implementationPersonnel" SET DEFAULT 0,
+ALTER COLUMN "implementationTech" SET DEFAULT 0,
+ALTER COLUMN "implementationInfra" SET DEFAULT 0,
+ALTER COLUMN "implementationTraining" SET DEFAULT 0,
+ALTER COLUMN "implementationExternal" SET DEFAULT 0,
+ALTER COLUMN "implementationOther" SET DEFAULT 0,
+ALTER COLUMN "operationalPersonnel" SET DEFAULT 0,
+ALTER COLUMN "operationalTech" SET DEFAULT 0,
+ALTER COLUMN "operationalInfra" SET DEFAULT 0,
+ALTER COLUMN "operationalTraining" SET DEFAULT 0,
+ALTER COLUMN "operationalExternal" SET DEFAULT 0,
+ALTER COLUMN "operationalOther" SET DEFAULT 0,
+ALTER COLUMN "maintenancePersonnel" SET DEFAULT 0,
+ALTER COLUMN "maintenanceTech" SET DEFAULT 0,
+ALTER COLUMN "maintenanceInfra" SET DEFAULT 0,
+ALTER COLUMN "maintenanceTraining" SET DEFAULT 0,
+ALTER COLUMN "maintenanceExternal" SET DEFAULT 0,
+ALTER COLUMN "maintenanceOther" SET DEFAULT 0,
+ALTER COLUMN "avoidedFinancial" SET DEFAULT 0,
+ALTER COLUMN "avoidedOperational" SET DEFAULT 0,
+ALTER COLUMN "avoidedReputational" SET DEFAULT 0,
+ALTER COLUMN "avoidedLegal" SET DEFAULT 0,
+ALTER COLUMN "totalCost" SET DEFAULT 0,
+ALTER COLUMN "totalBenefit" SET DEFAULT 0,
+ALTER COLUMN "netBenefit" SET DEFAULT 0,
+ALTER COLUMN "roi" SET DEFAULT 0,
+ALTER COLUMN "paybackPeriod" SET DEFAULT 0,
+ALTER COLUMN "bcRatio" SET DEFAULT 0,
+ALTER COLUMN "bestCaseRoi" SET DEFAULT 0,
+ALTER COLUMN "bestCaseNetBenefit" SET DEFAULT 0,
+ALTER COLUMN "worstCaseRoi" SET DEFAULT 0,
+ALTER COLUMN "worstCaseNetBenefit" SET DEFAULT 0,
+ALTER COLUMN "intangibleBenefits" SET DEFAULT ARRAY[]::TEXT[],
+ALTER COLUMN "recommendation" SET DEFAULT '',
+ALTER COLUMN "recommendationNotes" SET DEFAULT '',
+ALTER COLUMN "riskReduction" SET DEFAULT 0,
+ALTER COLUMN "createdBy" SET DEFAULT 'system';
+
+-- AlterTable
+ALTER TABLE "Dependency" ADD COLUMN     "organizationId" TEXT NOT NULL DEFAULT '00000000-0000-0000-0000-000000000001';
+
+-- AlterTable
+ALTER TABLE "Diagram" ADD COLUMN     "organizationId" TEXT NOT NULL DEFAULT '00000000-0000-0000-0000-000000000001';
+
+-- AlterTable
+ALTER TABLE "ExerciseRecord" ADD COLUMN     "organizationId" TEXT NOT NULL DEFAULT '00000000-0000-0000-0000-000000000001';
+
+-- AlterTable
+ALTER TABLE "FollowUpAction" ADD COLUMN     "organizationId" TEXT NOT NULL DEFAULT '00000000-0000-0000-0000-000000000001';
+
+-- AlterTable
+ALTER TABLE "ImpactAssessment" ADD COLUMN     "organizationId" TEXT NOT NULL DEFAULT '00000000-0000-0000-0000-000000000001';
+
+-- AlterTable
+ALTER TABLE "Process" ADD COLUMN     "organizationId" TEXT NOT NULL DEFAULT '00000000-0000-0000-0000-000000000001';
+
+-- AlterTable
+ALTER TABLE "ProcessResourceLink" ADD COLUMN     "organizationId" TEXT NOT NULL DEFAULT '00000000-0000-0000-0000-000000000001';
+
+-- AlterTable
+ALTER TABLE "RecoveryObjective" ADD COLUMN     "organizationId" TEXT NOT NULL DEFAULT '00000000-0000-0000-0000-000000000001';
+
+-- AlterTable
+ALTER TABLE "ResourceDependency" ADD COLUMN     "organizationId" TEXT NOT NULL DEFAULT '00000000-0000-0000-0000-000000000001';
+
+-- AlterTable
+ALTER TABLE "TieredResourceRequirement" ADD COLUMN     "organizationId" TEXT NOT NULL DEFAULT '00000000-0000-0000-0000-000000000001';
+
+-- AlterTable
+ALTER TABLE "VendorDetails" ADD COLUMN     "organizationId" TEXT NOT NULL DEFAULT '00000000-0000-0000-0000-000000000001';
+
+-- AlterTable
+ALTER TABLE "WorkaroundProcedure" ADD COLUMN     "organizationId" TEXT NOT NULL DEFAULT '00000000-0000-0000-0000-000000000001';

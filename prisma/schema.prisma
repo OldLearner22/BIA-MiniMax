@@ -51,6 +51,33 @@ model ImpactAssessment {
   process        Process @relation(fields: [processId], references: [id], onDelete: Cascade)
 }
 
+model ImpactCategory {
+  id                      String                   @id @default(uuid())
+  name                    String
+  description             String
+  weight                  Int // Weight as percentage (0-100)
+  color                   String
+  displayOrder            Int                      @default(0)
+  organizationId          String                   @default("00000000-0000-0000-0000-000000000001")
+  createdAt               DateTime                 @default(now())
+  updatedAt               DateTime                 @updatedAt
+  timeBasedDefinitions    ImpactCategoryDefinition[]
+
+  @@unique([organizationId, name])
+  @@index([organizationId, displayOrder])
+}
+
+model ImpactCategoryDefinition {
+  id                String         @id @default(uuid())
+  categoryId        String
+  timelinePointId   String         // e.g., "1h", "4h", "8h", "24h", "48h", "1w", "4w"
+  description       String
+  organizationId    String         @default("00000000-0000-0000-0000-000000000001")
+  category          ImpactCategory @relation(fields: [categoryId], references: [id], onDelete: Cascade)
+
+  @@unique([categoryId, timelinePointId])
+}
+
 model RecoveryObjective {
   id               String           @id @default(uuid())
   processId        String           @unique
@@ -73,9 +100,15 @@ model Dependency {
   description     String
   sourceHandle    String?
   targetHandle    String?
+  version         Int            @default(1)
+  isActive        Boolean        @default(true)
+  createdAt       DateTime       @default(now())
+  updatedAt       DateTime       @updatedAt
   organizationId  String         @default("00000000-0000-0000-0000-000000000001")
   sourceProcess   Process        @relation("SourceProcess", fields: [sourceProcessId], references: [id], onDelete: Cascade)
   targetProcess   Process        @relation("TargetProcess", fields: [targetProcessId], references: [id], onDelete: Cascade)
+
+  @@index([sourceProcessId, targetProcessId, isActive])
 }
 
 model BusinessResource {
@@ -134,9 +167,15 @@ model ResourceDependency {
   description      String
   sourceHandle     String?
   targetHandle     String?
+  version          Int              @default(1)
+  isActive         Boolean          @default(true)
+  createdAt        DateTime         @default(now())
+  updatedAt        DateTime         @updatedAt
   organizationId   String           @default("00000000-0000-0000-0000-000000000001")
   sourceResource   BusinessResource @relation("SourceResource", fields: [sourceResourceId], references: [id], onDelete: Cascade)
   targetResource   BusinessResource @relation("TargetResource", fields: [targetResourceId], references: [id], onDelete: Cascade)
+
+  @@index([sourceResourceId, targetResourceId, isActive])
 }
 
 model ProcessResourceLink {
@@ -148,10 +187,16 @@ model ProcessResourceLink {
   notes              String
   processHandle      String?
   resourceHandle     String?
+  version            Int                         @default(1)
+  isActive           Boolean                     @default(true)
+  createdAt          DateTime                    @default(now())
+  updatedAt          DateTime                    @updatedAt
   organizationId     String                      @default("00000000-0000-0000-0000-000000000001")
   process            Process                     @relation(fields: [processId], references: [id], onDelete: Cascade)
   resource           BusinessResource            @relation(fields: [resourceId], references: [id], onDelete: Cascade)
   tieredRequirements TieredResourceRequirement[]
+
+  @@index([processId, resourceId, isActive])
 }
 
 model TieredResourceRequirement {
@@ -343,48 +388,56 @@ model RecoveryOption {
 model CostBenefitAnalysis {
   id                      String                      @id @default(uuid())
   title                   String
-  description             String
+  description             String                      @default("")
   analysisDate            DateTime                    @default(now())
-  implementationPersonnel Float
-  implementationTech      Float
-  implementationInfra     Float
-  implementationTraining  Float
-  implementationExternal  Float
-  implementationOther     Float
-  operationalPersonnel    Float
-  operationalTech         Float
-  operationalInfra        Float
-  operationalTraining     Float
-  operationalExternal     Float
-  operationalOther        Float
-  maintenancePersonnel    Float
-  maintenanceTech         Float
-  maintenanceInfra        Float
-  maintenanceTraining     Float
-  maintenanceExternal     Float
-  maintenanceOther        Float
-  avoidedFinancial        Float
-  avoidedOperational      Float
-  avoidedReputational     Float
-  avoidedLegal            Float
-  totalCost               Float
-  totalBenefit            Float
-  netBenefit              Float
-  roi                     Float
-  paybackPeriod           Float
-  bcRatio                 Float
-  bestCaseRoi             Float
-  bestCaseNetBenefit      Float
-  worstCaseRoi            Float
-  worstCaseNetBenefit     Float
-  intangibleBenefits      String[]
-  recommendation          String
-  recommendationNotes     String
-  riskReduction           Float
+  // Implementation costs - default to 0 if not provided by user
+  implementationPersonnel Float                       @default(0)
+  implementationTech      Float                       @default(0)
+  implementationInfra     Float                       @default(0)
+  implementationTraining  Float                       @default(0)
+  implementationExternal  Float                       @default(0)
+  implementationOther     Float                       @default(0)
+  // Operational costs - default to 0 if not provided by user
+  operationalPersonnel    Float                       @default(0)
+  operationalTech         Float                       @default(0)
+  operationalInfra        Float                       @default(0)
+  operationalTraining     Float                       @default(0)
+  operationalExternal     Float                       @default(0)
+  operationalOther        Float                       @default(0)
+  // Maintenance costs - default to 0 if not provided by user
+  maintenancePersonnel    Float                       @default(0)
+  maintenanceTech         Float                       @default(0)
+  maintenanceInfra        Float                       @default(0)
+  maintenanceTraining     Float                       @default(0)
+  maintenanceExternal     Float                       @default(0)
+  maintenanceOther        Float                       @default(0)
+  // Avoided losses - default to 0 if not provided by user
+  avoidedFinancial        Float                       @default(0)
+  avoidedOperational      Float                       @default(0)
+  avoidedReputational     Float                       @default(0)
+  avoidedLegal            Float                       @default(0)
+  // Calculated metrics - default to 0
+  totalCost               Float                       @default(0)
+  totalBenefit            Float                       @default(0)
+  netBenefit              Float                       @default(0)
+  roi                     Float                       @default(0)
+  paybackPeriod           Float                       @default(0)
+  bcRatio                 Float                       @default(0)
+  // Scenario analysis - default to 0
+  bestCaseRoi             Float                       @default(0)
+  bestCaseNetBenefit      Float                       @default(0)
+  worstCaseRoi            Float                       @default(0)
+  worstCaseNetBenefit     Float                       @default(0)
+  // Risk assessment
+  riskReduction           Float                       @default(0)
+  // Metadata
+  intangibleBenefits      String[]                    @default([])
+  recommendation          String                      @default("")
+  recommendationNotes     String                      @default("")
   status                  StrategyStatus              @default(draft)
   createdAt               DateTime                    @default(now())
   updatedAt               DateTime                    @updatedAt
-  createdBy               String
+  createdBy               String                      @default("system")
   organizationId          String                      @default("00000000-0000-0000-0000-000000000001")
   recoveryOptions         CostBenefitRecoveryOption[]
 

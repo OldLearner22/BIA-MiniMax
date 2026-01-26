@@ -1,6 +1,5 @@
 import { Router } from "express";
 
-
 const router = Router();
 import { prisma } from "../db";
 
@@ -172,11 +171,20 @@ router.get("/dimensions/gaps", async (req, res) => {
 // POST /api/settings/dimensions/gaps - Update gap analysis (calculated from current data)
 router.post("/dimensions/gaps", async (req, res) => {
   try {
+    console.log("POST /dimensions/gaps called with body:", req.body);
     const organizationId = DEFAULT_ORG_ID;
     const gaps = req.body; // Array of gap objects
 
+    if (!Array.isArray(gaps)) {
+      console.error("Expected array but got:", typeof gaps, gaps);
+      return res.status(400).json({ error: "Expected array of gaps" });
+    }
+
+    console.log(`Processing ${gaps.length} gaps...`);
+
     const results = await Promise.all(
       gaps.map(async (gap: any) => {
+        console.log("Upserting gap:", gap);
         return prisma.dimensionGapAnalysis.upsert({
           where: {
             organizationId_dimension: {
@@ -208,6 +216,10 @@ router.post("/dimensions/gaps", async (req, res) => {
     res.json({ success: true, count: results.length });
   } catch (error) {
     console.error("Error updating dimension gaps:", error);
+    if (error instanceof Error) {
+      console.error("Error message:", error.message);
+      console.error("Stack:", error.stack);
+    }
     res.status(500).json({ error: "Failed to update dimension gaps" });
   }
 });

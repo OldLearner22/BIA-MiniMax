@@ -2,7 +2,7 @@ import { PrismaClient } from "@prisma/client";
 
 const prisma = new PrismaClient();
 
-// Define business processes
+// Interface for timeline points (imported from types but defined here for seed context)
 const PROCESSES = [
   {
     name: "Customer Support",
@@ -66,6 +66,17 @@ const PROCESSES = [
   },
 ];
 
+interface TimelinePoint {
+  timeOffset: number; // hours from disruption
+  timeLabel: string;
+  financial: number;
+  operational: number;
+  reputational: number;
+  legal: number;
+  health: number;
+  environmental: number;
+}
+
 async function main() {
   console.log("🌱 Starting database seed...\n");
 
@@ -80,6 +91,7 @@ async function main() {
     await prisma.strategyApproval.deleteMany({});
     await prisma.risk.deleteMany({});
     await prisma.threat.deleteMany({});
+    await prisma.incident.deleteMany({});
     await prisma.process.deleteMany({});
     console.log("✓ Data cleared\n");
 
@@ -136,43 +148,17 @@ async function main() {
     }
     console.log(`✓ Created ${impacts.length} impact assessments\n`);
 
-    // Step 4: Create Recovery Objectives
-    console.log("🎯 Creating recovery objectives...");
-    const recoveryObjectives: any[] = [];
-    const recoveryStrategies: ("high_availability" | "warm_standby" | "cold_backup" | "manual")[] = [
-      "high_availability",
-      "warm_standby",
-      "cold_backup",
-      "manual",
-    ];
-    for (const process of createdProcesses) {
-      const strategyIdx =
-        process.criticality === "critical"
-          ? 0
-          : process.criticality === "high"
-          ? 1
-          : process.criticality === "medium"
-          ? 2
-          : 3;
-      const objective = await prisma.recoveryObjective.create({
-        data: {
-          processId: process.id,
-          mtpd: Math.floor(Math.random() * 72) + 4, // 4-76 hours
-          rto: Math.floor(Math.random() * 24) + 1,
-          rpo: Math.floor(Math.random() * 12) + 0.5,
-          mbco: Math.random() > 0.5,
-          recoveryStrategy: recoveryStrategies[strategyIdx],
-          strategyNotes: `Recovery strategy for ${process.name}`,
-        },
-      });
-      recoveryObjectives.push(objective);
-    }
-    console.log(`✓ Created ${recoveryObjectives.length} recovery objectives\n`);
-
-    // Step 5: Create Business Resources
+    // Step 4: Create Business Resources
     console.log("👥 Creating business resources...");
     const resources: any[] = [];
-    const resourceTypes: ("personnel" | "systems" | "equipment" | "facilities" | "vendors" | "data")[] = [
+    const resourceTypes: (
+      | "personnel"
+      | "systems"
+      | "equipment"
+      | "facilities"
+      | "vendors"
+      | "data"
+    )[] = [
       "personnel",
       "personnel",
       "personnel",
@@ -202,7 +188,11 @@ async function main() {
       "Source Code Repository",
     ];
 
-    const redundancyLevels: ("none" | "partial" | "full")[] = ["none", "partial", "full"];
+    const redundancyLevels: ("none" | "partial" | "full")[] = [
+      "none",
+      "partial",
+      "full",
+    ];
 
     for (let i = 0; i < resourceNames.length; i++) {
       const resource = await prisma.businessResource.create({
@@ -212,14 +202,17 @@ async function main() {
           description: `Critical resource: ${resourceNames[i]}`,
           rtoValue: Math.floor(Math.random() * 8) + 1,
           rtoUnit: "hours",
-          redundancy: redundancyLevels[Math.floor(Math.random() * redundancyLevels.length)],
+          redundancy:
+            redundancyLevels[
+              Math.floor(Math.random() * redundancyLevels.length)
+            ],
         },
       });
       resources.push(resource);
     }
     console.log(`✓ Created ${resources.length} business resources\n`);
 
-    // Step 6: Create Recovery Options
+    // Step 5: Create Recovery Options
     console.log("🔄 Creating recovery options...");
     const recoveryOptions: any[] = [];
     const strategyTypes: ("prevention" | "response" | "recovery")[] = [
@@ -233,20 +226,20 @@ async function main() {
       "standard",
       "extended",
     ];
-    const technologies: ("cloud" | "on-premise" | "hybrid" | "manual" | "external")[] = [
-      "cloud",
-      "on-premise",
-      "hybrid",
-      "manual",
-      "external",
-    ];
-    const facilities: ("primary" | "secondary" | "remote" | "external" | "none")[] = [
-      "primary",
-      "secondary",
-      "remote",
-      "external",
-      "none",
-    ];
+    const technologies: (
+      | "cloud"
+      | "on-premise"
+      | "hybrid"
+      | "manual"
+      | "external"
+    )[] = ["cloud", "on-premise", "hybrid", "manual", "external"];
+    const facilities: (
+      | "primary"
+      | "secondary"
+      | "remote"
+      | "external"
+      | "none"
+    )[] = ["primary", "secondary", "remote", "external", "none"];
 
     for (const process of createdProcesses) {
       // Create 2-3 recovery options per process
@@ -265,8 +258,10 @@ async function main() {
             rpoUnit: "hours",
             recoveryCapacity: Math.floor(Math.random() * 40) + 60,
             peopleRequired: Math.floor(Math.random() * 10) + 2,
-            technologyType: technologies[Math.floor(Math.random() * technologies.length)],
-            facilityType: facilities[Math.floor(Math.random() * facilities.length)],
+            technologyType:
+              technologies[Math.floor(Math.random() * technologies.length)],
+            facilityType:
+              facilities[Math.floor(Math.random() * facilities.length)],
             implementationCost: Math.floor(Math.random() * 500000) + 50000,
             operationalCost: Math.floor(Math.random() * 100000) + 10000,
             readinessScore: Math.floor(Math.random() * 60) + 40,
@@ -280,7 +275,7 @@ async function main() {
     }
     console.log(`✓ Created ${recoveryOptions.length} recovery options\n`);
 
-    // Step 7: Create Cost-Benefit Analyses
+    // Step 6: Create Cost-Benefit Analyses
     console.log("💰 Creating cost-benefit analyses...");
     const costBenefitAnalyses: any[] = [];
     for (const process of createdProcesses.slice(0, 8)) {
@@ -293,7 +288,11 @@ async function main() {
       const avoidedOperational = Math.floor(Math.random() * 2000000) + 200000;
       const avoidedReputational = Math.floor(Math.random() * 1000000) + 100000;
       const avoidedLegal = Math.floor(Math.random() * 500000) + 50000;
-      const totalBenefit = avoidedFinancial + avoidedOperational + avoidedReputational + avoidedLegal;
+      const totalBenefit =
+        avoidedFinancial +
+        avoidedOperational +
+        avoidedReputational +
+        avoidedLegal;
 
       const netBenefit = totalBenefit - totalCost;
       const roi = (netBenefit / totalCost) * 100;
@@ -343,9 +342,14 @@ async function main() {
           worstCaseRoi: roi * 0.8,
           worstCaseNetBenefit: netBenefit * 0.8,
 
-          intangibleBenefits: ["Improved customer trust", "Better team morale", "Reduced risk"],
+          intangibleBenefits: [
+            "Improved customer trust",
+            "Better team morale",
+            "Reduced risk",
+          ],
           recommendation: netBenefit > 0 ? "approve" : "reject",
-          recommendationNotes: netBenefit > 0 ? "Strong financial case" : "Requires optimization",
+          recommendationNotes:
+            netBenefit > 0 ? "Strong financial case" : "Requires optimization",
           riskReduction: Math.floor(Math.random() * 40) + 20,
 
           status: "approved",
@@ -354,9 +358,11 @@ async function main() {
       });
       costBenefitAnalyses.push(cba);
     }
-    console.log(`✓ Created ${costBenefitAnalyses.length} cost-benefit analyses\n`);
+    console.log(
+      `✓ Created ${costBenefitAnalyses.length} cost-benefit analyses\n`,
+    );
 
-    // Step 8: Create Strategy Approvals
+    // Step 7: Create Strategy Approvals
     console.log("✅ Creating strategy approvals...");
     const strategyApprovals: any[] = [];
 
@@ -375,16 +381,21 @@ async function main() {
           finalDecisionDate: new Date(),
           finalDecisionBy: "Executive Director",
           finalDecisionNotes: "Approved for implementation",
-          approvalConditions: ["Resource allocation confirmed", "Budget approved"],
+          approvalConditions: [
+            "Resource allocation confirmed",
+            "Budget approved",
+          ],
           auditLog: JSON.parse(
             JSON.stringify([
               {
-                timestamp: new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString(),
+                timestamp: new Date(
+                  Date.now() - 7 * 24 * 60 * 60 * 1000,
+                ).toISOString(),
                 action: "submitted",
                 performedBy: "Planning Manager",
                 details: "Strategy submitted for approval",
               },
-            ])
+            ]),
           ),
           steps: {
             create: [
@@ -426,10 +437,16 @@ async function main() {
     }
     console.log(`✓ Created ${strategyApprovals.length} strategy approvals\n`);
 
-    // Step 9: Create Risk data
+    // Step 8: Create Risk data
     console.log("⚠️ Creating risks...");
     const risks: any[] = [];
-    const riskCategories = ["Operational", "Technical", "Strategic", "Compliance", "Financial"];
+    const riskCategories = [
+      "Operational",
+      "Technical",
+      "Strategic",
+      "Compliance",
+      "Financial",
+    ];
     for (let i = 0; i < 8; i++) {
       const probability = Math.floor(Math.random() * 3) + 1;
       const impact = Math.floor(Math.random() * 4) + 1;
@@ -451,10 +468,16 @@ async function main() {
     }
     console.log(`✓ Created ${risks.length} risks\n`);
 
-    // Step 10: Create Threat data
+    // Step 9: Create Threat data
     console.log("🛡️ Creating threats...");
     const threats: any[] = [];
-    const threatSources = ["External", "Internal", "Natural", "Human Error", "Malicious"];
+    const threatSources = [
+      "External",
+      "Internal",
+      "Natural",
+      "Human Error",
+      "Malicious",
+    ];
     for (let i = 0; i < 8; i++) {
       const likelihood = Math.floor(Math.random() * 3) + 1;
       const impact = Math.floor(Math.random() * 4) + 1;
@@ -475,6 +498,103 @@ async function main() {
     }
     console.log(`✓ Created ${threats.length} threats\n`);
 
+    // Step 10: Create Incidents
+    console.log("🚨 Creating incidents...");
+    const incidents: any[] = [];
+    const incidentData = [
+      {
+        incidentNumber: "INC-2026-001",
+        title: "Database Server Outage",
+        description:
+          "Primary database server experienced a hardware failure resulting in complete service unavailability",
+        category: "TECHNICAL_FAILURE",
+        severity: "CRITICAL",
+        status: "RESOLVED",
+        businessImpact: "Payment processing halted for 2 hours",
+        estimatedFinancialImpact: 50000,
+        affectedProcessIds: [
+          createdProcesses[0]?.id,
+          createdProcesses[1]?.id,
+        ].filter(Boolean),
+        affectedLocations: ["Primary Data Center"],
+        affectedSystems: ["Payment System", "Reporting Database"],
+        detectionTime: new Date("2026-01-15T09:00:00Z"),
+        reportTime: new Date("2026-01-15T09:05:00Z"),
+        responseStartTime: new Date("2026-01-15T09:10:00Z"),
+        resolutionTime: new Date("2026-01-15T11:00:00Z"),
+        initialResponseActions:
+          "Activated backup server, initiated manual transaction reconciliation",
+        escalationDetails: "Escalated to VP of Operations",
+        rootCause: "Disk array controller failure",
+        correctiveActions: "Replaced failed hardware components",
+        reportedBy: "System Monitor Alert",
+        assignedTo: "Database Administrator",
+        organizationId: "ORG-001",
+      },
+      {
+        incidentNumber: "INC-2026-002",
+        title: "Cyber Attack - Ransomware Detection",
+        description:
+          "Ransomware detected on network segment containing document repository",
+        category: "MALICIOUS_ACTIVITY",
+        severity: "HIGH",
+        status: "RESPONDING",
+        businessImpact: "Document access restricted to prevent spread",
+        estimatedFinancialImpact: 100000,
+        affectedProcessIds: [
+          createdProcesses[4]?.id,
+          createdProcesses[5]?.id,
+        ].filter(Boolean),
+        affectedLocations: ["Corporate Office"],
+        affectedSystems: ["Document Management System", "Shared File Storage"],
+        detectionTime: new Date("2026-01-20T14:30:00Z"),
+        reportTime: new Date("2026-01-20T14:35:00Z"),
+        responseStartTime: new Date("2026-01-20T14:40:00Z"),
+        initialResponseActions:
+          "Isolated affected network segment, engaged cybersecurity team and law enforcement",
+        escalationDetails: "CEO and Board notified",
+        reportedBy: "Antivirus Alert",
+        assignedTo: "IT Security Manager",
+        organizationId: "ORG-001",
+      },
+      {
+        incidentNumber: "INC-2026-003",
+        title: "Natural Disaster - Flooding",
+        description:
+          "Unexpected flooding affected secondary data center facility",
+        category: "NATURAL_DISASTER",
+        severity: "HIGH",
+        status: "ESCALATED",
+        businessImpact:
+          "Secondary site unavailable, increased load on primary datacenter",
+        estimatedFinancialImpact: 200000,
+        affectedProcessIds: [
+          createdProcesses[2]?.id,
+          createdProcesses[3]?.id,
+        ].filter(Boolean),
+        affectedLocations: ["Secondary Data Center"],
+        affectedSystems: ["Backup Systems", "Disaster Recovery Site"],
+        detectionTime: new Date("2026-01-18T02:00:00Z"),
+        reportTime: new Date("2026-01-18T02:15:00Z"),
+        responseStartTime: new Date("2026-01-18T02:30:00Z"),
+        initialResponseActions:
+          "Activated disaster recovery procedures, transferred workloads to primary site",
+        escalationDetails: "Executive crisis team activated",
+        rootCause: "Heavy rainfall exceeded drainage capacity",
+        reportedBy: "Facility Manager",
+        assignedTo: "Disaster Recovery Coordinator",
+        organizationId: "ORG-001",
+      },
+    ];
+
+    for (const incident of incidentData) {
+      const created = await prisma.incident.create({
+        data: incident as any,
+      });
+      incidents.push(created);
+    }
+    console.log(`✓ Created ${incidents.length} incidents\n`);
+
     // Summary
     console.log("═════════════════════════════════════════════════════");
     console.log("✨ DATABASE SEED COMPLETED SUCCESSFULLY ✨");
@@ -482,21 +602,23 @@ async function main() {
     console.log("📊 Summary of created data:");
     console.log(`   • Business Processes: ${createdProcesses.length}`);
     console.log(`   • Impact Assessments: ${impacts.length}`);
-    console.log(`   • Recovery Objectives: ${recoveryObjectives.length}`);
     console.log(`   • Business Resources: ${resources.length}`);
     console.log(`   • Recovery Options: ${recoveryOptions.length}`);
     console.log(`   • Cost-Benefit Analyses: ${costBenefitAnalyses.length}`);
     console.log(`   • Strategy Approvals: ${strategyApprovals.length}`);
     console.log(`   • Risks: ${risks.length}`);
     console.log(`   • Threats: ${threats.length}`);
+    console.log(`   • Incidents: ${incidents.length}`);
     console.log("\n");
     console.log("🎯 Key Test Scenarios:");
     console.log("   1. ✓ View all processes and their impact assessments");
-    console.log("   2. ✓ Verify recovery objectives match process criticality");
-    console.log("   3. ✓ Test recovery options filtering by tier and type");
-    console.log("   4. ✓ Analyze cost-benefit ratios and ROI calculations");
-    console.log("   5. ✓ Track approval workflows through all stages");
-    console.log("   6. ✓ Export decision documentation for audit trail");
+    console.log("   2. ✓ Create temporal analysis for a process");
+    console.log(
+      "   3. ✓ Verify recovery objectives are calculated from temporal data",
+    );
+    console.log("   4. ✓ Test recovery options filtering by tier and type");
+    console.log("   5. ✓ Analyze cost-benefit ratios and ROI calculations");
+    console.log("   6. ✓ Track approval workflows through all stages");
     console.log("   7. ✓ Validate risk and threat assessment data\n");
 
     console.log("✅ Database is ready for testing!\n");

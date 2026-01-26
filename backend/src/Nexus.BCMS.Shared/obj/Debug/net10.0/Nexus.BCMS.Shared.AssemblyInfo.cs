@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("Nexus.BCMS.Shared")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+56cfb242429d804ef13e81aadf6e84f5fda2390e")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+da05c171a6463124365dc3f85297075e77e4fbdf")]
 [assembly: System.Reflection.AssemblyProductAttribute("Nexus.BCMS.Shared")]
 [assembly: System.Reflection.AssemblyTitleAttribute("Nexus.BCMS.Shared")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

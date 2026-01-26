@@ -30,6 +30,15 @@ import documentAnalyticsRoutes from "./routes/documentAnalytics";
 import documentTemplatesRoutes from "./routes/documentTemplates";
 import complianceRoutes from "./routes/compliance";
 import dimensionSettingsRoutes from "./routes/dimensionSettings";
+import impactCategoriesRoutes from "./routes/impactCategories";
+import processesRoutes from "./routes/processes";
+import impactsRoutes from "./routes/impacts";
+import recoveryObjectivesRoutes from "./routes/recoveryObjectives";
+import dependenciesRoutes from "./routes/dependencies";
+import recoveryOptionsRoutes from "./routes/recoveryOptions";
+import costBenefitAnalysesRoutes from "./routes/costBenefitAnalyses";
+import businessResourcesRoutes from "./routes/businessResources";
+import exercisesRoutes from "./routes/exercises";
 
 const app = express();
 import { prisma } from "./db";
@@ -42,6 +51,11 @@ app.use(express.json());
 app.use((req, res, next) => {
   console.log(`${req.method} ${req.path}`);
   next();
+});
+
+// Health check endpoint
+app.get("/health", (req, res) => {
+  res.json({ status: "ok", timestamp: new Date().toISOString() });
 });
 
 app.use("/api/bc-team-structure", bcTeamStructureRoutes);
@@ -61,6 +75,15 @@ app.use("/api", documentAnalyticsRoutes);
 app.use("/api", documentTemplatesRoutes);
 app.use("/api", complianceRoutes);
 app.use("/api/settings", dimensionSettingsRoutes);
+app.use("/api/impact-categories", impactCategoriesRoutes);
+app.use("/api/processes", processesRoutes);
+app.use("/api/impacts", impactsRoutes);
+app.use("/api/recovery-objectives", recoveryObjectivesRoutes);
+app.use("/api/dependencies", dependenciesRoutes);
+app.use("/api/recovery-options", recoveryOptionsRoutes);
+app.use("/api/cost-benefit-analyses", costBenefitAnalysesRoutes);
+app.use("/api/business-resources", businessResourcesRoutes);
+app.use("/api/exercises", exercisesRoutes);
 
 // --- Diagram Endpoints ---
 
@@ -385,7 +408,9 @@ app.delete("/api/resources/:id", async (req, res) => {
 
 app.get("/api/dependencies", async (req, res) => {
   try {
-    const dependencies = await prisma.dependency.findMany();
+    const dependencies = await prisma.dependency.findMany({
+      where: { isActive: true },
+    });
     res.json(dependencies);
   } catch (error) {
     console.error("Error fetching dependencies:", error);
@@ -395,10 +420,54 @@ app.get("/api/dependencies", async (req, res) => {
 
 app.post("/api/dependencies", async (req, res) => {
   try {
-    const dependency = await prisma.dependency.create({
-      data: req.body,
+    const { sourceProcessId, targetProcessId, ...data } = req.body;
+
+    // Check if an active dependency already exists between these processes
+    const existing = await prisma.dependency.findFirst({
+      where: {
+        sourceProcessId,
+        targetProcessId,
+        isActive: true,
+      },
     });
-    res.json(dependency);
+
+    if (existing) {
+      // Check if the data is actually different
+      const isDifferent =
+        existing.type !== data.type ||
+        existing.criticality !== data.criticality ||
+        existing.description !== data.description ||
+        existing.sourceHandle !== data.sourceHandle ||
+        existing.targetHandle !== data.targetHandle;
+
+      if (!isDifferent) {
+        // Data is identical, return existing
+        return res.json(existing);
+      }
+
+      // Deactivate old version
+      await prisma.dependency.update({
+        where: { id: existing.id },
+        data: { isActive: false },
+      });
+
+      // Create new version
+      const dependency = await prisma.dependency.create({
+        data: {
+          ...data,
+          sourceProcessId,
+          targetProcessId,
+          version: existing.version + 1,
+        },
+      });
+      res.json(dependency);
+    } else {
+      // Create new dependency
+      const dependency = await prisma.dependency.create({
+        data: { ...data, sourceProcessId, targetProcessId },
+      });
+      res.json(dependency);
+    }
   } catch (error) {
     console.error("Error creating dependency:", error);
     res.status(500).json({ error: "Failed to create dependency" });
@@ -475,7 +544,9 @@ app.delete("/api/exercises/:id", async (req, res) => {
 
 app.get("/api/process-resource-links", async (req, res) => {
   try {
-    const links = await prisma.processResourceLink.findMany();
+    const links = await prisma.processResourceLink.findMany({
+      where: { isActive: true },
+    });
     res.json(links);
   } catch (error) {
     console.error("Error fetching links:", error);
@@ -485,10 +556,54 @@ app.get("/api/process-resource-links", async (req, res) => {
 
 app.post("/api/process-resource-links", async (req, res) => {
   try {
-    const link = await prisma.processResourceLink.create({
-      data: req.body,
+    const { processId, resourceId, ...data } = req.body;
+
+    // Check if an active link already exists
+    const existing = await prisma.processResourceLink.findFirst({
+      where: {
+        processId,
+        resourceId,
+        isActive: true,
+      },
     });
-    res.json(link);
+
+    if (existing) {
+      // Check if the data is actually different
+      const isDifferent =
+        existing.criticality !== data.criticality ||
+        existing.quantityRequired !== data.quantityRequired ||
+        existing.notes !== data.notes ||
+        existing.processHandle !== data.processHandle ||
+        existing.resourceHandle !== data.resourceHandle;
+
+      if (!isDifferent) {
+        // Data is identical, return existing
+        return res.json(existing);
+      }
+
+      // Deactivate old version
+      await prisma.processResourceLink.update({
+        where: { id: existing.id },
+        data: { isActive: false },
+      });
+
+      // Create new version
+      const link = await prisma.processResourceLink.create({
+        data: {
+          ...data,
+          processId,
+          resourceId,
+          version: existing.version + 1,
+        },
+      });
+      res.json(link);
+    } else {
+      // Create new link
+      const link = await prisma.processResourceLink.create({
+        data: { ...data, processId, resourceId },
+      });
+      res.json(link);
+    }
   } catch (error) {
     console.error("Error creating link:", error);
     res.status(500).json({ error: "Failed to create link" });
@@ -524,7 +639,9 @@ app.delete("/api/process-resource-links/:id", async (req, res) => {
 
 app.get("/api/resource-dependencies", async (req, res) => {
   try {
-    const deps = await prisma.resourceDependency.findMany();
+    const deps = await prisma.resourceDependency.findMany({
+      where: { isActive: true },
+    });
     res.json(deps);
   } catch (error) {
     console.error("Error fetching resource dependencies:", error);
@@ -534,10 +651,54 @@ app.get("/api/resource-dependencies", async (req, res) => {
 
 app.post("/api/resource-dependencies", async (req, res) => {
   try {
-    const dep = await prisma.resourceDependency.create({
-      data: req.body,
+    const { sourceResourceId, targetResourceId, ...data } = req.body;
+
+    // Check if an active dependency already exists
+    const existing = await prisma.resourceDependency.findFirst({
+      where: {
+        sourceResourceId,
+        targetResourceId,
+        isActive: true,
+      },
     });
-    res.json(dep);
+
+    if (existing) {
+      // Check if the data is actually different
+      const isDifferent =
+        existing.type !== data.type ||
+        existing.isBlocking !== data.isBlocking ||
+        existing.description !== data.description ||
+        existing.sourceHandle !== data.sourceHandle ||
+        existing.targetHandle !== data.targetHandle;
+
+      if (!isDifferent) {
+        // Data is identical, return existing
+        return res.json(existing);
+      }
+
+      // Deactivate old version
+      await prisma.resourceDependency.update({
+        where: { id: existing.id },
+        data: { isActive: false },
+      });
+
+      // Create new version
+      const dep = await prisma.resourceDependency.create({
+        data: {
+          ...data,
+          sourceResourceId,
+          targetResourceId,
+          version: existing.version + 1,
+        },
+      });
+      res.json(dep);
+    } else {
+      // Create new dependency
+      const dep = await prisma.resourceDependency.create({
+        data: { ...data, sourceResourceId, targetResourceId },
+      });
+      res.json(dep);
+    }
   } catch (error) {
     console.error("Error creating resource dependency:", error);
     res.status(500).json({ error: "Failed to create resource dependency" });

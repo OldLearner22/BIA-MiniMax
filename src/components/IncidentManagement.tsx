@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import IncidentDashboard from "./incident/IncidentDashboard";
 import IncidentList from "./incident/IncidentList";
 import { useStore } from "../store/useStore";
@@ -7,7 +7,11 @@ import { AlertTriangle } from "lucide-react";
 
 const IncidentManagement: React.FC = () => {
   const [activeTab, setActiveTab] = useState<"dashboard" | "log">("dashboard");
-  const { incidents, updateIncidentStatus } = useStore();
+  const { incidents, fetchIncidents, updateIncidentStatus } = useStore();
+
+  useEffect(() => {
+    fetchIncidents();
+  }, [fetchIncidents]);
 
   const handleIncidentSelect = (incident: Incident) => {
     // TODO: Implement incident details modal or navigation

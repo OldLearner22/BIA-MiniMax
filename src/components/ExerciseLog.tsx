@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useStore } from "../store/useStore";
 import {
   Plus,
@@ -50,6 +50,7 @@ export function ExerciseLog() {
     deleteExerciseRecord,
     processes,
     businessResources,
+    fetchExerciseRecords,
   } = useStore();
   const [searchTerm, setSearchTerm] = useState("");
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -80,6 +81,11 @@ export function ExerciseLog() {
   });
 
   const [participantInput, setParticipantInput] = useState("");
+
+  // Fetch exercise records on mount
+  useEffect(() => {
+    fetchExerciseRecords();
+  }, [fetchExerciseRecords]);
 
   const filteredRecords = exerciseRecords.filter(
     (rec) =>
@@ -326,16 +332,16 @@ export function ExerciseLog() {
                 </p>
 
                 <div className="pl-[52px] flex flex-wrap gap-2">
-                  {record.scope.processIds.length > 0 && (
+                  {(record.scope?.processIds?.length ?? 0) > 0 && (
                     <div className="px-2 py-1 bg-white/5 rounded text-xs text-bia-text-tertiary flex items-center gap-1">
                       <FileText className="w-3 h-3" />
-                      {record.scope.processIds.length} Process(es)
+                      {record.scope?.processIds?.length ?? 0} Process(es)
                     </div>
                   )}
-                  {record.scope.resourceIds.length > 0 && (
+                  {(record.scope?.resourceIds?.length ?? 0) > 0 && (
                     <div className="px-2 py-1 bg-white/5 rounded text-xs text-bia-text-tertiary flex items-center gap-1">
                       <Users className="w-3 h-3" />
-                      {record.scope.resourceIds.length} Resource(s)
+                      {record.scope?.resourceIds?.length ?? 0} Resource(s)
                     </div>
                   )}
                 </div>
